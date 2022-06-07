@@ -1,7 +1,15 @@
 const MARGIN_SMALL=8.0;
 const MARGIN_MEDIUM=12.0;
 const MARGIN_MEDIUM_2=16.0;
+const MARGIN_LARGE=28.0;
 
 
 ///Text
+const TEXT_SMALL=12.0;
+const TEXT_REGULAR=20.0;
 const TEXT_MEDIUM=28.0;
+const TEXT_LARGE=32.0;
+
+
+///App dimensions
+const CHATTING_SECTION_HEIGHT=60.0;

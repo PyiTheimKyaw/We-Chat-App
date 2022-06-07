@@ -1,3 +1,3 @@
 import 'package:flutter/material.dart';
 
-const Color APP_BAR_COLOR= Color.fromRGBO(237, 237, 237, 1.0);
+const Color PRIMARY_COLOR= Color(0xFF1FE559);

@@ -4,3 +4,5 @@ const String LABEL_DISCOVER="Discover";
 const String LABEL_ME="Me";
 
 const String LABEL_WECHAT="WeChat";
+const String LABEL_MOMENTS="Moments";
+const String TAP_TO_CHANGE_COVER="Tap to change cover";

@@ -10,9 +10,9 @@ class SearchAndAddButtonView extends StatelessWidget {
       padding: const EdgeInsets.only(right: MARGIN_MEDIUM_2),
       child: Row(
         children: const[
-          Icon(Icons.search_rounded,color: Colors.black,),
+          Icon(Icons.search_rounded,color: Colors.white,),
           SizedBox(width: MARGIN_MEDIUM_2,),
-          Icon(Icons.add_circle_outline,color: Colors.black,)
+          Icon(Icons.add,color: Colors.white,)
         ],
       ),
     );

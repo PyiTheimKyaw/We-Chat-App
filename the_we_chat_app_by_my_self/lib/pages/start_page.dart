@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/start_page_bloc.dart';
-import 'package:the_we_chat_app_by_my_self/pages/chat_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/chat_list_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/contact_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/profile_page.dart';
@@ -21,7 +21,7 @@ class StartPage extends StatelessWidget {
       LABEL_DISCOVER,
     ];
     List<Widget> pages = [
-      const ChatPage(),
+      const ChatListPage(),
       const ContactPage(),
       const DiscoverPage(),
       const ProfilePage()
@@ -36,21 +36,20 @@ class StartPage extends StatelessWidget {
                 ? null
                 : AppBar(
                     elevation: 0,
-                    backgroundColor: APP_BAR_COLOR,
+                    backgroundColor: PRIMARY_COLOR,
                     centerTitle: true,
                     title: Text(
                       appBarTitles[currentIndex],
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     actions: const [
                       SearchAndAddButtonView(),
                     ],
                   ),
-            body: SingleChildScrollView(
-                child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.white,
-                    child: pages[currentIndex])),
+            body: Container(
+                // height: MediaQuery.of(context).size.height,
+                color: Colors.white,
+                child: pages[currentIndex]),
             bottomNavigationBar: NavigationBarSectionView(
               onChangePageIndex: (pageIndex) {
                 StartPageBloc bloc = Provider.of(context, listen: false);
@@ -83,7 +82,7 @@ class NavigationBarSectionView extends StatelessWidget {
       ),
       child: NavigationBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 10,
         selectedIndex: selectedIndex,
         onDestinationSelected: (int newIndex) {
           onChangePageIndex(newIndex);
@@ -91,32 +90,33 @@ class NavigationBarSectionView extends StatelessWidget {
         destinations: const [
           NavigationDestination(
               selectedIcon: Icon(
-                Icons.chat_bubble,
-                color: Colors.green,
+                Icons.wechat_outlined,
+                color: PRIMARY_COLOR,
               ),
               icon: Icon(
-                Icons.chat_bubble_outline,
+                Icons.wechat_outlined,
+
               ),
               label: LABEL_CHATS),
           NavigationDestination(
-              icon: Icon(Icons.person_outline_outlined),
+              icon: Icon(Icons.person_add_alt),
               selectedIcon: Icon(
-                Icons.person,
-                color: Colors.green,
+                Icons.person_add_alt,
+                color: PRIMARY_COLOR,
               ),
               label: LABEL_CONTACTS),
           NavigationDestination(
               icon: Icon(Icons.search_sharp),
               selectedIcon: Icon(
                 Icons.search_sharp,
-                color: Colors.green,
+                color: PRIMARY_COLOR,
               ),
               label: LABEL_DISCOVER),
           NavigationDestination(
               icon: Icon(Icons.person_outline),
               selectedIcon: Icon(
                 Icons.person,
-                color: Colors.green,
+                color: PRIMARY_COLOR,
               ),
               label: LABEL_ME),
         ],
