@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
 class MomentPage extends StatelessWidget {
@@ -44,7 +47,9 @@ class MomentPage extends StatelessWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                navigateToNextScreen(context, const AddMomentPage());
+              },
               icon: const Icon(Icons.camera_alt_outlined),
             ),
           ],
@@ -451,12 +456,16 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
         // crossAxisAlignment: CrossAxisAlignment.center,
         // mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Flexible(flex: 3, child: ProfileImageView()),
-          SizedBox(
+        children: [
+          Flexible(
+              flex: 3,
+              child: ProfileImageView(
+                radius: PROFILE_HEIGHT / 2,
+              )),
+          const SizedBox(
             width: PROFILE_HEIGHT,
           ),
-          Flexible(
+          const Flexible(
             flex: 1,
             child: UserNameAndMomentsInfoView(),
           ),
@@ -494,21 +503,6 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
           style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),
       ],
-    );
-  }
-}
-
-class ProfileImageView extends StatelessWidget {
-  const ProfileImageView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircleAvatar(
-      backgroundImage: NetworkImage(
-          "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
-      radius: PROFILE_HEIGHT / 2,
     );
   }
 }
