@@ -5,8 +5,10 @@ import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/chatting_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/icons_view.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
 class ChatListPage extends StatelessWidget {
   const ChatListPage({Key? key}) : super(key: key);
@@ -14,115 +16,66 @@ class ChatListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: PRIMARY_COLOR,
+        centerTitle: true,
+        title: TitleText(title: LABEL_WECHAT),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            color: Colors.white,
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: Container(
         color: Colors.white,
-        child: ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
-          padding: const EdgeInsets.symmetric(
-              horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM_2),
-          itemCount: 20,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              onHorizontalDragStart: (dragStart) {},
-              onHorizontalDragEnd: (dragEnd) {},
-              onTap: () {
-                navigateToNextScreen(context, const ChattingPage());
-              },
-              child: Slidable(
-                  endActionPane:
-                      ActionPane(motion: const StretchMotion(), children: [
-                    SlidableAction(
-                      borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2),
-                      onPressed: (context) {},
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      icon: Icons.clear,
-                    ),
-                  ]),
-                  child: const ChattingItemSectionView()),
-            );
-          },
-        ),
+        child: const ChattingHistoryListSectionView(),
       ),
     );
   }
 }
 
-class ChattingItemSectionView extends StatelessWidget {
-  const ChattingItemSectionView({
+class ChattingHistoryListSectionView extends StatelessWidget {
+  const ChattingHistoryListSectionView({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: CHATTING_SECTION_HEIGHT,
-      child:
-          // ListTile(
-          //   leading: const CircleAvatar(
-          //     radius: MARGIN_LARGE,
-          //     backgroundColor: Colors.white,
-          //     backgroundImage: NetworkImage(
-          //         "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
-          //   ),
-          //   title: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: const [
-          //       Text(
-          //         "Pyi Theim Kyaw",
-          //         style: TextStyle(
-          //             fontSize: TEXT_REGULAR, fontWeight: FontWeight.bold),
-          //       ),
-          //       Expanded(
-          //         child: Text(
-          //           "What's up bro,are you okay?I'm on my way! ",
-          //           style: TextStyle(color: Colors.black38),
-          //         ),
-          //       ),
-          //       Divider(),
-          //     ],
-          //   ),
-          // ),
-          Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CircleAvatar(
-            radius: MARGIN_LARGE,
-            backgroundColor: Colors.white,
-            backgroundImage: NetworkImage(
-                "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
-          ),
-          const SizedBox(
-            width: MARGIN_MEDIUM,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Pyi Theim Kyaw",
-                  style: TextStyle(
-                      fontSize: TEXT_REGULAR, fontWeight: FontWeight.bold),
+    return ListView.separated(
+      separatorBuilder: (BuildContext context, int index) => Divider(),
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
+      itemCount: 20,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        return GestureDetector(
+          onHorizontalDragStart: (dragStart) {},
+          onHorizontalDragEnd: (dragEnd) {},
+          onTap: () {
+            navigateToNextScreen(context, const ChattingPage());
+          },
+          child: Slidable(
+              endActionPane:
+                  ActionPane(motion: const StretchMotion(), children: [
+                SlidableAction(
+                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2),
+                  onPressed: (context) {},
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  icon: Icons.clear,
                 ),
-                SizedBox(
-                  height: MARGIN_SMALL,
+              ]),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                child: ChattingItemView(
+                  isContact: false,
                 ),
-                Expanded(
-                  child: Text(
-                    "What's up bro,are you okay?I'm on my way ",
-                    style: TextStyle(color: Colors.black38),
-                  ),
-                ),
-                // Divider(
-                //   thickness: 1,
-                // ),
-              ],
-            ),
-          ),
-        ],
-      ),
+              )),
+        );
+      },
     );
   }
 }

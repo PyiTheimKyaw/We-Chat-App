@@ -2,6 +2,7 @@ const MARGIN_SMALL=8.0;
 const MARGIN_MEDIUM=12.0;
 const MARGIN_MEDIUM_2=16.0;
 const MARGIN_LARGE=28.0;
+const MARGIN_XLARGE=40.0;
 
 
 ///Text
@@ -12,4 +13,8 @@ const TEXT_LARGE=32.0;
 
 
 ///App dimensions
-const CHATTING_SECTION_HEIGHT=60.0;
+const CHATTING_SECTION_HEIGHT=70.0;
+const PROFILE_HEIGHT=80.0;
+const post=null;
+const MOMENT_USER_PROFILE_HEIGHT=50.0;
+const MOMENT_IMAGE_HEIGHT=250.0;

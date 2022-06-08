@@ -9,6 +9,7 @@ import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/icons_view.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -32,20 +33,6 @@ class StartPage extends StatelessWidget {
         selector: (context, bloc) => bloc.currentIndex,
         builder: (BuildContext context, currentIndex, Widget? child) {
           return Scaffold(
-            appBar: (currentIndex == 3)
-                ? null
-                : AppBar(
-                    elevation: 0,
-                    backgroundColor: PRIMARY_COLOR,
-                    centerTitle: true,
-                    title: Text(
-                      appBarTitles[currentIndex],
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    actions: const [
-                      SearchAndAddButtonView(),
-                    ],
-                  ),
             body: Container(
                 // height: MediaQuery.of(context).size.height,
                 color: Colors.white,
@@ -95,7 +82,6 @@ class NavigationBarSectionView extends StatelessWidget {
               ),
               icon: Icon(
                 Icons.wechat_outlined,
-
               ),
               label: LABEL_CHATS),
           NavigationDestination(

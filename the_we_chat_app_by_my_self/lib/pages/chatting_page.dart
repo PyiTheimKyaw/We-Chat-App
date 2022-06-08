@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
+import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 
 class ChattingPage extends StatelessWidget {
   const ChattingPage({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class ChattingPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: PRIMARY_COLOR,
         automaticallyImplyLeading: true,
-        leadingWidth: 90,
+        leadingWidth: MediaQuery.of(context).size.width /4,
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -24,7 +25,7 @@ class ChattingPage extends StatelessWidget {
                 size: TEXT_LARGE,
               ),
               Text(
-                "WeChat",
+                LABEL_WECHAT,
                 style: TextStyle(
                     color: Colors.white60, fontSize: MARGIN_MEDIUM_2),
               ),

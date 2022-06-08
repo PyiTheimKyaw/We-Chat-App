@@ -5,25 +5,37 @@ import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/icons_view.dart';
 
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
 class DiscoverPage extends StatelessWidget {
   const DiscoverPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DiscoverItemsListTileSectionView(
-          title: LABEL_MOMENTS,
-          onTapListTile: () {
-            navigateToNextScreen(context, const MomentPage());
-          },
-        ),
-        DiscoverItemsListTileSectionView(title: "Scan", onTapListTile: () {}),
-        DiscoverItemsListTileSectionView(title: "Shake", onTapListTile: () {}),
-        DiscoverItemsListTileSectionView(
-            title: "Top Stories", onTapListTile: () {}),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: PRIMARY_COLOR,
+        centerTitle: true,
+        title: TitleText(title:LABEL_DISCOVER),
+        // actions:  [
+        //   IconButton(icon:const Icon(Icons.add),color: Colors.white, onPressed: () {  },),
+        // ],
+      ),
+      body: Column(
+        children: [
+          DiscoverItemsListTileSectionView(
+            title: LABEL_MOMENTS,
+            onTapListTile: () {
+              navigateToNextScreen(context,  MomentPage());
+            },
+          ),
+          DiscoverItemsListTileSectionView(title: "Scan", onTapListTile: () {}),
+          DiscoverItemsListTileSectionView(title: "Shake", onTapListTile: () {}),
+          DiscoverItemsListTileSectionView(
+              title: "Top Stories", onTapListTile: () {}),
+        ],
+      ),
     );
   }
 }
