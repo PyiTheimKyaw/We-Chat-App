@@ -13,7 +13,8 @@ import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
-import 'package:video_player/video_player.dart';
+
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class AddMomentPage extends StatefulWidget {
   const AddMomentPage({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class AddMomentPage extends StatefulWidget {
 }
 
 class _AddMomentPageState extends State<AddMomentPage> {
-  var  controller=BottomDrawerController();
+  var controller = BottomDrawerController();
 
   @override
   void initState() {
@@ -51,17 +52,31 @@ class _AddMomentPageState extends State<AddMomentPage> {
           centerTitle: true,
           title: const Text("Create Post"),
           actions: [
-            TextButton(
-              onPressed: () {},
-              child: const Text("Post",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: TEXT_REGULAR)),
+            Consumer<AddMomentsPageBloc>(
+              builder: (BuildContext context, bloc, Widget? child) {
+                return TextButton(
+                  onPressed: () {
+                    if (bloc.isAddNewMomentError) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Post shouldn't be empty")));
+                    } else {
+                      bloc
+                          .onTapAddNewMoment()
+                          .then((value) => Navigator.pop(context));
+                    }
+                  },
+                  child: const Text("Post",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: TEXT_REGULAR)),
+                );
+              },
             ),
           ],
         ),
-        bottomNavigationBar:  BottomNavigationBarSectionView(controller: controller,),
+        bottomNavigationBar: BottomNavigationBarSectionView(
+          controller: controller,
+        ),
         body: Consumer<AddMomentsPageBloc>(
           builder: (BuildContext context, bloc, Widget? child) {
             return Stack(
@@ -238,21 +253,29 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-      child: Container(
-        height: null,
-        child: TextField(
-          onTap: () {
-            controller.close();
-          },
-          maxLines: null,
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            hintText: "What's in your mind?",
+    return Consumer<AddMomentsPageBloc>(
+      builder: (BuildContext context, bloc, Widget? child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+          child: Container(
+            height: null,
+            child: TextField(
+              onTap: () {
+                controller.close();
+              },
+              onChanged: (text) {
+                print(text);
+                bloc.onNewPostTextChanged(text);
+              },
+              maxLines: null,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: "What's in your mind?",
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -266,7 +289,6 @@ Widget _buildBottomDrawer(
     drawerHeight: DRAWER_BODY_HEIGHT,
     color: Colors.white,
     controller: controller,
-
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.15),
@@ -555,4 +577,8 @@ class OptionView extends StatelessWidget {
       )),
     );
   }
+}
+
+void showSnackBarWithMessage(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }

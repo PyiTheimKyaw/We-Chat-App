@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -56,14 +57,12 @@ class MomentPage extends StatelessWidget {
         ),
         body: Container(
           color: BACKGROUND_COLOR,
-          child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                const ChangeCoverPhotoSectionView(),
-              ];
-            },
-            body: const MomentItemSectionView(),
+          // height: null,
+          child: ListView(
+            children: const [
+              ChangeCoverPhotoSectionView(),
+               MomentItemSectionView(),
+            ],
           ),
         ),
       ),
@@ -78,30 +77,40 @@ class MomentItemSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(
-        vertical: MARGIN_XLARGE * 2,
-      ),
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
-          child: Stack(
-            children: const [
-              MomentsFavouriteAndCommentsView(),
-              Positioned(
-                left: MOMENT_USER_PROFILE_HEIGHT / 2,
-                child: MomentUserProfileView(),
-              ),
-              Positioned(
-                right: MOMENT_USER_PROFILE_HEIGHT / 2,
-                child: Text(
-                  "12 mins ago",
-                  style: TextStyle(color: Colors.black54),
-                ),
-              ),
-            ],
+    return Consumer<MomentsPageBloc>(
+      builder: (BuildContext context, bloc, Widget? child) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics:const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(
+            vertical: MARGIN_XLARGE * 2,
           ),
+          itemCount: bloc.momentsList?.length ?? 0,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
+              child: Stack(
+                children: [
+                  MomentsFavouriteAndCommentsView(
+                    momentVO: bloc.momentsList?[index],
+                  ),
+                  Positioned(
+                    left: MOMENT_USER_PROFILE_HEIGHT / 2,
+                    child: MomentUserProfileView(
+                      userProfile: bloc.momentsList?[index].profilePicture,
+                    ),
+                  ),
+                  const Positioned(
+                    right: MOMENT_USER_PROFILE_HEIGHT / 2,
+                    child: Text(
+                      "12 mins ago",
+                      style: TextStyle(color: Colors.black54),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -109,34 +118,39 @@ class MomentItemSectionView extends StatelessWidget {
 }
 
 class MomentUserProfileView extends StatelessWidget {
-  const MomentUserProfileView({
+  MomentUserProfileView({
     Key? key,
+    required this.userProfile,
   }) : super(key: key);
+  String? userProfile;
 
   @override
   Widget build(BuildContext context) {
-    return const CircleAvatar(
-      backgroundImage: NetworkImage(
-          "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
+    return CircleAvatar(
+      backgroundImage: NetworkImage(userProfile ?? ""),
       radius: MOMENT_USER_PROFILE_HEIGHT / 2,
     );
   }
 }
 
 class MomentsFavouriteAndCommentsView extends StatelessWidget {
-  const MomentsFavouriteAndCommentsView({
+  MomentsFavouriteAndCommentsView({
     Key? key,
+    required this.momentVO,
   }) : super(key: key);
+  final MomentVO? momentVO;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        MomentsItemView(),
-        SizedBox(
+      children: [
+        MomentsItemView(
+          moment: momentVO,
+        ),
+        const SizedBox(
           height: MARGIN_SMALL,
         ),
-        CommentsAndFavouriteView(),
+        const CommentsAndFavouriteView(),
       ],
     );
   }
@@ -263,9 +277,11 @@ class FavouriteView extends StatelessWidget {
 }
 
 class MomentsItemView extends StatelessWidget {
-  const MomentsItemView({
+  MomentsItemView({
     Key? key,
+    required this.moment,
   }) : super(key: key);
+  final MomentVO? moment;
 
   @override
   Widget build(BuildContext context) {
@@ -288,22 +304,24 @@ class MomentsItemView extends StatelessWidget {
             horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_SMALL),
         height: null,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: MARGIN_LARGE * 3),
+              padding: const EdgeInsets.only(left: PROFILE_HEIGHT),
               child: TitleText(
-                title: "Pyi Theim Kyaw",
+                title: moment?.userName ?? "",
                 textColor: Colors.black,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(
+            Padding(
+              padding: const EdgeInsets.only(
                   left: MARGIN_LARGE, top: MARGIN_MEDIUM, bottom: MARGIN_LARGE),
-              child: Text(
-                  "Hello I'm new user nice to meet you all :3 hee hee Hello I'm new user nice to meet you all :3 hee hee Hello I'm new user nice to meet you all :3 hee hee "),
+              child: Text(moment?.description ?? ""),
             ),
-            const MomentImageView(),
+            MomentImageView(
+              momentImage: moment?.postFile,
+            ),
             const SizedBox(
               height: MARGIN_SMALL,
             ),
@@ -357,30 +375,27 @@ class MoreButtonView extends StatelessWidget {
 }
 
 class MomentImageView extends StatelessWidget {
-  const MomentImageView({
+  MomentImageView({
     Key? key,
+    required this.momentImage,
   }) : super(key: key);
+  String? momentImage;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MomentsPageBloc>(
-      builder: (BuildContext context, bloc, Widget? child) {
-        return Visibility(
-          visible: bloc.momentImage != "",
-          child: Container(
-            width: double.infinity,
-            height: MOMENT_IMAGE_HEIGHT,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(MARGIN_SMALL),
-              image: DecorationImage(
-                image: NetworkImage(bloc.momentImage),
-                fit: BoxFit.cover,
-              ),
-              color: Colors.red,
-            ),
+    return Visibility(
+      visible: momentImage != null,
+      child: Container(
+        width: double.infinity,
+        height: MOMENT_IMAGE_HEIGHT,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(MARGIN_SMALL),
+          image: DecorationImage(
+            image: NetworkImage(momentImage ?? ""),
+            fit: BoxFit.cover,
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -396,45 +411,43 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
     const left = PROFILE_HEIGHT / 1.5;
     return Consumer<MomentsPageBloc>(
       builder: (BuildContext context, bloc, Widget? child) {
-        return SliverToBoxAdapter(
-          child: GestureDetector(
-            onTap: (bloc.chosenCoverImage == null)
-                ? () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      bloc.onChosenCoverImage(File(image.path));
-                    }
+        return GestureDetector(
+          onTap: (bloc.chosenCoverImage == null)
+              ? () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? image =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  if (image != null) {
+                    bloc.onChosenCoverImage(File(image.path));
                   }
-                : null,
-            child: Stack(
-              // alignment: Alignment.center,
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  decoration: BoxDecoration(
-                    color: Colors.black38,
-                    image: (bloc.chosenCoverImage != null)
-                        ? DecorationImage(
-                            image: FileImage(
-                              bloc.chosenCoverImage ?? File(""),
-                            ),
-                            fit: BoxFit.cover)
-                        : const DecorationImage(
-                            image: NetworkImage(
-                                "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640"),
-                            fit: BoxFit.cover),
-                  ),
+                }
+              : null,
+          child: Stack(
+            // alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height / 3,
+                decoration: BoxDecoration(
+                  color: Colors.black38,
+                  image: (bloc.chosenCoverImage != null)
+                      ? DecorationImage(
+                          image: FileImage(
+                            bloc.chosenCoverImage ?? File(""),
+                          ),
+                          fit: BoxFit.cover)
+                      : const DecorationImage(
+                          image: NetworkImage(
+                              "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640"),
+                          fit: BoxFit.cover),
                 ),
-                Positioned(
-                  top: top,
-                  left: left,
-                  child: const ProfileImageAndUserNameSectionView(),
-                )
-              ],
-            ),
+              ),
+              Positioned(
+                top: top,
+                left: left,
+                child: const ProfileImageAndUserNameSectionView(),
+              )
+            ],
           ),
         );
       },
