@@ -12,6 +12,7 @@ import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
+import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
 
 class MomentPage extends StatelessWidget {
   const MomentPage({Key? key}) : super(key: key);
@@ -346,6 +347,7 @@ class MomentsItemView extends StatelessWidget {
               child: Text(moment?.description ?? ""),
             ),
             MomentImageView(
+              fileType: moment?.fileType ?? "",
               momentImage: moment?.postFile,
             ),
             const SizedBox(
@@ -415,23 +417,31 @@ class MomentImageView extends StatelessWidget {
   MomentImageView({
     Key? key,
     required this.momentImage,
+    required this.fileType,
   }) : super(key: key);
   String? momentImage;
+  String fileType;
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
       visible: momentImage != null,
       child: Container(
+        clipBehavior: Clip.antiAlias,
         width: double.infinity,
         height: MOMENT_IMAGE_HEIGHT,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(MARGIN_SMALL),
-          image: DecorationImage(
-            image: NetworkImage(momentImage ?? ""),
-            fit: BoxFit.cover,
-          ),
         ),
+        child: (fileType == "mp4")
+            ? FLickVideoPlayerView(
+                isMomentsPage: true,
+                momentFile: momentImage,
+              )
+            : Image.network(
+                momentImage ?? "",
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }

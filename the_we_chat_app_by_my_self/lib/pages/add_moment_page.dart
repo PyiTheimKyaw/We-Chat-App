@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/add_moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
@@ -17,13 +18,11 @@ import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class AddMomentPage extends StatefulWidget {
-  AddMomentPage({Key? key, this.momentId=0}) : super(key: key);
-  int momentId;
+  AddMomentPage({Key? key, this.momentId}) : super(key: key);
+  int? momentId;
 
   @override
   State<AddMomentPage> createState() => _AddMomentPageState();
-
-
 }
 
 class _AddMomentPageState extends State<AddMomentPage> {
@@ -39,111 +38,175 @@ class _AddMomentPageState extends State<AddMomentPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => AddMomentsPageBloc(momentId:widget.momentId),
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: PRIMARY_COLOR,
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.close,
-                color: Colors.white,
-              )),
-          centerTitle: true,
-          title: const Text("Create Post"),
-          actions: [
-            Consumer<AddMomentsPageBloc>(
-              builder: (BuildContext context, bloc, Widget? child) {
-                return TextButton(
-                  onPressed: () {
-                    if (bloc.isAddNewMomentError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Post shouldn't be empty")));
-                    } else {
-                      bloc
-                          .onTapAddNewMoment()
-                          .then((value) => Navigator.pop(context));
-                    }
-                  },
-                  child: const Text("Post",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: TEXT_REGULAR)),
-                );
-              },
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBarSectionView(
-          controller: controller,
-        ),
-        body: Consumer<AddMomentsPageBloc>(
-          builder: (BuildContext context, bloc, Widget? child) {
-            return Stack(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.white,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                         UserProfileAndPostOptionsSectionView(profilePic: bloc.profilePicture ?? "",userName: bloc.userName ?? "",),
-                        const SizedBox(
-                          height: MARGIN_LARGE,
-                        ),
-                        MomentsDescriptionTextFieldView(
-                          controller: controller,
-                        ),
-                        Stack(
-                          children: [
-                            Visibility(
-                              visible: bloc.chosenPostImage != null,
-                              child: Container(
-                                width: double.infinity,
-                                height: null,
-                                color: Colors.red,
-                                child: (bloc.fileType == "mp4")
-                                    ? FLickVideoPlayerView(
-                                        postFile: bloc.chosenPostImage)
-                                    : Image.file(
-                                        bloc.chosenPostImage ?? File(""),
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Visibility(
-                                  visible: bloc.chosenPostImage != null,
-                                  child: IconButton(
-                                    icon: Icon(Icons.close, color: Colors.red),
-                                    onPressed: () {
-                                      bloc.onChosenDeleteFile();
-                                    },
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ],
+      create: (BuildContext context) =>
+          AddMomentsPageBloc(momentId: widget.momentId),
+      child: Selector<AddMomentsPageBloc, bool>(
+        selector: (BuildContext context, bloc) => bloc.isLoading,
+        builder: (BuildContext context, isLoading, Widget? child) {
+          return Stack(
+            children: [
+              Scaffold(
+                appBar: AppBar(
+                  elevation: 0,
+                  backgroundColor: PRIMARY_COLOR,
+                  leading: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      )),
+                  centerTitle: true,
+                  title: const Text("Create Post"),
+                  actions: [
+                    Consumer<AddMomentsPageBloc>(
+                      builder: (BuildContext context, bloc, Widget? child) {
+                        return TextButton(
+                          onPressed: () {
+                            if (bloc.isAddNewMomentError) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("Post shouldn't be empty")));
+                            } else {
+                              bloc
+                                  .onTapAddNewMoment()
+                                  .then((value) => Navigator.pop(context));
+                            }
+                          },
+                          child: const Text("Post",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: TEXT_REGULAR)),
+                        );
+                      },
                     ),
-                  ),
+                  ],
                 ),
-                Visibility(
-                    visible: bloc.isDrawerPop,
-                    child: _buildBottomDrawer(context, controller)),
-              ],
-            );
-          },
-        ),
+                bottomNavigationBar: BottomNavigationBarSectionView(
+                  controller: controller,
+                ),
+                body: Consumer<AddMomentsPageBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return Stack(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: MARGIN_MEDIUM_2),
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: Colors.white,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                UserProfileAndPostOptionsSectionView(
+                                  profilePic: bloc.profilePicture ?? "",
+                                  userName: bloc.userName ?? "",
+                                ),
+                                const SizedBox(
+                                  height: MARGIN_LARGE,
+                                ),
+                                MomentsDescriptionTextFieldView(
+                                  controller: controller,
+                                ),
+                                Stack(
+                                  children: [
+                                    Visibility(
+                                      visible: (bloc.chosenPostImage != null ||
+                                          bloc.postImage != ''),
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: null,
+                                        color: Colors.red,
+                                        child: (bloc.fileType == 'mp4')
+                                            ? FLickVideoPlayerView(
+                                                momentFile: bloc.postImage,
+                                                postFile: bloc.chosenPostImage,
+                                              )
+                                            : (bloc.chosenPostImage == null)
+                                                ? Image.network(
+                                                    bloc.postImage,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.file(
+                                                    bloc.chosenPostImage ??
+                                                        File(""),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                        // (bloc.fileType == "mp4")
+                                        //     ? FLickVideoPlayerView(
+                                        //         postFile: bloc.chosenPostImage,momentFile: bloc.postImage,)
+                                        //     : (bloc.chosenPostImage ==null) ?Image.file(
+                                        //         bloc.chosenPostImage ??
+                                        //             File(""),
+                                        //         fit: BoxFit.cover,
+                                        //       ): Image.network(bloc.postImage ?? "",fit: BoxFit.cover,),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: Visibility(
+                                          visible:
+                                              (bloc.chosenPostImage != null ||
+                                                  bloc.postImage != ''),
+                                          child: IconButton(
+                                            icon: Icon(Icons.close,
+                                                color: Colors.red),
+                                            onPressed: () {
+                                              bloc.onChosenDeleteFile();
+                                            },
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                            visible: bloc.isDrawerPop,
+                            child: _buildBottomDrawer(context, controller)),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              Visibility(
+                  visible: isLoading,
+                  child: Container(
+                    color: Colors.black12,
+                    child: const Center(
+                      child: LoadingView(),
+                    ),
+                  )),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class LoadingView extends StatelessWidget {
+  const LoadingView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: MARGIN_XLARGE,
+      height: MARGIN_XLARGE,
+      child: LoadingIndicator(
+        indicatorType: Indicator.audioEqualizer,
+        colors: [Colors.white],
+        strokeWidth: 2,
+        backgroundColor: Colors.transparent,
+        pathBackgroundColor: Colors.black,
       ),
     );
   }
@@ -264,13 +327,16 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
           child: Container(
             height: null,
             child: TextField(
-              controller: TextEditingController(text:bloc.newMomentDescription),
+              controller:
+                  TextEditingController(
+                      text: bloc.newMomentDescription)..selection=TextSelection.collapsed(offset: -1),
               onTap: () {
                 controller.close();
               },
               onChanged: (text) {
                 print(text);
                 bloc.onNewPostTextChanged(text);
+
               },
               maxLines: null,
               decoration: const InputDecoration(
@@ -456,13 +522,14 @@ class ListTitlePostActionsView extends StatelessWidget {
 }
 
 class UserProfileAndPostOptionsSectionView extends StatelessWidget {
-   UserProfileAndPostOptionsSectionView({
+  UserProfileAndPostOptionsSectionView({
     Key? key,
     required this.profilePic,
-     required this.userName,
+    required this.userName,
   }) : super(key: key);
   String profilePic;
   String userName;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -470,7 +537,9 @@ class UserProfileAndPostOptionsSectionView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ProfileImageView(profilePicture: profilePic,),
+          ProfileImageView(
+            profilePicture: profilePic,
+          ),
           const SizedBox(
             width: MARGIN_MEDIUM,
           ),

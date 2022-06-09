@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/we_chat_data_agent.dart';
 
 ///Moments Collection
 const momentCollection = "moments";
+const fileUploadRef = "uploads";
 
 class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   static final CloudFireStoreDataAgentImpl _singleton =
@@ -17,6 +21,9 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
 
   ///Database
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+
+  ///Storage
+  var firebaseStorage = FirebaseStorage.instance;
 
   @override
   Stream<List<MomentVO>> getMoments() {
@@ -55,5 +62,14 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         .asStream()
         .where((documentSnapShot) => documentSnapShot.data() != null)
         .map((documentSnapShot) => MomentVO.fromJson(documentSnapShot.data()!));
+  }
+
+  @override
+  Future<String> uploadFileToFirebase(File file) {
+    return firebaseStorage
+        .ref(fileUploadRef)
+        .child("${DateTime.now().millisecondsSinceEpoch}")
+        .putFile(file)
+        .then((taskSnapShot) => taskSnapShot.ref.getDownloadURL());
   }
 }

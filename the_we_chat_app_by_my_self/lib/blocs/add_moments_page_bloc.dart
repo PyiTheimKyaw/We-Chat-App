@@ -13,12 +13,12 @@ class AddMomentsPageBloc extends ChangeNotifier {
   bool isDrawerPop = false;
   bool isAddNewMomentError = false;
   bool isInEditMode = false;
+  bool isLoading = false;
 
   ///Variables
   String? userName;
   String? profilePicture;
-
-  String? postImage;
+  String postImage='';
 
   ///States
   String newMomentDescription = '';
@@ -44,7 +44,8 @@ class AddMomentsPageBloc extends ChangeNotifier {
       userName = moment.userName;
       newMomentDescription = moment.description ?? "";
       profilePicture = moment.profilePicture ?? "";
-      postImage = moment.postFile;
+      postImage = moment.postFile ?? "";
+      fileType = moment.fileType;
       mMoment = moment;
       _notifySafely();
     });
@@ -62,22 +63,32 @@ class AddMomentsPageBloc extends ChangeNotifier {
       _notifySafely();
       return Future.error("Error");
     } else {
+      isLoading = true;
       isAddNewMomentError = true;
       _notifySafely();
       if (isInEditMode) {
-        return _editMoment();
+        return _editMoment().then((value) {
+          isLoading = false;
+          _notifySafely();
+        });
       } else {
-        return _addNewMoment();
+        return _addNewMoment().then((value) {
+          isLoading = false;
+          _notifySafely();
+        });
       }
     }
   }
-  Future<dynamic> _addNewMoment(){
-    return mModel.addNewMoment(newMomentDescription);
+
+  Future<dynamic> _addNewMoment() {
+    return mModel.addNewMoment(
+        newMomentDescription, chosenPostImage, fileType ?? "");
   }
+
   Future<dynamic> _editMoment() {
     mMoment?.description = newMomentDescription;
     if (mMoment != null) {
-      return mModel.editMoment(mMoment!);
+      return mModel.editMoment(mMoment!,chosenPostImage,fileType ?? "");
     } else {
       return Future.error("Error");
     }
@@ -107,6 +118,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
 
   void onChosenDeleteFile() {
     chosenPostImage = null;
+    postImage='';
     _notifySafely();
   }
 

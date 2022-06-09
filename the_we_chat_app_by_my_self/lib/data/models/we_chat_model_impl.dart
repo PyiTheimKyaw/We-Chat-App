@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/cloud_fire_store_data_agent_impl.dart';
@@ -21,15 +23,38 @@ class WeChatModelImpl extends WeChatModel {
   }
 
   @override
-  Future<void> addNewMoment(String description) {
+  Future<void> addNewMoment(String description, File? file, String fileType) {
+    if (file != null) {
+      return mDataAgent
+          .uploadFileToFirebase(file)
+          .then((downloadUrl) =>
+              craftNewMomentVO(description, downloadUrl, fileType))
+          .then((newMoment) => mDataAgent.addNewMoment(newMoment));
+    } else {
+      return craftNewMomentVO(description, "", "")
+          .then((newMoment) => mDataAgent.addNewMoment(newMoment));
+    }
+  }
+
+  Future<MomentVO> craftNewMomentVO(
+      String description, String fileUrl, String fileType) {
     var newMoment = MomentVO(
-        id: DateTime.now().millisecond,
+        id: DateTime.now().millisecondsSinceEpoch,
         description: description,
-        postFile: null,
+        postFile: fileUrl,
         profilePicture:
             "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg",
-        userName: "Pyi Theim Kyaw");
-    return mDataAgent.addNewMoment(newMoment);
+        userName: "Pyi Theim Kyaw",
+        fileType: fileType);
+    return Future.value(newMoment);
+  }
+
+  Future<MomentVO> craftEditMomentVO(
+      MomentVO moment, String fileUrl, String fileType) {
+    MomentVO editMoment = moment;
+    editMoment.postFile = fileUrl;
+    editMoment.fileType = fileType;
+    return Future.value(editMoment);
   }
 
   @override
@@ -43,7 +68,20 @@ class WeChatModelImpl extends WeChatModel {
   }
 
   @override
-  Future<void> editMoment(MomentVO editMoment) {
-    return mDataAgent.addNewMoment(editMoment);
+  Future<void> editMoment(MomentVO editMoment, File? file, String fileType) {
+    if (file != null) {
+      return mDataAgent
+          .uploadFileToFirebase(file)
+          .then((downloadUrl) =>
+              craftEditMomentVO(editMoment, downloadUrl, fileType))
+          .then((editedMoment) => mDataAgent.addNewMoment(editedMoment));
+    } else {
+      return mDataAgent.addNewMoment(editMoment);
+    }
+  }
+
+  @override
+  Future<String> uploadFileToFirebase(File file) {
+    return mDataAgent.uploadFileToFirebase(file);
   }
 }
