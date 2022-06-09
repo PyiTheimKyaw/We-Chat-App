@@ -26,6 +26,10 @@ class MomentsPageBloc extends ChangeNotifier {
     });
   }
 
+  void onTapDelete(int momentId) {
+    mWeChatModel.deleteMoment(momentId);
+  }
+
   void onChosenCoverImage(File? imageFile) {
     chosenCoverImage = imageFile;
     _notifySafely();

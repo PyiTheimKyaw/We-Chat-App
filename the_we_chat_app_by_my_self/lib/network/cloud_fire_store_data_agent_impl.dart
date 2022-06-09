@@ -37,4 +37,12 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         .doc(newMoment.id.toString())
         .set(newMoment.toJson());
   }
+
+  @override
+  Future<void> deleteMoment(int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .delete();
+  }
 }

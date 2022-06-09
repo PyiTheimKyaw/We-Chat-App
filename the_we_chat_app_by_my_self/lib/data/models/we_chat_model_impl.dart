@@ -31,4 +31,9 @@ class WeChatModelImpl extends WeChatModel {
         userName: "Pyi Theim Kyaw");
     return mDataAgent.addNewMoment(newMoment);
   }
+
+  @override
+  Future<void> deleteMoment(int momentId) {
+    return mDataAgent.deleteMoment(momentId);
+  }
 }

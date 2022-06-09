@@ -61,7 +61,7 @@ class MomentPage extends StatelessWidget {
           child: ListView(
             children: const [
               ChangeCoverPhotoSectionView(),
-               MomentItemSectionView(),
+              MomentItemSectionView(),
             ],
           ),
         ),
@@ -81,7 +81,7 @@ class MomentItemSectionView extends StatelessWidget {
       builder: (BuildContext context, bloc, Widget? child) {
         return ListView.builder(
           shrinkWrap: true,
-          physics:const NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(
             vertical: MARGIN_XLARGE * 2,
           ),
@@ -92,6 +92,9 @@ class MomentItemSectionView extends StatelessWidget {
               child: Stack(
                 children: [
                   MomentsFavouriteAndCommentsView(
+                    onTapDelete: (momentId) {
+                      bloc.onTapDelete(momentId);
+                    },
                     momentVO: bloc.momentsList?[index],
                   ),
                   Positioned(
@@ -137,14 +140,19 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
   MomentsFavouriteAndCommentsView({
     Key? key,
     required this.momentVO,
+    required this.onTapDelete,
   }) : super(key: key);
   final MomentVO? momentVO;
+  final Function(int) onTapDelete;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         MomentsItemView(
+          onTapDelete: () {
+            onTapDelete(momentVO?.id ?? 0);
+          },
           moment: momentVO,
         ),
         const SizedBox(
@@ -280,8 +288,10 @@ class MomentsItemView extends StatelessWidget {
   MomentsItemView({
     Key? key,
     required this.moment,
+    required this.onTapDelete,
   }) : super(key: key);
   final MomentVO? moment;
+  final Function onTapDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -327,16 +337,18 @@ class MomentsItemView extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
-                Icon(Icons.favorite_border),
-                SizedBox(
+              children: [
+                const Icon(Icons.favorite_border),
+                const SizedBox(
                   width: MARGIN_SMALL,
                 ),
-                Icon(Icons.comment_outlined),
-                SizedBox(
+                const Icon(Icons.comment_outlined),
+                const SizedBox(
                   width: MARGIN_SMALL,
                 ),
-                MoreButtonView()
+                MoreButtonView(
+                  onTapDelete: onTapDelete,
+                )
               ],
             )
           ],
@@ -347,9 +359,11 @@ class MomentsItemView extends StatelessWidget {
 }
 
 class MoreButtonView extends StatelessWidget {
-  const MoreButtonView({
+  MoreButtonView({
     Key? key,
+    required this.onTapDelete,
   }) : super(key: key);
+  final Function onTapDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -362,7 +376,9 @@ class MoreButtonView extends StatelessWidget {
         ),
         PopupMenuItem(
           value: 2,
-          onTap: () {},
+          onTap: () {
+            onTapDelete();
+          },
           child: const Text("Delete"),
         ),
       ],

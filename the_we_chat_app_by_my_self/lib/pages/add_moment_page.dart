@@ -57,7 +57,8 @@ class _AddMomentPageState extends State<AddMomentPage> {
                 return TextButton(
                   onPressed: () {
                     if (bloc.isAddNewMomentError) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Post shouldn't be empty")));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Post shouldn't be empty")));
                     } else {
                       bloc
                           .onTapAddNewMoment()
