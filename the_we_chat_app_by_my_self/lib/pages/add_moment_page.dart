@@ -17,10 +17,13 @@ import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class AddMomentPage extends StatefulWidget {
-  const AddMomentPage({Key? key}) : super(key: key);
+  AddMomentPage({Key? key, this.momentId=0}) : super(key: key);
+  int momentId;
 
   @override
   State<AddMomentPage> createState() => _AddMomentPageState();
+
+
 }
 
 class _AddMomentPageState extends State<AddMomentPage> {
@@ -36,7 +39,7 @@ class _AddMomentPageState extends State<AddMomentPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => AddMomentsPageBloc(),
+      create: (BuildContext context) => AddMomentsPageBloc(momentId:widget.momentId),
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -93,7 +96,7 @@ class _AddMomentPageState extends State<AddMomentPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const UserProfileAndPostOptionsSectionView(),
+                         UserProfileAndPostOptionsSectionView(profilePic: bloc.profilePicture ?? "",userName: bloc.userName ?? "",),
                         const SizedBox(
                           height: MARGIN_LARGE,
                         ),
@@ -261,6 +264,7 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
           child: Container(
             height: null,
             child: TextField(
+              controller: TextEditingController(text:bloc.newMomentDescription),
               onTap: () {
                 controller.close();
               },
@@ -452,10 +456,13 @@ class ListTitlePostActionsView extends StatelessWidget {
 }
 
 class UserProfileAndPostOptionsSectionView extends StatelessWidget {
-  const UserProfileAndPostOptionsSectionView({
+   UserProfileAndPostOptionsSectionView({
     Key? key,
+    required this.profilePic,
+     required this.userName,
   }) : super(key: key);
-
+  String profilePic;
+  String userName;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -463,7 +470,7 @@ class UserProfileAndPostOptionsSectionView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ProfileImageView(),
+          ProfileImageView(profilePicture: profilePic,),
           const SizedBox(
             width: MARGIN_MEDIUM,
           ),
@@ -471,7 +478,7 @@ class UserProfileAndPostOptionsSectionView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TitleText(
-                title: "Pyi Theim Kyaw",
+                title: userName,
                 textColor: Colors.black,
               ),
               const SizedBox(

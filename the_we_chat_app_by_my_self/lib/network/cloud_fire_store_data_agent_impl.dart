@@ -45,4 +45,15 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         .doc(momentId.toString())
         .delete();
   }
+
+  @override
+  Stream<MomentVO> getMomentById(int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .get()
+        .asStream()
+        .where((documentSnapShot) => documentSnapShot.data() != null)
+        .map((documentSnapShot) => MomentVO.fromJson(documentSnapShot.data()!));
+  }
 }

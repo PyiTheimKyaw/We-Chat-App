@@ -49,7 +49,7 @@ class MomentPage extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
-                navigateToNextScreen(context, const AddMomentPage());
+                navigateToNextScreen(context, AddMomentPage());
               },
               icon: const Icon(Icons.camera_alt_outlined),
             ),
@@ -94,6 +94,15 @@ class MomentItemSectionView extends StatelessWidget {
                   MomentsFavouriteAndCommentsView(
                     onTapDelete: (momentId) {
                       bloc.onTapDelete(momentId);
+                    },
+                    onTapEdit: (momentId) {
+                      Future.delayed(Duration(seconds: 1)).then((value) {
+                        navigateToNextScreen(
+                            context,
+                            AddMomentPage(
+                              momentId: momentId,
+                            ));
+                      });
                     },
                     momentVO: bloc.momentsList?[index],
                   ),
@@ -141,9 +150,11 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
     Key? key,
     required this.momentVO,
     required this.onTapDelete,
+    required this.onTapEdit,
   }) : super(key: key);
   final MomentVO? momentVO;
   final Function(int) onTapDelete;
+  final Function(int) onTapEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +163,9 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
         MomentsItemView(
           onTapDelete: () {
             onTapDelete(momentVO?.id ?? 0);
+          },
+          onTapEdit: () {
+            onTapEdit(momentVO?.id ?? 0);
           },
           moment: momentVO,
         ),
@@ -289,9 +303,11 @@ class MomentsItemView extends StatelessWidget {
     Key? key,
     required this.moment,
     required this.onTapDelete,
+    required this.onTapEdit,
   }) : super(key: key);
   final MomentVO? moment;
   final Function onTapDelete;
+  final Function onTapEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -347,6 +363,7 @@ class MomentsItemView extends StatelessWidget {
                   width: MARGIN_SMALL,
                 ),
                 MoreButtonView(
+                  onTapEdit: onTapEdit,
                   onTapDelete: onTapDelete,
                 )
               ],
@@ -362,8 +379,10 @@ class MoreButtonView extends StatelessWidget {
   MoreButtonView({
     Key? key,
     required this.onTapDelete,
+    required this.onTapEdit,
   }) : super(key: key);
   final Function onTapDelete;
+  final Function onTapEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -371,7 +390,9 @@ class MoreButtonView extends StatelessWidget {
       itemBuilder: (BuildContext context) => [
         PopupMenuItem(
           value: 1,
-          onTap: () {},
+          onTap: () {
+            onTapEdit();
+          },
           child: const Text("Edit"),
         ),
         PopupMenuItem(

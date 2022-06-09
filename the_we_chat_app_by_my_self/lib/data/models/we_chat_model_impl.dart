@@ -36,4 +36,14 @@ class WeChatModelImpl extends WeChatModel {
   Future<void> deleteMoment(int momentId) {
     return mDataAgent.deleteMoment(momentId);
   }
+
+  @override
+  Stream<MomentVO> getMomentById(int momentId) {
+    return mDataAgent.getMomentById(momentId);
+  }
+
+  @override
+  Future<void> editMoment(MomentVO editMoment) {
+    return mDataAgent.addNewMoment(editMoment);
+  }
 }

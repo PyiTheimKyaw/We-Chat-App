@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 
 class AddMomentsPageBloc extends ChangeNotifier {
   File? chosenPostImage;
@@ -11,12 +12,49 @@ class AddMomentsPageBloc extends ChangeNotifier {
   int currentIndex = 0;
   bool isDrawerPop = false;
   bool isAddNewMomentError = false;
+  bool isInEditMode = false;
+
+  ///Variables
+  String? userName;
+  String? profilePicture;
+
+  String? postImage;
 
   ///States
   String newMomentDescription = '';
+  MomentVO? mMoment;
 
   ///Models
   WeChatModel mModel = WeChatModelImpl();
+
+  AddMomentsPageBloc({int? momentId}) {
+    if (momentId != null) {
+      isInEditMode = true;
+      _notifySafely();
+      _prePopulateDataForEditMode(momentId);
+    } else {
+      isInEditMode = false;
+      _notifySafely();
+      _prePopulateDataForAddMode();
+    }
+  }
+
+  void _prePopulateDataForEditMode(int momentId) {
+    mModel.getMomentById(momentId).listen((moment) {
+      userName = moment.userName;
+      newMomentDescription = moment.description ?? "";
+      profilePicture = moment.profilePicture ?? "";
+      postImage = moment.postFile;
+      mMoment = moment;
+      _notifySafely();
+    });
+  }
+
+  void _prePopulateDataForAddMode() {
+    userName = "Pyi Theim Kyaw";
+    profilePicture =
+        "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg";
+  }
 
   Future<void> onTapAddNewMoment() {
     if (newMomentDescription.isEmpty) {
@@ -26,7 +64,22 @@ class AddMomentsPageBloc extends ChangeNotifier {
     } else {
       isAddNewMomentError = true;
       _notifySafely();
-      return mModel.addNewMoment(newMomentDescription);
+      if (isInEditMode) {
+        return _editMoment();
+      } else {
+        return _addNewMoment();
+      }
+    }
+  }
+  Future<dynamic> _addNewMoment(){
+    return mModel.addNewMoment(newMomentDescription);
+  }
+  Future<dynamic> _editMoment() {
+    mMoment?.description = newMomentDescription;
+    if (mMoment != null) {
+      return mModel.editMoment(mMoment!);
+    } else {
+      return Future.error("Error");
     }
   }
 
@@ -58,7 +111,9 @@ class AddMomentsPageBloc extends ChangeNotifier {
   }
 
   void _notifySafely() {
-    notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   @override

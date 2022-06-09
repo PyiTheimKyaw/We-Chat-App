@@ -4,4 +4,5 @@ abstract class WeChatDataAgent{
   Stream<List<MomentVO>> getMoments();
   Future<void> addNewMoment(MomentVO newMoment);
   Future<void> deleteMoment(int momentId);
+  Stream<MomentVO> getMomentById(int momentId);
 }
