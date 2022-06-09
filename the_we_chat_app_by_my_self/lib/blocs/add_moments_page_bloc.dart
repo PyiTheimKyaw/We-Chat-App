@@ -4,14 +4,31 @@ import 'package:flutter/foundation.dart';
 
 class AddMomentsPageBloc extends ChangeNotifier {
   File? chosenPostImage;
+  String? fileType;
   bool isDisposed = false;
+  int currentIndex=0;
+  bool isDrawerPop=false;
 
-  void onChosenPostImage(File image) {
+  Future<void> onTapMoreToDrawerPop(){
+    isDrawerPop=true;
+    _notifySafely();
+    return Future.value();
+  }
+  void onChosenIndex(int index){
+    currentIndex=index;
+    _notifySafely();
+  }
+  void onChosenPostImage(File image,String fileType) {
     chosenPostImage = image;
-    _notififySafely();
+    this.fileType=fileType;
+    _notifySafely();
+  }
+  void onChosenDeleteFile(){
+    chosenPostImage=null;
+    _notifySafely();
   }
 
-  void _notififySafely() {
+  void _notifySafely() {
     notifyListeners();
   }
 

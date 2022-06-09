@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:bottom_drawer/bottom_drawer.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/add_moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
@@ -10,11 +12,25 @@ import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
+import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
+import 'package:video_player/video_player.dart';
 
-BottomDrawerController _controller = BottomDrawerController();
-
-class AddMomentPage extends StatelessWidget {
+class AddMomentPage extends StatefulWidget {
   const AddMomentPage({Key? key}) : super(key: key);
+
+  @override
+  State<AddMomentPage> createState() => _AddMomentPageState();
+}
+
+class _AddMomentPageState extends State<AddMomentPage> {
+  var  controller=BottomDrawerController();
+
+  @override
+  void initState() {
+    controller.open();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +61,7 @@ class AddMomentPage extends StatelessWidget {
             ),
           ],
         ),
+        bottomNavigationBar:  BottomNavigationBarSectionView(controller: controller,),
         body: Consumer<AddMomentsPageBloc>(
           builder: (BuildContext context, bloc, Widget? child) {
             return Stack(
@@ -64,21 +81,46 @@ class AddMomentPage extends StatelessWidget {
                         const SizedBox(
                           height: MARGIN_LARGE,
                         ),
-                        const MomentsDescriptionTextFieldView(),
-                        Visibility(
-                          visible: bloc.chosenPostImage!=null,
-                          child: Container(
-                            width: double.infinity,
-                            height: 400,
-                            color: Colors.red,
-                            child: Image.file(bloc.chosenPostImage ?? File("")),
-                          ),
+                        MomentsDescriptionTextFieldView(
+                          controller: controller,
+                        ),
+                        Stack(
+                          children: [
+                            Visibility(
+                              visible: bloc.chosenPostImage != null,
+                              child: Container(
+                                width: double.infinity,
+                                height: null,
+                                color: Colors.red,
+                                child: (bloc.fileType == "mp4")
+                                    ? FLickVideoPlayerView(
+                                        postFile: bloc.chosenPostImage)
+                                    : Image.file(
+                                        bloc.chosenPostImage ?? File(""),
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Visibility(
+                                  visible: bloc.chosenPostImage != null,
+                                  child: IconButton(
+                                    icon: Icon(Icons.close, color: Colors.red),
+                                    onPressed: () {
+                                      bloc.onChosenDeleteFile();
+                                    },
+                                  )),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ),
-                _buildBottomDrawer(context),
+                Visibility(
+                    visible: bloc.isDrawerPop,
+                    child: _buildBottomDrawer(context, controller)),
               ],
             );
           },
@@ -88,34 +130,143 @@ class AddMomentPage extends StatelessWidget {
   }
 }
 
-class MomentsDescriptionTextFieldView extends StatelessWidget {
-  const MomentsDescriptionTextFieldView({
-    Key? key,
-  }) : super(key: key);
+class BottomNavigationBarSectionView extends StatelessWidget {
+  BottomNavigationBarSectionView({Key? key, required this.controller})
+      : super(key: key);
+  BottomDrawerController controller;
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-      child: TextField(
-        maxLines: 6,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "What's in your mind?",
+    return Consumer<AddMomentsPageBloc>(
+      builder: (BuildContext context, bloc, Widget? child) {
+        return NavigationBarTheme(
+          data: NavigationBarThemeData(
+            height: MediaQuery.of(context).size.height / 12,
+            indicatorColor: Colors.white,
+          ),
+          child: Visibility(
+            visible: !bloc.isDrawerPop,
+            child: NavigationBar(
+              backgroundColor: Colors.white,
+              elevation: 10,
+              selectedIndex: bloc.currentIndex,
+              onDestinationSelected: (int newIndex) async {
+                bloc.onChosenIndex(newIndex);
+                if (newIndex == 0) {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles();
+                  if (result != null) {
+                    print("File Type => ${result.files.single.extension}");
+                    bloc.onChosenPostImage(File(result.files.single.path ?? ""),
+                        result.files.single.extension ?? "");
+                  }
+                } else if (newIndex == 4) {
+                  bloc.onTapMoreToDrawerPop().whenComplete(() {
+                    Future.delayed(Duration(seconds: 1))
+                        .then((value) => controller.open());
+                  });
+                }
+              },
+              destinations: const [
+                NavigationDestination(
+                    selectedIcon: Icon(
+                      Icons.photo_library_rounded,
+                      color: Colors.green,
+                    ),
+                    icon: Icon(
+                      Icons.photo_library_outlined,
+                      color: Colors.green,
+                    ),
+                    label: ''),
+                NavigationDestination(
+                    icon: Icon(
+                      Icons.person_add_alt,
+                      color: Colors.blue,
+                    ),
+                    selectedIcon: Icon(
+                      Icons.person_add_alt,
+                      color: Colors.blue,
+                    ),
+                    label: ''),
+                NavigationDestination(
+                    icon: Icon(
+                      Icons.emoji_emotions_outlined,
+                      color: Colors.yellow,
+                    ),
+                    selectedIcon: Icon(
+                      Icons.emoji_emotions_outlined,
+                      color: Colors.yellow,
+                    ),
+                    label: ''),
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.location_on,
+                    color: Colors.orange,
+                  ),
+                  selectedIcon: Icon(
+                    Icons.location_on,
+                    color: Colors.orange,
+                  ),
+                  label: '',
+                ),
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
+                    color: Colors.black,
+                  ),
+                  selectedIcon: Icon(
+                    Icons.more_horiz_rounded,
+                    color: Colors.black,
+                  ),
+                  label: '',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class MomentsDescriptionTextFieldView extends StatelessWidget {
+  MomentsDescriptionTextFieldView({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+  BottomDrawerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+      child: Container(
+        height: null,
+        child: TextField(
+          onTap: () {
+            controller.close();
+          },
+          maxLines: null,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            hintText: "What's in your mind?",
+          ),
         ),
       ),
     );
   }
 }
 
-Widget _buildBottomDrawer(BuildContext context) {
+Widget _buildBottomDrawer(
+    BuildContext context, BottomDrawerController controller) {
   return BottomDrawer(
     header: _buildBottomDrawerHead(context),
     body: _buildBottomDrawerBody(context),
     headerHeight: DRAWER_HEADER_HEIGHT,
     drawerHeight: DRAWER_BODY_HEIGHT,
     color: Colors.white,
-    controller: _controller,
+    controller: controller,
+
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.15),
@@ -156,32 +307,80 @@ Widget _buildBottomDrawerBody(BuildContext context) {
                   FilePickerResult? result =
                       await FilePicker.platform.pickFiles();
                   if (result != null) {
-                    bloc.onChosenPostImage(
-                        File(result.files.single.path ?? ""));
+                    print("File Type => ${result.files.single.extension}");
+                    bloc.onChosenPostImage(File(result.files.single.path ?? ""),
+                        result.files.single.extension ?? "");
                   }
                 },
               ),
+              Divider(),
               ListTitlePostActionsView(
                 icon: Icons.person_add_alt_1,
                 label: "Tag people",
                 iconColor: Colors.blue,
                 onTapListTile: () {},
               ),
+              Divider(),
               ListTitlePostActionsView(
                 icon: Icons.emoji_emotions_outlined,
                 label: "Feeling/activity",
                 iconColor: Colors.yellow,
                 onTapListTile: () {},
               ),
+              Divider(),
               ListTitlePostActionsView(
                 icon: Icons.location_on,
                 label: "Check in",
                 iconColor: Colors.orange,
                 onTapListTile: () {},
               ),
+              Divider(),
               ListTitlePostActionsView(
                 icon: Icons.video_call,
                 label: "Live Video",
+                iconColor: Colors.red,
+                onTapListTile: () {},
+              ),
+              Divider(),
+              ListTitlePostActionsView(
+                icon: Icons.text_increase_outlined,
+                label: "Background colour",
+                iconColor: Colors.greenAccent,
+                onTapListTile: () {},
+              ),
+              Divider(),
+              ListTitlePostActionsView(
+                icon: Icons.camera_alt,
+                label: "Camera",
+                iconColor: Colors.blueAccent,
+                onTapListTile: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? image =
+                      await picker.pickImage(source: ImageSource.camera);
+                  if (image != null) {
+                    bloc.onChosenPostImage(File(image.path), image.name);
+                  }
+                },
+              ),
+              Divider(),
+              ListTitlePostActionsView(
+                icon: Icons.gif_rounded,
+                label: "GIF",
+                iconColor: Colors.greenAccent,
+                onTapListTile: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles();
+                  if (result != null) {
+                    print("File Type => ${result.files.single.extension}");
+                    bloc.onChosenPostImage(File(result.files.single.path ?? ""),
+                        result.files.single.extension ?? "");
+                  }
+                },
+              ),
+              Divider(),
+              ListTitlePostActionsView(
+                icon: Icons.mic_rounded,
+                label: "Host a Q&A",
                 iconColor: Colors.red,
                 onTapListTile: () {},
               ),
@@ -208,15 +407,23 @@ class ListTitlePostActionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: iconColor,
+    return Container(
+      height: 35,
+      child: Center(
+        child: ListTile(
+          minVerticalPadding: 1,
+          leading: Icon(
+            icon,
+            color: iconColor,
+          ),
+          title: Text(
+            label,
+          ),
+          onTap: () {
+            onTapListTile();
+          },
+        ),
       ),
-      title: Text(label),
-      onTap: () {
-        onTapListTile();
-      },
     );
   }
 }
