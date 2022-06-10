@@ -64,12 +64,12 @@ class NavigationBarSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
-        height: MediaQuery.of(context).size.height / 12,
-        indicatorColor: Colors.white,
+        height: MediaQuery.of(context).size.height / 15,
+        indicatorColor: BOTTOM_NAVIGATION_BOTTOM_COLOR,
       ),
       child: NavigationBar(
-        backgroundColor: Colors.white,
-        elevation: 10,
+        backgroundColor: BOTTOM_NAVIGATION_BOTTOM_COLOR,
+        elevation: 0,
         selectedIndex: selectedIndex,
         onDestinationSelected: (int newIndex) {
           onChangePageIndex(newIndex);
@@ -82,24 +82,25 @@ class NavigationBarSectionView extends StatelessWidget {
               ),
               icon: Icon(
                 Icons.wechat_outlined,
+                  color: Colors.black54
               ),
               label: LABEL_CHATS),
           NavigationDestination(
-              icon: Icon(Icons.person_add_alt),
+              icon: Icon(Icons.contact_page_outlined,color: Colors.black54,),
               selectedIcon: Icon(
-                Icons.person_add_alt,
+                Icons.contact_page,
                 color: PRIMARY_COLOR,
               ),
               label: LABEL_CONTACTS),
           NavigationDestination(
-              icon: Icon(Icons.search_sharp),
+              icon: Icon(Icons.search_sharp,color: Colors.black54),
               selectedIcon: Icon(
                 Icons.search_sharp,
                 color: PRIMARY_COLOR,
               ),
               label: LABEL_DISCOVER),
           NavigationDestination(
-              icon: Icon(Icons.person_outline),
+              icon: Icon(Icons.person_outline,color: Colors.black54),
               selectedIcon: Icon(
                 Icons.person,
                 color: PRIMARY_COLOR,

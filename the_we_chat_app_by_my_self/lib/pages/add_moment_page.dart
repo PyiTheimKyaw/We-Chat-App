@@ -58,7 +58,8 @@ class _AddMomentPageState extends State<AddMomentPage> {
                         color: Colors.white,
                       )),
                   centerTitle: true,
-                  title: const Text("Create Post"),
+                  title: Text(
+                      (widget.momentId == null) ? "Create Post" : "Edit Post"),
                   actions: [
                     Consumer<AddMomentsPageBloc>(
                       builder: (BuildContext context, bloc, Widget? child) {
@@ -327,16 +328,14 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
           child: Container(
             height: null,
             child: TextField(
-              controller:
-                  TextEditingController(
-                      text: bloc.newMomentDescription)..selection=TextSelection.collapsed(offset: -1),
+              controller: TextEditingController(text: bloc.newMomentDescription)
+                ..selection = TextSelection.collapsed(offset: -1),
               onTap: () {
                 controller.close();
               },
               onChanged: (text) {
                 print(text);
                 bloc.onNewPostTextChanged(text);
-
               },
               maxLines: null,
               decoration: const InputDecoration(

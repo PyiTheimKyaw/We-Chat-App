@@ -12,7 +12,9 @@ import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
+import 'package:the_we_chat_app_by_my_self/widgets/commentOverLayView.dart';
 import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
+import 'package:the_we_chat_app_by_my_self/widgets/momentOverlayView.dart';
 
 class MomentPage extends StatelessWidget {
   const MomentPage({Key? key}) : super(key: key);
@@ -92,20 +94,26 @@ class MomentItemSectionView extends StatelessWidget {
               padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
               child: Stack(
                 children: [
-                  MomentsFavouriteAndCommentsView(
-                    onTapDelete: (momentId) {
-                      bloc.onTapDelete(momentId);
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MomentOverlayView(moment: bloc.momentsList?[index]));
                     },
-                    onTapEdit: (momentId) {
-                      Future.delayed(Duration(seconds: 1)).then((value) {
-                        navigateToNextScreen(
-                            context,
-                            AddMomentPage(
-                              momentId: momentId,
-                            ));
-                      });
-                    },
-                    momentVO: bloc.momentsList?[index],
+                    child: MomentsFavouriteAndCommentsView(
+                      onTapDelete: (momentId) {
+                        bloc.onTapDelete(momentId);
+                      },
+                      onTapEdit: (momentId) {
+                        Future.delayed(Duration(seconds: 1)).then((value) {
+                          navigateToNextScreen(
+                              context,
+                              AddMomentPage(
+                                momentId: momentId,
+                              ));
+                        });
+                      },
+                      momentVO: bloc.momentsList?[index],
+                    ),
                   ),
                   Positioned(
                     left: MOMENT_USER_PROFILE_HEIGHT / 2,
@@ -171,7 +179,7 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
           moment: momentVO,
         ),
         const SizedBox(
-          height: MARGIN_SMALL,
+          height: 4,
         ),
         const CommentsAndFavouriteView(),
       ],
@@ -305,10 +313,14 @@ class MomentsItemView extends StatelessWidget {
     required this.moment,
     required this.onTapDelete,
     required this.onTapEdit,
+    this.isOverlay=false,
+    this.color=Colors.black,
   }) : super(key: key);
   final MomentVO? moment;
   final Function onTapDelete;
   final Function onTapEdit;
+  final bool isOverlay;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -316,15 +328,15 @@ class MomentsItemView extends StatelessWidget {
       width: double.infinity,
       height: post,
       margin: const EdgeInsets.only(top: MARGIN_LARGE),
-      decoration: const BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            offset: Offset(0.0, 1.0), //(x,y)
-            blurRadius: 6.0,
-          ),
-        ],
-        color: Colors.white,
+      decoration:  BoxDecoration(
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.grey,
+        //     offset: Offset(0.0, 1.0), //(x,y)
+        //     blurRadius: 6.0,
+        //   ),
+        // ],
+        color: (isOverlay) ? Colors.transparent:Colors.white,
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -335,16 +347,16 @@ class MomentsItemView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: PROFILE_HEIGHT),
+              padding:  EdgeInsets.only(left: (isOverlay) ? MARGIN_SMALL:PROFILE_HEIGHT),
               child: TitleText(
                 title: moment?.userName ?? "",
-                textColor: Colors.black,
+                textColor: color,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: MARGIN_LARGE, top: MARGIN_MEDIUM, bottom: MARGIN_LARGE),
-              child: Text(moment?.description ?? ""),
+              padding:  EdgeInsets.only(
+                  left: (isOverlay) ? MARGIN_SMALL:MARGIN_LARGE, top: MARGIN_MEDIUM, bottom: MARGIN_LARGE),
+              child: Text(moment?.description ?? "",style: TextStyle(color: color),),
             ),
             MomentImageView(
               fileType: moment?.fileType ?? "",
@@ -356,11 +368,11 @@ class MomentsItemView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Icon(Icons.favorite_border),
+                 Icon(Icons.favorite_border,color: color,),
                 const SizedBox(
                   width: MARGIN_SMALL,
                 ),
-                const Icon(Icons.comment_outlined),
+                 CommentButtonView(color: color,),
                 const SizedBox(
                   width: MARGIN_SMALL,
                 ),
@@ -373,6 +385,24 @@ class MomentsItemView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CommentButtonView extends StatelessWidget {
+   CommentButtonView({
+    Key? key,
+    required this.color,
+  }) : super(key: key);
+  final Color color;
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon:  Icon(Icons.comment_outlined,color: color,),
+      onPressed: () {
+        print("comment print");
+        Navigator.of(context).push(CommentOverlayView());
+      },
     );
   }
 }

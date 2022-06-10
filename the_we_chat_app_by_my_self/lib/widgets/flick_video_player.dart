@@ -24,6 +24,7 @@ class _FLickVideoPlayerViewState extends State<FLickVideoPlayerView> {
   void initState() {
     super.initState();
     flickManager = FlickManager(
+      autoPlay: false,
       videoPlayerController: (widget.momentFile != null && widget.postFile ==null)
           ? VideoPlayerController.network(widget.momentFile ?? "")
           : VideoPlayerController.file(widget.postFile ?? File("")),
