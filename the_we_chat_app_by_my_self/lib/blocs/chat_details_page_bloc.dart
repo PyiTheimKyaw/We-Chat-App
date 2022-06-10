@@ -1,12 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 
 class ChatDetailsPageBloc extends ChangeNotifier {
   bool isPopUp = false;
   bool isDisposed = false;
   File? chosenFile;
   String? chosenFileType;
+  List<ChatMessageVO>? conversations;
+
+  ChatDetailsPageBloc(){
+    conversations=messages;
+    _notifySafely();
+  }
 
   void onTapMoreButton(){
     isPopUp=!isPopUp;

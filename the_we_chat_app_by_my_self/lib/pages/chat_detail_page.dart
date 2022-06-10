@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/chat_details_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
@@ -40,11 +42,38 @@ class ChatDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => ChatDetailsPageBloc(),
-      child: Scaffold(
-        appBar: getAppBar(context),
-        body: Container(),
-        bottomSheet: getBottomSheet(context),
-        // bottomNavigationBar: _buildBottomDrawer(context, controller),
+      child: Selector<ChatDetailsPageBloc, List<ChatMessageVO>?>(
+        selector: (BuildContext context, bloc) => bloc.conversations,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (BuildContext context, conversations, Widget? child) {
+          return Scaffold(
+            appBar: getAppBar(context),
+            body: Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: MARGIN_MEDIUM_2),
+                      child: ListView.builder(
+                        itemCount: conversations?.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Message(
+                            conversations: conversations?[index],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  getBottomSheet(context),
+                ],
+              ),
+            ),
+            // bottomSheet: getBottomSheet(context),
+            // bottomNavigationBar: _buildBottomDrawer(context, controller),
+          );
+        },
       ),
     );
   }
@@ -175,6 +204,50 @@ class ChatDetailPage extends StatelessWidget {
   }
 }
 
+class Message extends StatelessWidget {
+  const Message({
+    Key? key,
+    required this.conversations,
+  }) : super(key: key);
+  final ChatMessageVO? conversations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: (conversations?.isOtherUser ?? false)
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
+      children: [
+        TextMessage(conversations: conversations),
+      ],
+    );
+  }
+}
+
+class TextMessage extends StatelessWidget {
+  const TextMessage({
+    Key? key,
+    required this.conversations,
+  }) : super(key: key);
+
+  final ChatMessageVO? conversations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width / 1.5,
+        margin: const EdgeInsets.only(top: MARGIN_LARGE),
+        padding: const EdgeInsets.symmetric(
+            horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
+        decoration: BoxDecoration(
+            color: BACKGROUND_COLOR,
+            borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
+        child: Text(
+          conversations?.message ?? "",
+        ));
+  }
+}
+
 class MoreOptionButtonView extends StatelessWidget {
   MoreOptionButtonView(
       {required this.icon,
@@ -250,6 +323,7 @@ class TextFieldSectionView extends StatelessWidget {
                       },
                       maxLines: 1,
                       decoration: const InputDecoration(
+                          hintText: "Message...",
                           border:
                               OutlineInputBorder(borderSide: BorderSide.none)),
                     ),

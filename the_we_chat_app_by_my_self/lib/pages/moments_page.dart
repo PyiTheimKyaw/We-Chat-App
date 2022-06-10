@@ -23,40 +23,7 @@ class MomentPage extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (BuildContext context) => MomentsPageBloc(),
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: PRIMARY_COLOR,
-          automaticallyImplyLeading: true,
-          leadingWidth: MediaQuery.of(context).size.width / 4,
-          // leading: GestureDetector(
-          //   onTap: () {
-          //     Navigator.pop(context);
-          //   },
-          //   child: Row(
-          //     children: const [
-          //       Icon(
-          //         Icons.chevron_left,
-          //         size: TEXT_LARGE,
-          //       ),
-          //       Text(
-          //         LABEL_DISCOVER,
-          //         style: TextStyle(
-          //             color: Colors.white60, fontSize: MARGIN_MEDIUM_2),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          title: TitleText(title: LABEL_MOMENTS),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                navigateToNextScreen(context, AddMomentPage());
-              },
-              icon: const Icon(Icons.camera_alt_outlined),
-            ),
-          ],
-        ),
+        appBar: buildAppBar(context),
         body: Container(
           color: BACKGROUND_COLOR,
           // height: null,
@@ -70,7 +37,45 @@ class MomentPage extends StatelessWidget {
       ),
     );
   }
+  PreferredSizeWidget buildAppBar(BuildContext context){
+    return AppBar(
+      elevation: 0,
+      backgroundColor: PRIMARY_COLOR,
+      automaticallyImplyLeading: true,
+      leadingWidth: MediaQuery.of(context).size.width / 4,
+      // leading: GestureDetector(
+      //   onTap: () {
+      //     Navigator.pop(context);
+      //   },
+      //   child: Row(
+      //     children: const [
+      //       Icon(
+      //         Icons.chevron_left,
+      //         size: TEXT_LARGE,
+      //       ),
+      //       Text(
+      //         LABEL_DISCOVER,
+      //         style: TextStyle(
+      //             color: Colors.white60, fontSize: MARGIN_MEDIUM_2),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      title: TitleText(title: LABEL_MOMENTS),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          onPressed: () {
+            navigateToNextScreen(context, AddMomentPage());
+          },
+          icon: const Icon(Icons.camera_alt_outlined),
+        ),
+      ],
+    );
+  }
 }
+
+
 
 class MomentItemSectionView extends StatelessWidget {
   const MomentItemSectionView({
@@ -103,7 +108,8 @@ class MomentItemSectionView extends StatelessWidget {
                         bloc.onTapDelete(momentId);
                       },
                       onTapEdit: (momentId) {
-                        Future.delayed(const Duration(seconds: 1)).then((value) {
+                        Future.delayed(const Duration(seconds: 1))
+                            .then((value) {
                           navigateToNextScreen(
                               context,
                               AddMomentPage(

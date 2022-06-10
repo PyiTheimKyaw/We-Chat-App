@@ -42,29 +42,38 @@ class MomentOverlayView extends ModalRoute {
         elevation: 200,
         type: MaterialType.transparency,
         child: SafeArea(
-          child: _buildOverlayContent(context),
+          child: OverLaySectionView(moment: moment),
         ),
       ),
     );
   }
+}
 
-  Widget _buildOverlayContent(BuildContext context) {
+class OverLaySectionView extends StatelessWidget {
+  OverLaySectionView({required this.moment});
+
+  final MomentVO? moment;
+
+  @override
+  Widget build(BuildContext context) {
     return Consumer<MomentsPageBloc>(
       builder: (BuildContext context, bloc, Widget? child) {
         return Center(
           child: MomentsItemView(
             color: Colors.white,
             isOverlay: true,
-            onTapDelete: (momentId) {
-              bloc.onTapDelete(momentId);
+            onTapDelete: () {
+              print("On Tap delete at overlay");
+              bloc.onTapDelete(moment?.id ?? 0);
             },
-            onTapEdit: (momentId) {
+            onTapEdit: () {
+              print("On Tap edit at overlay");
               Future.delayed(Duration(seconds: 1)).then((value) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => AddMomentPage(
-                              momentId: momentId,
+                              momentId: moment?.id ?? 0,
                             )));
               });
             },
@@ -72,18 +81,6 @@ class MomentOverlayView extends ModalRoute {
           ),
         );
       },
-    );
-  }
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    return FadeTransition(
-      opacity: animation,
-      child: ScaleTransition(
-        scale: animation,
-        child: child,
-      ),
     );
   }
 }
