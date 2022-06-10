@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      '$value'.toUpperCase(),
+                      '$value from scroll'.toUpperCase(),
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),

@@ -4,6 +4,7 @@ import 'package:the_we_chat_app_by_my_self/blocs/start_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/pages/chat_list_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/contact_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/moments_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/profile_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -24,7 +25,7 @@ class StartPage extends StatelessWidget {
     List<Widget> pages = [
       const ChatListPage(),
       const ContactPage(),
-      const DiscoverPage(),
+      const MomentPage(),
       const ProfilePage()
     ];
     return ChangeNotifierProvider(

@@ -66,4 +66,9 @@ List<ContactVO> contactsList = [
       subTitle: "Friend",
       profilePicture:
           "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
+  ContactVO(
+      username: "Zlatan Ibrahimovic",
+      subTitle: "Friend",
+      profilePicture:
+          "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
 ];

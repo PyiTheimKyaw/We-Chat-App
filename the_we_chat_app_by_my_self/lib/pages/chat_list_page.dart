@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:the_we_chat_app_by_my_self/pages/chatting_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/chat_detail_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -54,17 +54,17 @@ class ChattingHistoryListSectionView extends StatelessWidget {
           onHorizontalDragStart: (dragStart) {},
           onHorizontalDragEnd: (dragEnd) {},
           onTap: () {
-            navigateToNextScreen(context, const ChattingPage());
+            navigateToNextScreen(context, const ChatDetailPage());
           },
           child: Slidable(
               endActionPane:
                   ActionPane(motion: const StretchMotion(), children: [
                 SlidableAction(
-                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2),
+                  flex: 2,
                   onPressed: (context) {},
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  icon: Icons.clear,
+                  backgroundColor: BACKGROUND_COLOR,
+                  foregroundColor: Colors.red,
+                  icon: Icons.cancel,
                 ),
               ]),
               child: Padding(

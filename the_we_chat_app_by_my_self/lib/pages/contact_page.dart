@@ -2,7 +2,7 @@ import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_vo.dart';
 import 'package:the_we_chat_app_by_my_self/dummy_data/contacts.dart';
-import 'package:the_we_chat_app_by_my_self/pages/chatting_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/chat_detail_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
@@ -10,6 +10,7 @@ import 'package:the_we_chat_app_by_my_self/view_items/card_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/chatting_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({Key? key}) : super(key: key);
@@ -29,7 +30,6 @@ class _ContactPageState extends State<ContactPage> {
     // for (var i = 0; i < 26; i++) {
     //   userList.add(ContactVO(username:getRandomName(), subTitle:getRandomName(), profilePicture: ""));
     // }
-
 
     // userList.map((element) {
     //   strList.add(element.username ?? "");
@@ -59,14 +59,22 @@ class _ContactPageState extends State<ContactPage> {
       normalList.add(
         Column(
           children: [
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(user.profilePicture ?? ""),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChatDetailPage()));
+              },
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(user.profilePicture ?? ""),
+                ),
+                title: Text(user.username ?? ""),
+                subtitle: Text(user.subTitle ?? ""),
               ),
-              title: Text(user.username ?? ""),
-              subtitle: Text(user.subTitle ?? ""),
             ),
-           const Divider(),
+            const Divider(),
           ],
         ),
       );
@@ -80,24 +88,30 @@ class _ContactPageState extends State<ContactPage> {
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: PRIMARY_COLOR,
         centerTitle: true,
-        title: TitleText(title:LABEL_CONTACTS),
-        actions:  [
-          IconButton(icon:const Icon(Icons.person_add_alt_1_outlined),color: Colors.white, onPressed: () {  },),
+        title: TitleText(title: LABEL_CONTACTS),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add_alt_1_outlined),
+            color: Colors.white,
+            onPressed: () {},
+          ),
         ],
       ),
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return  [
+          return [
             SliverToBoxAdapter(
-              child: SearBarSectionView(controller: searchController,),
+              child: SearBarSectionView(
+                controller: searchController,
+              ),
             ),
             const SliverToBoxAdapter(
               child: ContactsCardsSectionView(),
@@ -152,9 +166,11 @@ class _ContactPageState extends State<ContactPage> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.2,
                 top: MediaQuery.of(context).size.width * 0.06,
-                child:  ContactPerfixSectionView(contactPrefix: "A",),
+                child: ContactPerfixSectionView(
+                  contactPrefix: "A",
+                ),
               ),
-               Align(
+              Align(
                 alignment: Alignment.topRight,
                 child: FriendsCountSectionView(friendCount: userList.length),
               ),
@@ -181,14 +197,14 @@ class FriendsCountSectionView extends StatelessWidget {
       child: Text(
         "$friendCount Friends",
         style: TextStyle(
-            color: Colors.black.withOpacity(0.5), fontSize: TEXT_SMALL),
+            color: Colors.black.withOpacity(0.5), fontSize: MARGIN_MEDIUM_2),
       ),
     );
   }
 }
 
 class ContactPerfixSectionView extends StatelessWidget {
-   ContactPerfixSectionView({
+  ContactPerfixSectionView({
     Key? key,
     required this.contactPrefix,
   }) : super(key: key);
@@ -226,9 +242,9 @@ class ContactsListSectionView extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
               onTap: () {
-                navigateToNextScreen(context, const ChattingPage());
+                navigateToNextScreen(context, const ChatDetailPage());
               },
-              child:  ChattingItemView());
+              child: ChattingItemView());
         },
       ),
     );
@@ -283,18 +299,19 @@ class ContactsCardsSectionView extends StatelessWidget {
 }
 
 class SearBarSectionView extends StatelessWidget {
-   SearBarSectionView({
+  SearBarSectionView({
     Key? key,
     required this.controller,
   }) : super(key: key);
-   TextEditingController controller;
+  TextEditingController controller;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
           horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
       width: double.infinity,
-      height: 50,
+      height: 40,
       decoration: BoxDecoration(
         color: SEARCH_BAR_COLOR,
         borderRadius: BorderRadius.circular(MARGIN_SMALL),
@@ -303,13 +320,15 @@ class SearBarSectionView extends StatelessWidget {
               color: Colors.black12, offset: Offset(0.0, 2.0), blurRadius: 3.0)
         ],
       ),
-      child:  TextField(
-        controller: controller,
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          hintText: "Search",
+      child: Expanded(
+        child: TextField(
+          controller: controller,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            hintText: "Search",
+          ),
         ),
       ),
     );

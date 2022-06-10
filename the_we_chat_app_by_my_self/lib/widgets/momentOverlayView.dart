@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:the_we_chat_app_by_my_self/blocs/add_moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
-import 'package:the_we_chat_app_by_my_self/pages/moments_page.dart';
-import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
-import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
-import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/moment_item_view.dart';
 
 class MomentOverlayView extends ModalRoute {
   MomentOverlayView({required this.moment});
@@ -26,7 +22,7 @@ class MomentOverlayView extends ModalRoute {
   bool get barrierDismissible => true;
 
   @override
-  Color get barrierColor => Colors.black.withOpacity(0.9);
+  Color get barrierColor => Colors.transparent.withOpacity(0.9);
 
   @override
   String get barrierLabel => "";
