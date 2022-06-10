@@ -425,7 +425,7 @@ class MomentImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: momentImage != null,
+      visible: momentImage != "",
       child: Container(
         clipBehavior: Clip.antiAlias,
         width: double.infinity,

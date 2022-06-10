@@ -1,5 +1,7 @@
 import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/contact_vo.dart';
+import 'package:the_we_chat_app_by_my_self/dummy_data/contacts.dart';
 import 'package:the_we_chat_app_by_my_self/pages/chatting_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -9,13 +11,78 @@ import 'package:the_we_chat_app_by_my_self/view_items/chatting_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
-class ContactPage extends StatelessWidget {
+class ContactPage extends StatefulWidget {
   const ContactPage({Key? key}) : super(key: key);
 
   @override
+  State<ContactPage> createState() => _ContactPageState();
+}
+
+class _ContactPageState extends State<ContactPage> {
+  List<ContactVO> userList = contactsList;
+  List<String> strList = [];
+  List<Widget> normalList = [];
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    // for (var i = 0; i < 26; i++) {
+    //   userList.add(ContactVO(username:getRandomName(), subTitle:getRandomName(), profilePicture: ""));
+    // }
+
+
+    // userList.map((element) {
+    //   strList.add(element.username ?? "");
+    // }).toList();
+    userList.sort((a, b) => (a.username ?? "")
+        .toLowerCase()
+        .compareTo((b.username ?? "").toLowerCase()));
+    filterList();
+    searchController.addListener(() {
+      filterList();
+    });
+    super.initState();
+  }
+
+  filterList() {
+    List<ContactVO> users = [];
+    users.addAll(userList);
+
+    normalList = [];
+    strList = [];
+    if (searchController.text.isNotEmpty) {
+      users.retainWhere((user) => (user.username ?? "")
+          .toLowerCase()
+          .contains(searchController.text.toLowerCase()));
+    }
+    users.forEach((user) {
+      normalList.add(
+        Column(
+          children: [
+            ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(user.profilePicture ?? ""),
+              ),
+              title: Text(user.username ?? ""),
+              subtitle: Text(user.subTitle ?? ""),
+            ),
+           const Divider(),
+          ],
+        ),
+      );
+      strList.add(user.username ?? "");
+    });
+
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
-    List<String> contacts = ['A', 'B', 'C'];
-    List<Widget> a = [];
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -28,11 +95,11 @@ class ContactPage extends StatelessWidget {
       ),
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return const [
+          return  [
             SliverToBoxAdapter(
-              child: SearBarSectionView(),
+              child: SearBarSectionView(controller: searchController,),
             ),
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: ContactsCardsSectionView(),
             ),
           ];
@@ -43,15 +110,53 @@ class ContactPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             clipBehavior: Clip.none,
             children: [
-              const ContactsListSectionView(),
+              // const ContactsListSectionView(),
+              Container(
+                margin: const EdgeInsets.only(top: MARGIN_XLARGE * 1.5),
+                height: post,
+                color: Colors.white,
+                child: AlphabetListScrollView(
+                  strList: strList,
+                  highlightTextStyle: const TextStyle(
+                    color: Colors.blue,
+                  ),
+                  showPreview: true,
+                  itemBuilder: (context, index) {
+                    print("index $index");
+                    return normalList[index];
+                  },
+                  indexedHeight: (i) {
+                    return 89;
+                  },
+                  keyboardUsage: true,
+                  // headerWidgetList: <AlphabetScrollListHeader>[
+                  //   AlphabetScrollListHeader(widgetList: [
+                  //     Padding(
+                  //       padding: const EdgeInsets.all(16.0),
+                  //       child: TextFormField(
+                  //         controller: searchController,
+                  //         decoration: InputDecoration(
+                  //           border: OutlineInputBorder(),
+                  //           suffix: Icon(
+                  //             Icons.search,
+                  //             color: Colors.grey,
+                  //           ),
+                  //           labelText: "Search",
+                  //         ),
+                  //       ),
+                  //     )
+                  //   ], icon: Icon(Icons.search), indexedHeaderHeight: (index) => 80),
+                  // ],
+                ),
+              ),
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.2,
                 top: MediaQuery.of(context).size.width * 0.06,
-                child: const ContactPerfixSectionView(),
+                child:  ContactPerfixSectionView(contactPrefix: "A",),
               ),
-              const Align(
+               Align(
                 alignment: Alignment.topRight,
-                child: FriendsCountSectionView(),
+                child: FriendsCountSectionView(friendCount: userList.length),
               ),
             ],
           ),
@@ -62,9 +167,11 @@ class ContactPage extends StatelessWidget {
 }
 
 class FriendsCountSectionView extends StatelessWidget {
-  const FriendsCountSectionView({
+  FriendsCountSectionView({
     Key? key,
+    required this.friendCount,
   }) : super(key: key);
+  int friendCount;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +179,7 @@ class FriendsCountSectionView extends StatelessWidget {
       padding: const EdgeInsets.only(
           top: MARGIN_LARGE * 1.2, right: MARGIN_MEDIUM_2),
       child: Text(
-        "15 Friends",
+        "$friendCount Friends",
         style: TextStyle(
             color: Colors.black.withOpacity(0.5), fontSize: TEXT_SMALL),
       ),
@@ -81,14 +188,16 @@ class FriendsCountSectionView extends StatelessWidget {
 }
 
 class ContactPerfixSectionView extends StatelessWidget {
-  const ContactPerfixSectionView({
+   ContactPerfixSectionView({
     Key? key,
+    required this.contactPrefix,
   }) : super(key: key);
+  String contactPrefix;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      'A',
+      contactPrefix,
       style: TextStyle(
           color: Colors.black.withOpacity(0.5), fontSize: TEXT_MEDIUM),
     );
@@ -174,17 +283,18 @@ class ContactsCardsSectionView extends StatelessWidget {
 }
 
 class SearBarSectionView extends StatelessWidget {
-  const SearBarSectionView({
+   SearBarSectionView({
     Key? key,
+    required this.controller,
   }) : super(key: key);
-
+   TextEditingController controller;
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
           horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
       width: double.infinity,
-      height: 40,
+      height: 50,
       decoration: BoxDecoration(
         color: SEARCH_BAR_COLOR,
         borderRadius: BorderRadius.circular(MARGIN_SMALL),
@@ -193,10 +303,11 @@ class SearBarSectionView extends StatelessWidget {
               color: Colors.black12, offset: Offset(0.0, 2.0), blurRadius: 3.0)
         ],
       ),
-      child: const TextField(
+      child:  TextField(
+        controller: controller,
         textAlign: TextAlign.center,
         maxLines: 2,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Search",
         ),
