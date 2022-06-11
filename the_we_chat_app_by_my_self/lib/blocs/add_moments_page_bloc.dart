@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
@@ -23,6 +24,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
   ///States
   String newMomentDescription = '';
   MomentVO? mMoment;
+  TextEditingController textEditingController=TextEditingController();
 
   ///Models
   WeChatModel mModel = WeChatModelImpl();
@@ -42,7 +44,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
   void _prePopulateDataForEditMode(int momentId) {
     mModel.getMomentById(momentId).listen((moment) {
       userName = moment.userName;
-      newMomentDescription = moment.description ?? "";
+      textEditingController.text = moment.description ?? "";
       profilePicture = moment.profilePicture ?? "";
       postImage = moment.postFile ?? "";
       fileType = moment.fileType;
@@ -58,7 +60,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
   }
 
   Future<void> onTapAddNewMoment() {
-    if (newMomentDescription.isEmpty) {
+    if (textEditingController.text.isEmpty) {
       isAddNewMomentError = true;
       _notifySafely();
       return Future.error("Error");
@@ -82,11 +84,11 @@ class AddMomentsPageBloc extends ChangeNotifier {
 
   Future<dynamic> _addNewMoment() {
     return mModel.addNewMoment(
-        newMomentDescription, chosenPostImage, fileType ?? "");
+        textEditingController.text, chosenPostImage, fileType ?? "");
   }
 
   Future<dynamic> _editMoment() {
-    mMoment?.description = newMomentDescription;
+    mMoment?.description = textEditingController.text;
     if (mMoment != null) {
       return mModel.editMoment(mMoment!,chosenPostImage,fileType ?? "");
     } else {

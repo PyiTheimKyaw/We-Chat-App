@@ -4,6 +4,7 @@ import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/moment_item_view.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class MomentOverlayView extends ModalRoute {
   MomentOverlayView({required this.moment});

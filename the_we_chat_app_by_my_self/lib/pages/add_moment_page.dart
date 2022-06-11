@@ -319,6 +319,7 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
   }) : super(key: key);
   BottomDrawerController controller;
 
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AddMomentsPageBloc>(
@@ -328,15 +329,14 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
           child: Container(
             height: null,
             child: TextField(
-              controller: TextEditingController(text: bloc.newMomentDescription)
-                ..selection = TextSelection.collapsed(offset: -1),
+              controller: bloc.textEditingController,
               onTap: () {
                 controller.close();
               },
-              onChanged: (text) {
-                print(text);
-                bloc.onNewPostTextChanged(text);
-              },
+              // onChanged: (text) {
+              //   print(text);
+              //   bloc.onNewPostTextChanged(text);
+              // },
               maxLines: null,
               decoration: const InputDecoration(
                 border: InputBorder.none,

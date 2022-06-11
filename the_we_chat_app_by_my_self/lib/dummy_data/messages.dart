@@ -14,5 +14,5 @@ List<ChatMessageVO> messages = [
       "That's sound not good , I'll be back 16th June ,poor me!", false),
   ChatMessageVO("We have more plans next time bro!", true),
   ChatMessageVO(
-      "That's sound really good, really thanks for your notice bro 😁 fdsf fdsf sdfsdfs dfs dfds fsdfsdf", false),
+      "That's sound really good, really thanks for your notice bro 😁 ", false),
 ];
