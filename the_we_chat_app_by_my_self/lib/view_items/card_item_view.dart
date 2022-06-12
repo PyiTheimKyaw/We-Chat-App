@@ -22,7 +22,7 @@ class CardItemView extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: MARGIN_LARGE,
+              size: MARGIN_XLARGE,
               color: Colors.black.withOpacity(0.5),
             ),
             const SizedBox(

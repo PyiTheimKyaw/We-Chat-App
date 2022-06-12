@@ -9,12 +9,15 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: const [
-        ProfileSectionView(),
-        UserFunctionSectionView(),
-        LogOutButtonSectionView(),
-      ],
+    return Container(
+      color: BACKGROUND_COLOR,
+      child: ListView(
+        children: const [
+          ProfileSectionView(),
+          UserFunctionSectionView(),
+          LogOutButtonSectionView(),
+        ],
+      ),
     );
   }
 }
@@ -32,15 +35,17 @@ class LogOutButtonSectionView extends StatelessWidget {
         width: 200,
         height: 40,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0.0, 1.0), //(x,y)
-                blurRadius: 3.0,
-              ),
-            ]),
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.white,
+          border: Border.all(width: 1,color: Colors.black26)
+          // boxShadow: const [
+          //   BoxShadow(
+          //     color: Colors.grey,
+          //     offset: Offset(0.0, 1.0), //(x,y)
+          //     blurRadius: 3.0,
+          //   ),
+          // ],
+        ),
         child: const Center(child: Text("Log Out")),
       ),
     );
@@ -64,7 +69,7 @@ class UserFunctionSectionView extends StatelessWidget {
     List<IconData> cardIconLabel = [
       Icons.photo_outlined,
       Icons.favorite_border,
-      Icons.wallet_outlined,
+      Icons.wallet_travel_outlined,
       Icons.credit_card_outlined,
       Icons.emoji_emotions_outlined,
       Icons.settings_outlined,
@@ -85,7 +90,7 @@ class UserFunctionSectionView extends StatelessWidget {
           height: MARGIN_LARGE,
         ),
         CardsSectionView(
-            cardLabelInfo: cardLabelInfo, cardIconLabel: cardIconLabel),
+            cardLabelInfo: cardLabelInfo, cardIcon: cardIconLabel),
       ],
     );
   }
@@ -95,11 +100,11 @@ class CardsSectionView extends StatelessWidget {
   const CardsSectionView({
     Key? key,
     required this.cardLabelInfo,
-    required this.cardIconLabel,
+    required this.cardIcon,
   }) : super(key: key);
 
   final List<String> cardLabelInfo;
-  final List<IconData> cardIconLabel;
+  final List<IconData> cardIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -109,15 +114,15 @@ class CardsSectionView extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            offset: Offset(0.0, 10.0), //(x,y)
-            blurRadius: 10.0,
+            offset: Offset(0.0, 3.0), //(x,y)
+            blurRadius: 5.0,
           ),
         ],
         color: Colors.white,
       ),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         itemCount: 6,
         gridDelegate:
@@ -125,7 +130,7 @@ class CardsSectionView extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return CardItemView(
             label: cardLabelInfo[index],
-            icon: cardIconLabel[index],
+            icon: cardIcon[index],
           );
         },
       ),
@@ -195,5 +200,3 @@ class ProfileSectionView extends StatelessWidget {
     );
   }
 }
-
-

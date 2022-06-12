@@ -55,7 +55,8 @@ class ChatDetailPage extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: MARGIN_MEDIUM_2),
+                          horizontal: MARGIN_MEDIUM_2,
+                          vertical: MARGIN_MEDIUM_2),
                       child: ListView.builder(
                         itemCount: conversations?.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -88,27 +89,36 @@ class ChatDetailPage extends StatelessWidget {
           color: BACKGROUND_COLOR,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Visibility(
-                  visible: bloc.chosenFile != null,
-                  child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(12),
+                visible: bloc.chosenFile != null,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: MARGIN_MEDIUM,
+                      horizontal: MARGIN_XLARGE + MARGIN_SMALL),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  height: 170,
+                  width: 170,
+                  child: Stack(children: [
+                    ChosenFileView(bloc.chosenFile, bloc.chosenFileType),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        alignment: Alignment.topRight,
+                        icon: const Icon(Icons.close, color: Colors.red),
+                        onPressed: () {
+                          bloc.onTapCancel();
+                        },
+                      ),
                     ),
-                    height: 100,
-                    width: 160,
-                    child: (bloc.chosenFileType == 'mp4')
-                        ? FLickVideoPlayerView(
-                            postFile: bloc.chosenFile,
-                          )
-                        : Image.file(
-                            bloc.chosenFile ?? File(""),
-                            fit: BoxFit.cover,
-                          ),
-                  )),
+                  ]),
+                ),
+              ),
               TextFieldSectionView(
                 onTapAdd: () {
                   bloc.onTapMoreButton();
@@ -201,6 +211,25 @@ class ChatDetailPage extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class ChosenFileView extends StatelessWidget {
+  ChosenFileView(this.chosenFile, this.chosenFileType);
+
+  final File? chosenFile;
+  final String? chosenFileType;
+
+  @override
+  Widget build(BuildContext context) {
+    return (chosenFileType == 'mp4')
+        ? FLickVideoPlayerView(
+            postFile: chosenFile,
+          )
+        : Image.file(
+            chosenFile ?? File(""),
+            fit: BoxFit.cover,
+          );
   }
 }
 

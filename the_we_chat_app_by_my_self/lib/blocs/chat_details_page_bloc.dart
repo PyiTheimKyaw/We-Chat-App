@@ -16,6 +16,11 @@ class ChatDetailsPageBloc extends ChangeNotifier {
     _notifySafely();
   }
 
+  void onTapCancel(){
+    chosenFile=null;
+    _notifySafely();
+  }
+
   void onTapMoreButton(){
     isPopUp=!isPopUp;
     _notifySafely();

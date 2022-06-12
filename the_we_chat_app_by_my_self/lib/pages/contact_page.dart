@@ -320,15 +320,13 @@ class SearBarSectionView extends StatelessWidget {
               color: Colors.black12, offset: Offset(0.0, 2.0), blurRadius: 3.0)
         ],
       ),
-      child: Expanded(
-        child: TextField(
-          controller: controller,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            hintText: "Search",
-          ),
+      child: TextField(
+        controller: controller,
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          hintText: "Search",
         ),
       ),
     );
