@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/login_and_sign_up_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/login_and_sign_up_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage({Key? key}) : super(key: key);
@@ -51,6 +53,11 @@ class EmailVerificationPage extends StatelessWidget {
                   VerifiedButtonView(
                     onTapVerified: () {
                       if (bloc.email != "") {
+                        navigateToNextScreen(
+                            context,
+                            const LoginAndSignUpPage(
+                              isLogin: true,
+                            ));
                         print("Email has data");
                       } else {
                         showSnackBarWithMessage(

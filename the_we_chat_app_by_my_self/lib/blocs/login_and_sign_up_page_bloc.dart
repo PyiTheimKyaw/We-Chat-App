@@ -4,37 +4,41 @@ import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 
 class LoginAndSignUpPageBloc extends ChangeNotifier {
   bool isDisposed = false;
   File? chosenProfileImage;
   int val = -1;
   bool canAcceptAndContinue = false;
-  bool isSecure=true;
+  bool isSecure = true;
+  bool isLoading = false;
 
   ///Text fields values
-  String? userName;
-  String? phoneNumber;
-  String? email;
-  String? password;
+  String userName = '';
+  String phoneNumber = '';
+  String email = '';
+  String password = '';
 
   ///Country code
   Country selectedDialogCountry =
       CountryPickerUtils.getCountryByPhoneCode('95');
 
-  LoginAndSignUpPageBloc() {
-    userName = "";
-    phoneNumber = "";
-    email = "";
-    password = "";
+  ///Model
+  AuthenticationModel mModel = AuthenticationModelImpl();
+
+  Future onTapLogin() {
+   _showLoading();
+   return mModel.login(email, password).whenComplete(() => _hideLoading());
   }
 
-  void onTapLogin() {
-    print("Tapped log in");
-  }
-
-  void onTapSignUp() {
-    print("Tapped sign up");
+  Future onTapSignUp() {
+    print("Email => $email , Password => $userName");
+    _showLoading();
+    return mModel
+        .register(email, password, phoneNumber, chosenProfileImage)
+        .whenComplete(() => _hideLoading());
   }
 
   void onTextChangedName(String name) {
@@ -58,10 +62,12 @@ class LoginAndSignUpPageBloc extends ChangeNotifier {
     this.password = password;
     _notifySafely();
   }
-  void onTapUnsecure(){
-    isSecure=!isSecure;
+
+  void onTapUnsecure() {
+    isSecure = !isSecure;
     _notifySafely();
   }
+
   void selectRadio(value) {
     print('radio value => $value');
     if (value == 1) {
@@ -74,10 +80,7 @@ class LoginAndSignUpPageBloc extends ChangeNotifier {
   }
 
   bool canCreateAccount() {
-    if (val == 1 &&
-        userName != "" &&
-        phoneNumber != "" &&
-        password != "") {
+    if (val == 1 && userName != "" && phoneNumber != "" && password != "") {
       return true;
     } else {
       return false;
@@ -99,6 +102,16 @@ class LoginAndSignUpPageBloc extends ChangeNotifier {
 
   void onChosenCountry(Country country) {
     selectedDialogCountry = country;
+    _notifySafely();
+  }
+
+  void _showLoading() {
+    isLoading = true;
+    _notifySafely();
+  }
+
+  void _hideLoading() {
+    isLoading = false;
     _notifySafely();
   }
 

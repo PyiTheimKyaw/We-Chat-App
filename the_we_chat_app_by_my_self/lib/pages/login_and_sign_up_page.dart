@@ -6,9 +6,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/login_and_sign_up_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/pages/privacy_policy_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/start_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
@@ -24,60 +26,95 @@ class LoginAndSignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => LoginAndSignUpPageBloc(),
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.close_outlined,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-          width: double.infinity,
-          color: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TitleSectionView(
-                  title: (isLogin) ? LOGIN_VIA_EMAIL : SIGN_UP_VIA_EMAIL,
+      child: Selector<LoginAndSignUpPageBloc, bool>(
+        selector: (BuildContext context, bloc) => bloc.isLoading,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (BuildContext context, isLoading, Widget? child) {
+          return Stack(
+            children: [
+              Scaffold(
+                appBar: AppBar(
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close_outlined,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: MARGIN_MEDIUM_2,
+                body: Container(
+                  height: MediaQuery.of(context).size.height,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TitleSectionView(
+                          title:
+                              (isLogin) ? LOGIN_VIA_EMAIL : SIGN_UP_VIA_EMAIL,
+                        ),
+                        const SizedBox(
+                          height: MARGIN_MEDIUM_2,
+                        ),
+                        Visibility(
+                          visible: !isLogin,
+                          child: const ChooseProfilePictureSectionView(),
+                        ),
+                        const SizedBox(
+                          height: MARGIN_XLARGE,
+                        ),
+                        TextFieldsSectionView(isLogin: isLogin),
+                        const SizedBox(
+                          height: MARGIN_XLARGE,
+                        ),
+                        Visibility(
+                            visible: !isLogin,
+                            child: const TermsAndServiceSectionView()),
+                        SizedBox(
+                          height:
+                              (isLogin) ? MARGIN_XLARGE * 10 : MARGIN_XLARGE,
+                        ),
+                        AcceptAndContinueButtonSectionView(
+                          isLogin: isLogin,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                Visibility(
-                  visible: !isLogin,
-                  child: const ChooseProfilePictureSectionView(),
-                ),
-                const SizedBox(
-                  height: MARGIN_XLARGE,
-                ),
-                TextFieldsSectionView(isLogin: isLogin),
-                const SizedBox(
-                  height: MARGIN_XLARGE,
-                ),
-                Visibility(
-                    visible: !isLogin,
-                    child: const TermsAndServiceSectionView()),
-                SizedBox(
-                  height: (isLogin) ? MARGIN_XLARGE * 10 : MARGIN_XLARGE,
-                ),
-                AcceptAndContinueButtonSectionView(
-                  isLogin: isLogin,
-                ),
-              ],
-            ),
-          ),
-        ),
+              ),
+              Visibility(visible: isLoading, child: const LoadingView()),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class LoadingView extends StatelessWidget {
+  const LoadingView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: MARGIN_XLARGE,
+      height: MARGIN_XLARGE,
+      child: LoadingIndicator(
+        indicatorType: Indicator.ballBeat,
+        colors: [Colors.white],
+        strokeWidth: 2,
+        backgroundColor: Colors.transparent,
+        pathBackgroundColor: Colors.black,
       ),
     );
   }
@@ -111,19 +148,23 @@ class AcceptAndContinueButtonSectionView extends StatelessWidget {
             onPressed: () {
               if (isLogin) {
                 if (bloc.canLoginAccount()) {
-                  bloc.onTapLogin();
+                  bloc.onTapLogin().then((value) {
+                    navigateToNextScreen(context, const StartPage());
+                  }).catchError((error) {
+                    showSnackBarWithMessage(context, error.toString());
+                  });
                 } else {
                   showSnackBarWithMessage(
                       context, "Please check your data to log in");
                 }
               } else {
                 if (bloc.canCreateAccount()) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PrivacyPolicyPage(
-                              mdFileName: 'privacy_policy.md')));
-                  bloc.onTapSignUp();
+                  bloc.onTapSignUp().then((value) {
+                    navigateToNextScreen(context,
+                        PrivacyPolicyPage(mdFileName: 'privacy_policy.md'));
+                  }).catchError((error) {
+                    showSnackBarWithMessage(context, error.toString());
+                  });
                 } else {
                   showSnackBarWithMessage(
                       context, "Please fill all Fields and accept Privacy");
@@ -230,21 +271,16 @@ class TextFieldsSectionView extends StatelessWidget {
                     bloc.onTextChangedPhoneNumber(phoneNumber);
                   },
                 )),
-            Visibility(
-              visible: isLogin,
-              child: TextFieldView(
-                hintText: "Enter your email",
-                prefixText: PREFIX_EMAIL,
-                onChanged: (email) {
-                  bloc.onTextChangedEmail(email);
-                },
-              ),
+            TextFieldView(
+              hintText: "Enter your email",
+              prefixText: PREFIX_EMAIL,
+              onChanged: (email) {
+                bloc.onTextChangedEmail(email);
+              },
             ),
-            Visibility(
-                visible: isLogin,
-                child: const Divider(
-                  thickness: 1,
-                )),
+            const Divider(
+              thickness: 1,
+            ),
             TextFieldView(
               hintText: "Enter your password",
               isPassword: true,
