@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/pages/welcome_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/start_page.dart';
 
 void main() async {
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const StartPage(),
+      home: const WelcomePage(),
     );
   }
 }
