@@ -25,3 +25,7 @@ const String PREFIX_PHONE="Phone";
 const String PREFIX_EMAIL="Email";
 const String PREFIX_PASSWORD="Password";
 const String PREFIX_REGION="Region";
+
+///Text
+const String PRIVACY_POLICY="Privacy Policy";
+const String NEXT="Next";

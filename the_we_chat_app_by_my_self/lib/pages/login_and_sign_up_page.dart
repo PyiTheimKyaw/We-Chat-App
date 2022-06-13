@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/login_and_sign_up_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/pages/privacy_policy_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
@@ -117,6 +118,11 @@ class AcceptAndContinueButtonSectionView extends StatelessWidget {
                 }
               } else {
                 if (bloc.canCreateAccount()) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PrivacyPolicyPage(
+                              mdFileName: 'privacy_policy.md')));
                   bloc.onTapSignUp();
                 } else {
                   showSnackBarWithMessage(
@@ -155,6 +161,7 @@ class TermsAndServiceSectionView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Radio(
+                    fillColor: MaterialStateColor.resolveWith((states) => BUTTON_COLOR),
                     value: 1,
                     groupValue: bloc.val,
                     toggleable: true,
