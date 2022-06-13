@@ -18,6 +18,7 @@ const String LABEL_CANCEL="Cancel";
 const String LABEL_ACCOUNT_AUTHENTICATION_BUTTON="Accept and Continue";
 const String LABEL_TAKE_PHOTO="Take Photo";
 const String LABEL_CHOOSE_FROM_ALBUM="Choose from Album";
+const String LABEL_SECURITY_VERIFICATION="Security Verification";
 
 ///prefix text
 const String PERFIX_NAME="Name";

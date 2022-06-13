@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/privacy_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/pages/security_verification_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
@@ -113,6 +114,8 @@ class AcceptPolicyAndNextButtonSectionView extends StatelessWidget {
                 onPressed: () {
                   if (bloc.val == 1) {
                     print("Tap at privacy ");
+                    navigateToNextScreen(
+                        context, const SecurityVerificationPage());
                   } else {
                     showSnackBarWithMessage(
                         context, "Please accept the privacy policy");
