@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/pages/login_and_sign_up_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/bottom_sheet_option_view.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -16,7 +19,13 @@ class WelcomePage extends StatelessWidget {
             fit: BoxFit.cover),
       ),
       child: LoginAndSignUpButtonSectionView(
-        onTapLogin: () {},
+        onTapLogin: () {
+          navigateToNextScreen(
+              context,
+              const LoginAndSignUpPage(
+                isLogin: true,
+              ));
+        },
         onTapSignUp: () {
           _showModalBottomSheet(context);
         },
@@ -42,20 +51,27 @@ class WelcomePage extends StatelessWidget {
             )),
             child: Column(
               children: [
-                SignUpOptionsView(
+                BottomSheetOptionView(
                   label: SIGN_UP_VIA_EMAIL,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToNextScreen(context, const LoginAndSignUpPage());
+                  },
                 ),
                 const Divider(),
-                SignUpOptionsView(
+                BottomSheetOptionView(
                   label: SIGN_UP_VIA_FACEBOOK,
                   onTap: () {},
                 ),
                 const Divider(
-                  thickness: 3,
+                  thickness: 6,
                   color: BACKGROUND_COLOR,
                 ),
-                SignUpOptionsView(label: LABEL_CANCEL, onTap: () {})
+                BottomSheetOptionView(
+                    label: LABEL_CANCEL,
+                    onTap: () {
+                      Navigator.pop(context);
+                    })
               ],
             ),
           );
@@ -63,30 +79,7 @@ class WelcomePage extends StatelessWidget {
   }
 }
 
-class SignUpOptionsView extends StatelessWidget {
-  const SignUpOptionsView({
-    Key? key,
-    required this.label,
-    required this.onTap,
-  }) : super(key: key);
-  final String label;
-  final Function onTap;
 
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-        onPressed: () {
-          onTap();
-        },
-        child: Text(
-          label,
-          style: const TextStyle(
-              fontSize: TEXT_MEDIUM - TEXT_SMALL,
-              color: Colors.black87,
-              fontWeight: FontWeight.w600),
-        ));
-  }
-}
 
 class LoginAndSignUpButtonSectionView extends StatelessWidget {
   const LoginAndSignUpButtonSectionView({
