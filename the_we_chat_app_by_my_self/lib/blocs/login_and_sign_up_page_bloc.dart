@@ -77,7 +77,6 @@ class LoginAndSignUpPageBloc extends ChangeNotifier {
     if (val == 1 &&
         userName != "" &&
         phoneNumber != "" &&
-        email != "" &&
         password != "") {
       return true;
     } else {

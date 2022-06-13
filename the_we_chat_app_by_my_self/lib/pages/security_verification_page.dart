@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/pages/email_verification_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class SecurityVerificationPage extends StatelessWidget {
   const SecurityVerificationPage({Key? key}) : super(key: key);
@@ -59,7 +61,9 @@ class SecurityVerificationPage extends StatelessWidget {
             MaterialButton(
               minWidth: BUTTON_WIDTH,
               color: BUTTON_COLOR,
-              onPressed: () {},
+              onPressed: () {
+                navigateToNextScreen(context, const EmailVerificationPage());
+              },
               child: const Text(
                 "Start",
                 style: TextStyle(color: Colors.white, fontSize: TEXT_REGULAR),

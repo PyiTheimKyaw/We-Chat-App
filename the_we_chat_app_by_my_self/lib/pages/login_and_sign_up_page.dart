@@ -161,7 +161,8 @@ class TermsAndServiceSectionView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Radio(
-                    fillColor: MaterialStateColor.resolveWith((states) => BUTTON_COLOR),
+                    fillColor: MaterialStateColor.resolveWith(
+                        (states) => BUTTON_COLOR),
                     value: 1,
                     groupValue: bloc.val,
                     toggleable: true,
@@ -229,14 +230,21 @@ class TextFieldsSectionView extends StatelessWidget {
                     bloc.onTextChangedPhoneNumber(phoneNumber);
                   },
                 )),
-            TextFieldView(
-              hintText: "Enter your email",
-              prefixText: PREFIX_EMAIL,
-              onChanged: (email) {
-                bloc.onTextChangedEmail(email);
-              },
+            Visibility(
+              visible: isLogin,
+              child: TextFieldView(
+                hintText: "Enter your email",
+                prefixText: PREFIX_EMAIL,
+                onChanged: (email) {
+                  bloc.onTextChangedEmail(email);
+                },
+              ),
             ),
-            const Divider(),
+            Visibility(
+                visible: isLogin,
+                child: const Divider(
+                  thickness: 1,
+                )),
             TextFieldView(
               hintText: "Enter your password",
               isPassword: true,
@@ -249,7 +257,9 @@ class TextFieldsSectionView extends StatelessWidget {
               },
               isUnsecure: bloc.isSecure,
             ),
-            const Divider(),
+            const Divider(
+              thickness: 1,
+            ),
           ],
         );
       },
@@ -272,7 +282,9 @@ class SignUpRequirementsView extends StatelessWidget {
           prefixText: PERFIX_NAME,
           onChanged: inputName,
         ),
-        const Divider(),
+        const Divider(
+          thickness: 1,
+        ),
         const SizedBox(
           height: MARGIN_MEDIUM,
         ),
@@ -290,14 +302,18 @@ class SignUpRequirementsView extends StatelessWidget {
         const SizedBox(
           height: MARGIN_MEDIUM,
         ),
-        const Divider(),
+        const Divider(
+          thickness: 1,
+        ),
         TextFieldView(
           hintText: 'Enter mobile number',
           isPhone: true,
           prefixText: PREFIX_PHONE,
           onChanged: inputPhone,
         ),
-        const Divider(),
+        const Divider(
+          thickness: 1,
+        ),
       ],
     );
   }
@@ -487,7 +503,9 @@ class ChooseProfilePictureSectionView extends StatelessWidget {
                   label: LABEL_TAKE_PHOTO,
                   onTap: onTapTakePhoto,
                 ),
-                const Divider(),
+                const Divider(
+                  thickness: 1,
+                ),
                 BottomSheetOptionView(
                   label: LABEL_CHOOSE_FROM_ALBUM,
                   onTap: onTapChooseAlbum,
