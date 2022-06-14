@@ -1,16 +1,15 @@
-import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
+import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/contact_vo.dart';
-import 'package:the_we_chat_app_by_my_self/dummy_data/contacts.dart';
-import 'package:the_we_chat_app_by_my_self/pages/chat_detail_page.dart';
+import 'package:provider/provider.dart';
+import 'package:the_we_chat_app_by_my_self/blocs/contact_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/az_item_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/card_item_view.dart';
-import 'package:the_we_chat_app_by_my_self/view_items/chatting_item_view.dart';
-import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
-import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({Key? key}) : super(key: key);
@@ -20,164 +19,169 @@ class ContactPage extends StatefulWidget {
 }
 
 class _ContactPageState extends State<ContactPage> {
-  List<ContactVO> userList = contactsList;
-  List<String> strList = [];
-  List<Widget> normalList = [];
-  TextEditingController searchController = TextEditingController();
-
   @override
-  void initState() {
-    // for (var i = 0; i < 26; i++) {
-    //   userList.add(ContactVO(username:getRandomName(), subTitle:getRandomName(), profilePicture: ""));
-    // }
-
-    // userList.map((element) {
-    //   strList.add(element.username ?? "");
-    // }).toList();
-    userList.sort((a, b) => (a.username ?? "")
-        .toLowerCase()
-        .compareTo((b.username ?? "").toLowerCase()));
-    filterList();
-    searchController.addListener(() {
-      filterList();
-    });
-    super.initState();
-  }
-
-  filterList() {
-    List<ContactVO> users = [];
-    users.addAll(userList);
-
-    normalList = [];
-    strList = [];
-    if (searchController.text.isNotEmpty) {
-      users.retainWhere((user) => (user.username ?? "")
-          .toLowerCase()
-          .contains(searchController.text.toLowerCase()));
-    }
-    users.forEach((user) {
-      normalList.add(
-        Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ChatDetailPage()));
-              },
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(user.profilePicture ?? ""),
-                ),
-                title: Text(user.username ?? ""),
-                subtitle: Text(user.subTitle ?? ""),
-              ),
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => ContactTabBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: PRIMARY_COLOR,
+          centerTitle: true,
+          title: TitleText(title: LABEL_CONTACTS),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.person_add_alt_1_outlined),
+              color: Colors.white,
+              onPressed: () {},
             ),
-            const Divider(),
           ],
         ),
-      );
-      strList.add(user.username ?? "");
-    });
-
-    setState(() {});
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverToBoxAdapter(
+                child: Consumer<ContactTabBloc>(
+                  builder: (BuildContext context, bloc, Widget? child) {
+                    return SearBarSectionView(
+                      onChanged: (text) {
+                        bloc.searchByName(text);
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: ContactsCardsSectionView(),
+              ),
+            ];
+          },
+          body: Container(
+            color: Colors.white,
+            child: Consumer<ContactTabBloc>(
+              builder: (BuildContext context, bloc, Widget? child) {
+                return Stack(
+                  alignment: Alignment.centerLeft,
+                  clipBehavior: Clip.none,
+                  children: [
+                    ContactSection(
+                        user: bloc.filterList ?? [], onClick: (user) {}),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: FriendsCountSectionView(
+                          friendCount: bloc.usersDummy?.length ?? 0),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
+}
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+class ContactSection extends StatelessWidget {
+  final List<AZItemVO> user;
+  final Function(UserVO) onClick;
+
+  const ContactSection({
+    Key? key,
+    required this.user,
+    required this.onClick,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: PRIMARY_COLOR,
-        centerTitle: true,
-        title: TitleText(title: LABEL_CONTACTS),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add_alt_1_outlined),
-            color: Colors.white,
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverToBoxAdapter(
-              child: SearBarSectionView(
-                controller: searchController,
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: ContactsCardsSectionView(),
-            ),
-          ];
-        },
-        body: Container(
-          color: BACKGROUND_COLOR,
-          child: Stack(
-            alignment: Alignment.centerLeft,
-            clipBehavior: Clip.none,
-            children: [
-              // const ContactsListSectionView(),
-              Container(
-                margin: const EdgeInsets.only(top: MARGIN_XLARGE * 1.5),
-                height: post,
-                color: Colors.white,
-                child: AlphabetListScrollView(
-                  strList: strList,
-                  highlightTextStyle: const TextStyle(
-                    color: Colors.blue,
+    return AzListView(
+        data: user,
+        itemCount: user.length,
+        indexBarMargin: const EdgeInsets.only(right: MARGIN_MEDIUM),
+        itemBuilder: (BuildContext context, int index) {
+          final tag = user[index].getSuspensionTag();
+          final length = user[index].getSuspensionTag().length;
+          final offStage = !user[index].isShowSuspension;
+          return ContactPeopleShowView(
+            user: user,
+            index: index,
+            tag: tag,
+            offStage: offStage,
+            onClick: () {
+              onClick(user[index].person);
+            },
+            length: length,
+          );
+        });
+  }
+}
+
+class ContactPeopleShowView extends StatelessWidget {
+  const ContactPeopleShowView({
+    Key? key,
+    required this.user,
+    required this.index,
+    required this.tag,
+    required this.offStage,
+    required this.onClick,
+    required this.length,
+  }) : super(key: key);
+
+  final List<AZItemVO> user;
+  final int index;
+  final String tag;
+  final bool offStage;
+  final Function onClick;
+  final int length;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        onClick();
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Offstage(
+            offstage: offStage,
+            child: Container(
+              alignment: Alignment.centerLeft,
+              width: MediaQuery.of(context).size.width,
+              height: MOMENT_USER_PROFILE_HEIGHT,
+              color: BACKGROUND_COLOR,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: MOMENT_USER_PROFILE_HEIGHT),
+                child: Text(
+                  tag,
+                  style: const TextStyle(
+                    color: Color(0xFF757575),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
-                  showPreview: true,
-                  itemBuilder: (context, index) {
-                    print("index $index");
-                    return normalList[index];
-                  },
-                  indexedHeight: (i) {
-                    return 89;
-                  },
-                  keyboardUsage: true,
-                  // headerWidgetList: <AlphabetScrollListHeader>[
-                  //   AlphabetScrollListHeader(widgetList: [
-                  //     Padding(
-                  //       padding: const EdgeInsets.all(16.0),
-                  //       child: TextFormField(
-                  //         controller: searchController,
-                  //         decoration: InputDecoration(
-                  //           border: OutlineInputBorder(),
-                  //           suffix: Icon(
-                  //             Icons.search,
-                  //             color: Colors.grey,
-                  //           ),
-                  //           labelText: "Search",
-                  //         ),
-                  //       ),
-                  //     )
-                  //   ], icon: Icon(Icons.search), indexedHeaderHeight: (index) => 80),
-                  // ],
                 ),
               ),
-              Positioned(
-                left: MediaQuery.of(context).size.width * 0.2,
-                top: MediaQuery.of(context).size.width * 0.06,
-                child: ContactPerfixSectionView(
-                  contactPrefix: "A",
-                ),
+            ),
+          ),
+          Column(
+            children: [
+              ListTile(
+                leading: ProfileImageView(
+                    radius: MARGIN_LARGE - MARGIN_SMALL,
+                    profilePicture: user[index].person.profilePicture ?? ""),
+                title: Text(user[index].person.userName ?? ""),
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: FriendsCountSectionView(friendCount: userList.length),
+              const Divider(
+                thickness: 1,
+                indent: MOMENT_USER_PROFILE_HEIGHT,
+                endIndent: TAG_HEIGHT,
               ),
             ],
-          ),
-        ),
+          )
+        ],
       ),
     );
   }
@@ -193,10 +197,10 @@ class FriendsCountSectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-          top: MARGIN_LARGE * 1.2, right: MARGIN_MEDIUM_2),
+      padding:
+          const EdgeInsets.only(top: MARGIN_MEDIUM_2, right: MARGIN_MEDIUM_2),
       child: Text(
-        "$friendCount Friends",
+        (friendCount > 1) ? "$friendCount Friends" : "$friendCount Friend",
         style: TextStyle(
             color: Colors.black.withOpacity(0.5), fontSize: MARGIN_MEDIUM_2),
       ),
@@ -204,53 +208,53 @@ class FriendsCountSectionView extends StatelessWidget {
   }
 }
 
-class ContactPerfixSectionView extends StatelessWidget {
-  ContactPerfixSectionView({
-    Key? key,
-    required this.contactPrefix,
-  }) : super(key: key);
-  String contactPrefix;
+// class ContactPrefixSectionView extends StatelessWidget {
+//   ContactPrefixSectionView({
+//     Key? key,
+//     required this.contactPrefix,
+//   }) : super(key: key);
+//   String contactPrefix;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text(
+//       contactPrefix,
+//       style: TextStyle(
+//           color: Colors.black.withOpacity(0.5), fontSize: TEXT_MEDIUM),
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      contactPrefix,
-      style: TextStyle(
-          color: Colors.black.withOpacity(0.5), fontSize: TEXT_MEDIUM),
-    );
-  }
-}
-
-class ContactsListSectionView extends StatelessWidget {
-  const ContactsListSectionView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: MARGIN_XLARGE * 1.5),
-      height: post,
-      color: Colors.white,
-      child: ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          thickness: 0,
-          color: Colors.white,
-        ),
-        itemCount: 10,
-        padding: const EdgeInsets.symmetric(
-            horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM_2),
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-              onTap: () {
-                navigateToNextScreen(context, const ChatDetailPage());
-              },
-              child: ChattingItemView());
-        },
-      ),
-    );
-  }
-}
+// class ContactsListSectionView extends StatelessWidget {
+//   const ContactsListSectionView({
+//     Key? key,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.only(top: MARGIN_XLARGE * 1.5),
+//       height: post,
+//       color: Colors.white,
+//       child: ListView.separated(
+//         separatorBuilder: (context, index) => const Divider(
+//           thickness: 0,
+//           color: Colors.white,
+//         ),
+//         itemCount: 10,
+//         padding: const EdgeInsets.symmetric(
+//             horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM_2),
+//         itemBuilder: (BuildContext context, int index) {
+//           return GestureDetector(
+//               onTap: () {
+//                 navigateToNextScreen(context, const ChatDetailPage());
+//               },
+//               child: ChattingItemView());
+//         },
+//       ),
+//     );
+//   }
+// }
 
 class ContactsCardsSectionView extends StatelessWidget {
   const ContactsCardsSectionView({
@@ -286,7 +290,7 @@ class ContactsCardsSectionView extends StatelessWidget {
       ),
       child: GridView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         itemCount: 4,
         gridDelegate:
@@ -300,11 +304,11 @@ class ContactsCardsSectionView extends StatelessWidget {
 }
 
 class SearBarSectionView extends StatelessWidget {
-  SearBarSectionView({
+  const SearBarSectionView({
     Key? key,
-    required this.controller,
+    required this.onChanged,
   }) : super(key: key);
-  TextEditingController controller;
+  final Function(String) onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +316,7 @@ class SearBarSectionView extends StatelessWidget {
       margin: const EdgeInsets.symmetric(
           horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
       width: double.infinity,
-      height: 40,
+      height: TAG_HEIGHT,
       decoration: BoxDecoration(
         color: SEARCH_BAR_COLOR,
         borderRadius: BorderRadius.circular(MARGIN_SMALL),
@@ -322,7 +326,9 @@ class SearBarSectionView extends StatelessWidget {
         ],
       ),
       child: TextField(
-        controller: controller,
+        onChanged: (text) {
+          onChanged(text);
+        },
         textAlign: TextAlign.center,
         maxLines: 1,
         decoration: const InputDecoration(

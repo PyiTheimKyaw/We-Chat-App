@@ -20,5 +20,5 @@ abstract class WeChatDataAgent{
   Stream<UserVO> getUserByQRCode(String qrCode);
   Future<void> addAnotherUserContact(UserVO user);
   Future<void> sendMyInfoToAnotherUser(UserVO user);
-
+  Stream<List<UserVO>> getContacts();
 }

@@ -19,4 +19,6 @@ abstract class WeChatModel {
   Stream<UserVO> getUserByQRCode(String qrCode);
 
   Future<void> addAnotherUserContact(UserVO user);
+
+  Stream<List<UserVO>> getContacts();
 }

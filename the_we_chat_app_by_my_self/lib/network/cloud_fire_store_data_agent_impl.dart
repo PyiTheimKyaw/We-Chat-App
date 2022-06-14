@@ -160,4 +160,18 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         .doc(getLoggedInUser().id)
         .set(getLoggedInUser().toJson());
   }
+
+  @override
+  Stream<List<UserVO>> getContacts() {
+    return _fireStore
+        .collection(userCollectionsPath)
+        .doc(auth.currentUser?.uid)
+        .collection(contactsCollectionPath)
+        .snapshots()
+        .map((querySnapShot) {
+      return querySnapShot.docs.map<UserVO>((document) {
+        return UserVO.fromJson(document.data());
+      }).toList();
+    });
+  }
 }

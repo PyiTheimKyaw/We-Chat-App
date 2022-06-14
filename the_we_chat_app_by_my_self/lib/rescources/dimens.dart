@@ -13,6 +13,7 @@ const TEXT_LARGE=32.0;
 
 
 ///App dimensions
+const TAG_HEIGHT=40.0;
 const CHATTING_SECTION_HEIGHT=70.0;
 const PROFILE_HEIGHT=80.0;
 const post=null;

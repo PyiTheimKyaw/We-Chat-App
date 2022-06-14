@@ -101,4 +101,9 @@ class WeChatModelImpl extends WeChatModel {
       mDataAgent.sendMyInfoToAnotherUser(user);
     });
   }
+
+  @override
+  Stream<List<UserVO>> getContacts() {
+    return mDataAgent.getContacts();
+  }
 }
