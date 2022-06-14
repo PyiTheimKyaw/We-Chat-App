@@ -4,7 +4,6 @@ import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/az_item_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
-import 'package:the_we_chat_app_by_my_self/dummy_data/contacts.dart';
 
 class ContactTabBloc extends ChangeNotifier{
 
@@ -25,7 +24,6 @@ class ContactTabBloc extends ChangeNotifier{
       SuspensionUtil.sortListBySuspensionTag(filterList);
       SuspensionUtil.setShowSuspensionStatus(filterList);
     });
-
     //usersDummy.sort((a,b) => a.name!.compareTo(b.name!));
 
 

@@ -24,6 +24,7 @@ class _ContactPageState extends State<ContactPage> {
     return ChangeNotifierProvider(
       create: (BuildContext context) => ContactTabBloc(),
       child: Scaffold(
+        // resizeToAvoidBottomInset: false,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,
@@ -39,6 +40,8 @@ class _ContactPageState extends State<ContactPage> {
             ],
           ),
           body: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Consumer<ContactTabBloc>(
                 builder: (BuildContext context, bloc, Widget? child) {
@@ -57,8 +60,7 @@ class _ContactPageState extends State<ContactPage> {
                   child: Consumer<ContactTabBloc>(
                     builder: (BuildContext context, bloc, Widget? child) {
                       return Stack(
-                        alignment: Alignment.centerLeft,
-                        clipBehavior: Clip.none,
+
                         children: [
                           ContactSection(
                               user: bloc.filterList ?? [], onClick: (user) {}),
@@ -133,6 +135,8 @@ class ContactPeopleShowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double? indent=MediaQuery.of(context).size.width/5;
+    double? endIndent=MediaQuery.of(context).size.width/9;
     return GestureDetector(
       onTap: () {
         onClick();
@@ -162,24 +166,27 @@ class ContactPeopleShowView extends StatelessWidget {
               ),
             ),
           ),
-          Column(
-            children: [
-              ListTile(
-                leading: ProfileImageView(
-                    radius: MARGIN_LARGE - MARGIN_SMALL,
-                    profilePicture: user[index].person.profilePicture ?? ""),
-                title: Text(
-                  user[index].person.userName ?? "",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: TEXT_REGULAR),
+          Padding(
+            padding: const EdgeInsets.only(top: MARGIN_MEDIUM),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: ProfileImageView(
+                      radius: MARGIN_XLARGE-MARGIN_MEDIUM_2,
+                      profilePicture: user[index].person.profilePicture ?? ""),
+                  title: Text(
+                    user[index].person.userName ?? "",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
                 ),
-              ),
-              const Divider(
-                thickness: 1,
-                indent: MOMENT_USER_PROFILE_HEIGHT,
-                endIndent: TAG_HEIGHT,
-              ),
-            ],
+                 Divider(
+                  thickness: 1,
+                  indent: indent,
+                  endIndent: endIndent,
+                ),
+              ],
+            ),
           )
         ],
       ),
