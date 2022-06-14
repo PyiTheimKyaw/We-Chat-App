@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/cloud_fire_store_data_agent_impl.dart';
@@ -16,6 +18,9 @@ class WeChatModelImpl extends WeChatModel {
 
   ///DataAgent
   WeChatDataAgent mDataAgent = CloudFireStoreDataAgentImpl();
+
+  ///Model
+  AuthenticationModel mAuthModel = AuthenticationModelImpl();
 
   @override
   Stream<List<MomentVO>> getMoments() {
@@ -43,8 +48,8 @@ class WeChatModelImpl extends WeChatModel {
         description: description,
         postFile: fileUrl,
         profilePicture:
-            "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg",
-        userName: "Pyi Theim Kyaw",
+            mAuthModel.getLoggedInUser().profilePicture,
+        userName: mAuthModel.getLoggedInUser().userName,
         fileType: fileType);
     return Future.value(newMoment);
   }

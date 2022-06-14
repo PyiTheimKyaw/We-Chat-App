@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 
 class AddMomentsPageBloc extends ChangeNotifier {
   File? chosenPostImage;
@@ -15,21 +18,24 @@ class AddMomentsPageBloc extends ChangeNotifier {
   bool isAddNewMomentError = false;
   bool isInEditMode = false;
   bool isLoading = false;
+  UserVO? _loggedInUser;
 
   ///Variables
   String? userName;
   String? profilePicture;
-  String postImage='';
+  String postImage = '';
 
   ///States
   String newMomentDescription = '';
   MomentVO? mMoment;
-  TextEditingController textEditingController=TextEditingController();
+  TextEditingController textEditingController = TextEditingController();
 
   ///Models
   WeChatModel mModel = WeChatModelImpl();
+  AuthenticationModel mAuthModel = AuthenticationModelImpl();
 
   AddMomentsPageBloc({int? momentId}) {
+    _loggedInUser = mAuthModel.getLoggedInUser();
     if (momentId != null) {
       isInEditMode = true;
       _notifySafely();
@@ -54,9 +60,8 @@ class AddMomentsPageBloc extends ChangeNotifier {
   }
 
   void _prePopulateDataForAddMode() {
-    userName = "Pyi Theim Kyaw";
-    profilePicture =
-        "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg";
+    userName = _loggedInUser?.userName;
+    profilePicture = _loggedInUser?.profilePicture;
   }
 
   Future<void> onTapAddNewMoment() {
@@ -90,7 +95,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
   Future<dynamic> _editMoment() {
     mMoment?.description = textEditingController.text;
     if (mMoment != null) {
-      return mModel.editMoment(mMoment!,chosenPostImage,fileType ?? "");
+      return mModel.editMoment(mMoment!, chosenPostImage, fileType ?? "");
     } else {
       return Future.error("Error");
     }
@@ -120,7 +125,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
 
   void onChosenDeleteFile() {
     chosenPostImage = null;
-    postImage='';
+    postImage = '';
     _notifySafely();
   }
 

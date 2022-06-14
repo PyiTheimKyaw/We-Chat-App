@@ -36,7 +36,7 @@ class AuthenticationModelImpl extends AuthenticationModel {
           email: email,
           password: password,
           phoneNumber: phoneNumber,
-          profilePicture: profilePicture,
+          profilePicture:(profilePicture!=null)? profilePicture : "https://th.bing.com/th/id/OIP.TpqSE-tsrMBbQurUw2Su-AHaHk?pid=ImgDet&rs=1",
           qrCode: "",
           fcmToken: fcmToken);
       return Future.value(newUser);
@@ -61,5 +61,10 @@ class AuthenticationModelImpl extends AuthenticationModel {
   @override
   Future<void> logOut() {
     return mDataAgent.logOut();
+  }
+
+  @override
+  UserVO getLoggedInUser() {
+    return mDataAgent.getLoggedInUser();
   }
 }

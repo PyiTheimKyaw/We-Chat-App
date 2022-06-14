@@ -37,7 +37,8 @@ class MomentPage extends StatelessWidget {
       ),
     );
   }
-  PreferredSizeWidget buildAppBar(BuildContext context){
+
+  PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
       backgroundColor: PRIMARY_COLOR,
@@ -74,8 +75,6 @@ class MomentPage extends StatelessWidget {
     );
   }
 }
-
-
 
 class MomentItemSectionView extends StatelessWidget {
   const MomentItemSectionView({
@@ -153,7 +152,8 @@ class MomentUserProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundImage: NetworkImage(userProfile ?? ""),
+      backgroundImage: NetworkImage(userProfile ??
+          "https://th.bing.com/th/id/OIP.TpqSE-tsrMBbQurUw2Su-AHaHk?pid=ImgDet&rs=1"),
       radius: MOMENT_USER_PROFILE_HEIGHT / 2,
     );
   }
@@ -357,7 +357,10 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
               Positioned(
                 top: top,
                 left: left,
-                child: const ProfileImageAndUserNameSectionView(),
+                child: ProfileImageAndUserNameSectionView(
+                  profilePicture: bloc.loggedInUser?.profilePicture ?? "",
+                  userName: bloc.loggedInUser?.userName ?? "",
+                ),
               )
             ],
           ),
@@ -370,7 +373,11 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
 class ProfileImageAndUserNameSectionView extends StatelessWidget {
   const ProfileImageAndUserNameSectionView({
     Key? key,
+    required this.profilePicture,
+    required this.userName,
   }) : super(key: key);
+  final String profilePicture;
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -386,13 +393,16 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
               flex: 3,
               child: ProfileImageView(
                 radius: PROFILE_HEIGHT / 2,
+                profilePicture: profilePicture,
               )),
           const SizedBox(
             width: PROFILE_HEIGHT,
           ),
-          const Flexible(
+          Flexible(
             flex: 1,
-            child: UserNameAndMomentsInfoView(),
+            child: UserNameAndMomentsInfoView(
+              userName: userName,
+            ),
           ),
         ],
       ),
@@ -403,7 +413,9 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
 class UserNameAndMomentsInfoView extends StatelessWidget {
   const UserNameAndMomentsInfoView({
     Key? key,
+    required this.userName,
   }) : super(key: key);
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -411,19 +423,20 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       // mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
-      children: const [
+      children: [
         Text(
-          "Pyi Theim Kyaw ",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          userName,
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
-        Text(
+        const Text(
           "Sunday September 14 , 2015 ",
           style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),
-        Text(
+        const Text(
           "23 new moments",
           style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),

@@ -16,5 +16,6 @@ abstract class WeChatDataAgent{
   Future<void> loginUser(String email,String password);
   bool isLoggedIn();
   Future logOut();
+  UserVO getLoggedInUser();
 
 }

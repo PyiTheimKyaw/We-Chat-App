@@ -519,7 +519,7 @@ class UserProfileAndPostOptionsSectionView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ProfileImageView(
-            profilePicture: profilePic,
+            profilePicture: profilePic ?? "",
           ),
           const SizedBox(
             width: MARGIN_MEDIUM,

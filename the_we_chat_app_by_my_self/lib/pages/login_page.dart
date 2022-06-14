@@ -41,8 +41,8 @@ class LoginPage extends StatelessWidget {
                 ),
                 body: Container(
                   height: MediaQuery.of(context).size.height,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_XLARGE),
                   width: double.infinity,
                   color: Colors.white,
                   child: Consumer<LoginBloc>(
@@ -81,6 +81,13 @@ class LoginPage extends StatelessWidget {
                             thickness: 1,
                           ),
                           const Spacer(),
+                          const Text(
+                            "The above email is only used for login verification",
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                          const SizedBox(
+                            height: MARGIN_MEDIUM_2,
+                          ),
                           AcceptAndContinueButtonSectionView(
                             onPressed: () {
                               if (bloc.canLoginAccount()) {

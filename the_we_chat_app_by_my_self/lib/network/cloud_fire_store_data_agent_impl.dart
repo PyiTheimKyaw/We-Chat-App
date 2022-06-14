@@ -32,8 +32,6 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   ///Auth
   FirebaseAuth auth = FirebaseAuth.instance;
 
-
-
   @override
   Stream<List<MomentVO>> getMoments() {
     return _fireStore
@@ -118,5 +116,16 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   @override
   Future logOut() {
     return auth.signOut();
+  }
+
+  @override
+  UserVO getLoggedInUser() {
+    return UserVO(
+        id: auth.currentUser?.uid,
+        userName: auth.currentUser?.displayName,
+        email: auth.currentUser?.email,
+        profilePicture: auth.currentUser?.photoURL,
+        phoneNumber: auth.currentUser?.phoneNumber,
+        qrCode: auth.currentUser?.uid);
   }
 }
