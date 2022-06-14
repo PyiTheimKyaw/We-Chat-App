@@ -4,6 +4,7 @@ import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/cloud_fire_store_data_agent_impl.dart';
 import 'package:the_we_chat_app_by_my_self/network/we_chat_data_agent.dart';
 
@@ -47,8 +48,7 @@ class WeChatModelImpl extends WeChatModel {
         id: DateTime.now().millisecondsSinceEpoch,
         description: description,
         postFile: fileUrl,
-        profilePicture:
-            mAuthModel.getLoggedInUser().profilePicture,
+        profilePicture: mAuthModel.getLoggedInUser().profilePicture,
         userName: mAuthModel.getLoggedInUser().userName,
         fileType: fileType);
     return Future.value(newMoment);
@@ -88,5 +88,17 @@ class WeChatModelImpl extends WeChatModel {
   @override
   Future<String> uploadFileToFirebase(File file) {
     return mDataAgent.uploadFileToFirebase(file);
+  }
+
+  @override
+  Stream<UserVO> getUserByQRCode(String qrCode) {
+    return mDataAgent.getUserByQRCode(qrCode);
+  }
+
+  @override
+  Future<void> addAnotherUserContact(UserVO user) {
+    return mDataAgent.addAnotherUserContact(user).then((value) {
+      mDataAgent.sendMyInfoToAnotherUser(user);
+    });
   }
 }

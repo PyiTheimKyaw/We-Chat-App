@@ -12,6 +12,7 @@ import 'package:the_we_chat_app_by_my_self/network/we_chat_data_agent.dart';
 const momentCollection = "moments";
 const fileUploadRef = "uploads";
 const userCollectionsPath = "users";
+const contactsCollectionPath = "contacts";
 
 class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   static final CloudFireStoreDataAgentImpl _singleton =
@@ -127,5 +128,36 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         profilePicture: auth.currentUser?.photoURL,
         phoneNumber: auth.currentUser?.phoneNumber,
         qrCode: auth.currentUser?.uid);
+  }
+
+  @override
+  Stream<UserVO> getUserByQRCode(String qrCode) {
+    return _fireStore
+        .collection(userCollectionsPath)
+        .doc(qrCode)
+        .get()
+        .asStream()
+        .where((documentSnapShot) => documentSnapShot.data() != null)
+        .map((documentSnapShot) => UserVO.fromJson(documentSnapShot.data()!));
+  }
+
+  @override
+  Future<void> addAnotherUserContact(UserVO user) {
+    return _fireStore
+        .collection(userCollectionsPath)
+        .doc(auth.currentUser?.uid)
+        .collection(contactsCollectionPath)
+        .doc(user.id)
+        .set(user.toJson());
+  }
+
+  @override
+  Future<void> sendMyInfoToAnotherUser(UserVO user) {
+    return _fireStore
+        .collection(userCollectionsPath)
+        .doc(user.id)
+        .collection(contactsCollectionPath)
+        .doc(getLoggedInUser().id)
+        .set(getLoggedInUser().toJson());
   }
 }

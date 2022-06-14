@@ -13,8 +13,8 @@ import 'package:the_we_chat_app_by_my_self/view_items/icons_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
 class StartPage extends StatelessWidget {
-  const StartPage({Key? key}) : super(key: key);
-
+   StartPage({Key? key,this.index=0}) : super(key: key);
+  int index;
   @override
   Widget build(BuildContext context) {
     List<String> appBarTitles = [
@@ -29,7 +29,7 @@ class StartPage extends StatelessWidget {
       const ProfilePage()
     ];
     return ChangeNotifierProvider(
-      create: (BuildContext context) => StartPageBloc(),
+      create: (BuildContext context) => StartPageBloc(index: index),
       child: Selector<StartPageBloc, int>(
         selector: (context, bloc) => bloc.currentIndex,
         builder: (BuildContext context, currentIndex, Widget? child) {

@@ -17,5 +17,8 @@ abstract class WeChatDataAgent{
   bool isLoggedIn();
   Future logOut();
   UserVO getLoggedInUser();
+  Stream<UserVO> getUserByQRCode(String qrCode);
+  Future<void> addAnotherUserContact(UserVO user);
+  Future<void> sendMyInfoToAnotherUser(UserVO user);
 
 }

@@ -3,7 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/qr_code_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
+import 'package:the_we_chat_app_by_my_self/pages/contact_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/qr_scanner_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/start_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 
 class QRCodeViewPage extends StatelessWidget {
@@ -20,13 +24,28 @@ class QRCodeViewPage extends StatelessWidget {
             floatingActionButton: FloatingActionButton(
               backgroundColor: PRIMARY_COLOR,
               onPressed: () {
-                bloc.scanQR().then((value) {
-                  print("Success");
+                bloc.scanQR().whenComplete(() {
                   (bloc.qrCode != '-1')
-                      ? _showDialog(context, onTapOk: () {}, onTapCancel: () {
-                          Navigator.pop(context);
+                      ? Future.delayed(const Duration(seconds: 3))
+                          .then((value) {
+                          _showDialog(context, scannedUser: bloc.scannedUser,
+                              onTapOk: () {
+                            bloc.addAnotherContact().then((value) {
+                              navigateToNextScreen(
+                                  context,
+                                  StartPage(
+                                    index: 1,
+                                  ));
+                            }).catchError((error) {
+                              showSnackBarWithMessage(
+                                  context, error.toString());
+                            });
+                          }, onTapCancel: () {
+                            Navigator.pop(context);
+                          });
                         })
                       : null;
+
                   // Navigator.push(context, MaterialPageRoute(builder: (context)=>QRScannerPage()));
                 });
                 // navigateToNextScreen(context, const QRScannerPage());
@@ -62,14 +81,17 @@ class QRCodeViewPage extends StatelessWidget {
   }
 
   void _showDialog(BuildContext context,
-      {required Function() onTapOk, required Function() onTapCancel}) {
+      {required UserVO? scannedUser,
+      required Function() onTapOk,
+      required Function() onTapCancel}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Are you sure to add this contact?"),
-        content: const ListTile(
-          leading: ProfileImageView(profilePicture: ""),
-          title: Text("Pyi Theim Kyaw"),
+        content: ListTile(
+          leading: ProfileImageView(
+              profilePicture: scannedUser?.profilePicture ?? ""),
+          title: Text(scannedUser?.userName ?? ""),
         ),
         actions: [
           FlatButton(onPressed: onTapCancel, child: const Text("Cancel")),

@@ -11,8 +11,8 @@ class QRScannerBloc extends ChangeNotifier {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  
-  
+
+
   QRScannerBloc(){
     if(result!=null){
       print("Result has data");
@@ -23,19 +23,18 @@ class QRScannerBloc extends ChangeNotifier {
     _notifySafely();
   }
 
-  Stream onQRViewCreated(QRViewController controller) {
+  Future onQRViewCreated(QRViewController controller) async{
     this.controller = controller;
     this.controller?.resumeCamera();
     _notifySafely();
 
-    controller.scannedDataStream.listen((scanData) {
+     this.controller?.scannedDataStream.listen((scanData) async{
       result = scanData;
       isScannedCompleted = true;
       controller.pauseCamera();
       _notifySafely();
       print("Result => ${result?.code}");
     });
-    return Stream.value(controller);
   }
 
   Future<QRViewController> onTapFlipCamera() {

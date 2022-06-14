@@ -24,9 +24,7 @@ class QRScannerPage extends StatelessWidget {
               children: [
                 Expanded(flex: 4, child: _buildQrView(context)),
                 Visibility(
-                    visible: (bloc.isScannedCompleted),
-                    child: Text("OK")),
-
+                    visible: (bloc.isScannedCompleted), child: Text("OK")),
               ],
             ),
           );
@@ -48,7 +46,7 @@ class QRScannerPage extends StatelessWidget {
         return QRView(
           key: bloc.qrKey,
           onQRViewCreated: (controller) {
-            bloc.onQRViewCreated(controller).listen((event) {
+            bloc.onQRViewCreated(controller).whenComplete(() {
               showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -69,8 +67,7 @@ class QRScannerPage extends StatelessWidget {
               borderLength: 30,
               borderWidth: 10,
               cutOutSize: scanArea),
-          onPermissionSet: (ctrl, p) =>
-              bloc.onPermissionSet(context, ctrl, p),
+          onPermissionSet: (ctrl, p) => bloc.onPermissionSet(context, ctrl, p),
         );
       },
     );

@@ -93,7 +93,7 @@ class LoginPage extends StatelessWidget {
                               if (bloc.canLoginAccount()) {
                                 bloc.onTapLogin().then((value) {
                                   navigateToNextScreen(
-                                      context, const StartPage());
+                                      context,  StartPage());
                                 }).catchError((error) {
                                   showSnackBarWithMessage(
                                       context, error.toString());
