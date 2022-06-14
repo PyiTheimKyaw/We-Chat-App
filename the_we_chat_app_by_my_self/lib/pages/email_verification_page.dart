@@ -1,16 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/sign_up_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/login_page.dart';
-import 'package:the_we_chat_app_by_my_self/pages/sign_up_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/loading_view.dart';
 
 class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage(
@@ -110,26 +109,7 @@ class EmailVerificationPage extends StatelessWidget {
   }
 }
 
-class LoadingView extends StatelessWidget {
-  const LoadingView({
-    Key? key,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox(
-      width: MARGIN_XLARGE,
-      height: MARGIN_XLARGE,
-      child: LoadingIndicator(
-        indicatorType: Indicator.ballBeat,
-        colors: [Colors.red],
-        strokeWidth: 2,
-        backgroundColor: Colors.transparent,
-        pathBackgroundColor: Colors.black,
-      ),
-    );
-  }
-}
 
 class VerifiedButtonView extends StatelessWidget {
   const VerifiedButtonView(

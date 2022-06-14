@@ -11,6 +11,7 @@ import 'package:the_we_chat_app_by_my_self/blocs/add_moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/loading_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
@@ -192,26 +193,7 @@ class _AddMomentPageState extends State<AddMomentPage> {
   }
 }
 
-class LoadingView extends StatelessWidget {
-  const LoadingView({
-    Key? key,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox(
-      width: MARGIN_XLARGE,
-      height: MARGIN_XLARGE,
-      child: LoadingIndicator(
-        indicatorType: Indicator.audioEqualizer,
-        colors: [Colors.white],
-        strokeWidth: 2,
-        backgroundColor: Colors.transparent,
-        pathBackgroundColor: Colors.black,
-      ),
-    );
-  }
-}
 
 class BottomNavigationBarSectionView extends StatelessWidget {
   BottomNavigationBarSectionView({Key? key, required this.controller})

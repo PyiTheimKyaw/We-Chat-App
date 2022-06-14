@@ -111,4 +111,9 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   bool isLoggedIn() {
     return auth.currentUser!=null;
   }
+
+  @override
+  Future logOut() {
+    return auth.signOut();
+  }
 }

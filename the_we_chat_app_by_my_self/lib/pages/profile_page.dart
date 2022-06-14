@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:the_we_chat_app_by_my_self/blocs/profile_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/pages/welcome_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/card_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
@@ -9,14 +13,17 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: BACKGROUND_COLOR,
-      child: ListView(
-        children: const [
-          ProfileSectionView(),
-          UserFunctionSectionView(),
-          LogOutButtonSectionView(),
-        ],
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => ProfileBloc(),
+      child: Container(
+        color: BACKGROUND_COLOR,
+        child: ListView(
+          children: const [
+            ProfileSectionView(),
+            UserFunctionSectionView(),
+            LogOutButtonSectionView(),
+          ],
+        ),
       ),
     );
   }
@@ -29,25 +36,35 @@ class LogOutButtonSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.only(top: MARGIN_LARGE),
-        width: 200,
-        height: 40,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: Colors.white,
-          border: Border.all(width: 1,color: Colors.black26)
-          // boxShadow: const [
-          //   BoxShadow(
-          //     color: Colors.grey,
-          //     offset: Offset(0.0, 1.0), //(x,y)
-          //     blurRadius: 3.0,
-          //   ),
-          // ],
+    return Consumer<ProfileBloc>(
+      builder: (BuildContext context, bloc, Widget? child) { return Center(
+        child: GestureDetector(
+          onTap: (){
+            bloc.onTapSignOut().then((value) {
+              navigateToNextScreen(context, const WelcomePage());
+            });
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: MARGIN_LARGE),
+            width: 200,
+            height: 40,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.white,
+                border: Border.all(width: 1,color: Colors.black26)
+              // boxShadow: const [
+              //   BoxShadow(
+              //     color: Colors.grey,
+              //     offset: Offset(0.0, 1.0), //(x,y)
+              //     blurRadius: 3.0,
+              //   ),
+              // ],
+            ),
+            child: const Center(child: Text("Log Out")),
+          ),
         ),
-        child: const Center(child: Text("Log Out")),
-      ),
+      ); },
+
     );
   }
 }
