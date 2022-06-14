@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/profile_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/pages/qr_code_view_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/welcome_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -15,15 +16,29 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => ProfileBloc(),
-      child: Container(
-        color: BACKGROUND_COLOR,
-        child: ListView(
-          children: const [
-            ProfileSectionView(),
-            UserFunctionSectionView(),
-            LogOutButtonSectionView(),
-          ],
-        ),
+      child: Consumer<ProfileBloc>(
+        builder: (BuildContext context, bloc, Widget? child) {
+          return Container(
+            color: BACKGROUND_COLOR,
+            child: ListView(
+              children: [
+                ProfileSectionView(
+                  userName: bloc.loggedInUser?.userName ?? "",
+                  profilePicture: bloc.loggedInUser?.profilePicture ?? "",
+                  onTapQrCode: () {
+                    navigateToNextScreen(
+                        context,
+                        QRCodeViewPage(
+                          loggedInUser: bloc.loggedInUser,
+                        ));
+                  },
+                ),
+                const UserFunctionSectionView(),
+                const LogOutButtonSectionView(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -37,34 +52,35 @@ class LogOutButtonSectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileBloc>(
-      builder: (BuildContext context, bloc, Widget? child) { return Center(
-        child: GestureDetector(
-          onTap: (){
-            bloc.onTapSignOut().then((value) {
-              navigateToNextScreen(context, const WelcomePage());
-            });
-          },
-          child: Container(
-            margin: const EdgeInsets.only(top: MARGIN_LARGE),
-            width: 200,
-            height: 40,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.white,
-                border: Border.all(width: 1,color: Colors.black26)
-              // boxShadow: const [
-              //   BoxShadow(
-              //     color: Colors.grey,
-              //     offset: Offset(0.0, 1.0), //(x,y)
-              //     blurRadius: 3.0,
-              //   ),
-              // ],
+      builder: (BuildContext context, bloc, Widget? child) {
+        return Center(
+          child: GestureDetector(
+            onTap: () {
+              bloc.onTapSignOut().then((value) {
+                navigateToNextScreen(context, const WelcomePage());
+              });
+            },
+            child: Container(
+              margin: const EdgeInsets.only(top: MARGIN_LARGE),
+              width: 200,
+              height: 40,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.white,
+                  border: Border.all(width: 1, color: Colors.black26)
+                  // boxShadow: const [
+                  //   BoxShadow(
+                  //     color: Colors.grey,
+                  //     offset: Offset(0.0, 1.0), //(x,y)
+                  //     blurRadius: 3.0,
+                  //   ),
+                  // ],
+                  ),
+              child: const Center(child: Text("Log Out")),
             ),
-            child: const Center(child: Text("Log Out")),
           ),
-        ),
-      ); },
-
+        );
+      },
     );
   }
 }
@@ -106,8 +122,7 @@ class UserFunctionSectionView extends StatelessWidget {
         const SizedBox(
           height: MARGIN_LARGE,
         ),
-        CardsSectionView(
-            cardLabelInfo: cardLabelInfo, cardIcon: cardIconLabel),
+        CardsSectionView(cardLabelInfo: cardLabelInfo, cardIcon: cardIconLabel),
       ],
     );
   }
@@ -143,7 +158,7 @@ class CardsSectionView extends StatelessWidget {
         scrollDirection: Axis.vertical,
         itemCount: 6,
         gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         itemBuilder: (BuildContext context, int index) {
           return CardItemView(
             label: cardLabelInfo[index],
@@ -158,7 +173,13 @@ class CardsSectionView extends StatelessWidget {
 class ProfileSectionView extends StatelessWidget {
   const ProfileSectionView({
     Key? key,
+    required this.userName,
+    required this.profilePicture,
+    required this.onTapQrCode,
   }) : super(key: key);
+  final String userName;
+  final String profilePicture;
+  final Function onTapQrCode;
 
   @override
   Widget build(BuildContext context) {
@@ -167,31 +188,36 @@ class ProfileSectionView extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(bottom: PROFILE_HEIGHT * 1.2),
+          margin: const EdgeInsets.only(bottom: PROFILE_HEIGHT * 1.2),
           width: double.infinity,
           height: MediaQuery.of(context).size.height / 4,
           color: PRIMARY_COLOR,
           child: Padding(
             padding: const EdgeInsets.only(
                 bottom: PROFILE_HEIGHT, left: PROFILE_HEIGHT * 1.4),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(child: TitleText(title: "Pyi Theim Kyaw")),
-                SizedBox(
-                  width: MARGIN_LARGE * 2,
-                ),
-                Icon(
-                  Icons.qr_code_outlined,
-                  color: Colors.white,
-                ),
-                Icon(
-                  Icons.chevron_right_outlined,
-                  color: Colors.white,
-                )
-              ],
+            child: GestureDetector(
+              onTap: () {
+                onTapQrCode();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(child: TitleText(title: userName)),
+                  const SizedBox(
+                    width: MARGIN_LARGE * 2,
+                  ),
+                  const Icon(
+                    Icons.qr_code_outlined,
+                    color: Colors.white,
+                  ),
+                  const Icon(
+                    Icons.chevron_right_outlined,
+                    color: Colors.white,
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -204,10 +230,9 @@ class ProfileSectionView extends StatelessWidget {
               shape: BoxShape.circle,
               color: Colors.white,
             ),
-            child: const Center(
+            child: Center(
               child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
+                backgroundImage: NetworkImage(profilePicture),
                 radius: PROFILE_HEIGHT,
               ),
             ),
