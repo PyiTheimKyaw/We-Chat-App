@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 
-class LoginAndSignUpPageBloc extends ChangeNotifier {
+class SignUpBloc extends ChangeNotifier {
   bool isDisposed = false;
   File? chosenProfileImage;
   int val = -1;
@@ -28,16 +28,12 @@ class LoginAndSignUpPageBloc extends ChangeNotifier {
   ///Model
   AuthenticationModel mModel = AuthenticationModelImpl();
 
-  Future onTapLogin() {
-   _showLoading();
-   return mModel.login(email, password).whenComplete(() => _hideLoading());
-  }
-
-  Future onTapSignUp() {
-    print("Email => $email , Password => $userName");
+  Future onTapSignUp(
+      String name, String password, String phone, File? profilePic) {
+    print("Email => $email , Password => $password");
     _showLoading();
     return mModel
-        .register(email, password, phoneNumber, chosenProfileImage)
+        .register(email, password, phone, profilePic)
         .whenComplete(() => _hideLoading());
   }
 
@@ -81,14 +77,6 @@ class LoginAndSignUpPageBloc extends ChangeNotifier {
 
   bool canCreateAccount() {
     if (val == 1 && userName != "" && phoneNumber != "" && password != "") {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool canLoginAccount() {
-    if (email != "" && password != "") {
       return true;
     } else {
       return false;

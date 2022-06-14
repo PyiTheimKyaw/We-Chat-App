@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -10,11 +12,21 @@ import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
-  PrivacyPolicyPage({Key? key, required this.mdFileName})
+  PrivacyPolicyPage(
+      {Key? key,
+      required this.mdFileName,
+      required this.phoneNumber,
+      required this.userName,
+      required this.password,
+      required this.profilePic})
       : assert(mdFileName.contains(".md"), 'Privacy Policy'),
         super(key: key);
 
   final String mdFileName;
+  final String userName;
+  final String phoneNumber;
+  final File? profilePic;
+  final String password;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +55,12 @@ class PrivacyPolicyPage extends StatelessWidget {
           child: Column(
             children: [
               PrivacyPolicyTextSectionView(mdFileName: mdFileName),
-              const AcceptPolicyAndNextButtonSectionView(),
+              AcceptPolicyAndNextButtonSectionView(
+                userName: userName,
+                password: password,
+                profile: profilePic,
+                phoneNumber: phoneNumber,
+              ),
             ],
           ),
         ),
@@ -77,7 +94,15 @@ class PrivacyPolicyTextSectionView extends StatelessWidget {
 class AcceptPolicyAndNextButtonSectionView extends StatelessWidget {
   const AcceptPolicyAndNextButtonSectionView({
     Key? key,
+    required this.userName,
+    required this.phoneNumber,
+    required this.password,
+    required this.profile,
   }) : super(key: key);
+  final String userName;
+  final String password;
+  final String phoneNumber;
+  final File? profile;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +140,13 @@ class AcceptPolicyAndNextButtonSectionView extends StatelessWidget {
                   if (bloc.val == 1) {
                     print("Tap at privacy ");
                     navigateToNextScreen(
-                        context, const SecurityVerificationPage());
+                        context,
+                        SecurityVerificationPage(
+                          userName: userName,
+                          password: password,
+                          profilePic: profile,
+                          phoneNumber: phoneNumber,
+                        ));
                   } else {
                     showSnackBarWithMessage(
                         context, "Please accept the privacy policy");

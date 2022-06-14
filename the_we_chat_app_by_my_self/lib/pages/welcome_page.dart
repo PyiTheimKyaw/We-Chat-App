@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_we_chat_app_by_my_self/pages/login_and_sign_up_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/sign_up_page.dart';
+import 'package:the_we_chat_app_by_my_self/pages/login_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
@@ -22,8 +23,7 @@ class WelcomePage extends StatelessWidget {
         onTapLogin: () {
           navigateToNextScreen(
               context,
-              const LoginAndSignUpPage(
-                isLogin: true,
+              const LoginPage(
               ));
         },
         onTapSignUp: () {
@@ -55,7 +55,7 @@ class WelcomePage extends StatelessWidget {
                   label: SIGN_UP_VIA_EMAIL,
                   onTap: () {
                     Navigator.pop(context);
-                    navigateToNextScreen(context, const LoginAndSignUpPage());
+                    navigateToNextScreen(context, const SignUpPage());
                   },
                 ),
                 const Divider(),

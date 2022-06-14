@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/pages/email_verification_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
@@ -6,7 +8,17 @@ import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class SecurityVerificationPage extends StatelessWidget {
-  const SecurityVerificationPage({Key? key}) : super(key: key);
+  const SecurityVerificationPage(
+      {Key? key,
+      required this.phoneNumber,
+      required this.userName,
+      required this.password,
+      required this.profilePic})
+      : super(key: key);
+  final String userName;
+  final String phoneNumber;
+  final File? profilePic;
+  final String password;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +74,14 @@ class SecurityVerificationPage extends StatelessWidget {
               minWidth: BUTTON_WIDTH,
               color: BUTTON_COLOR,
               onPressed: () {
-                navigateToNextScreen(context, const EmailVerificationPage());
+                navigateToNextScreen(
+                    context,
+                    EmailVerificationPage(
+                      userName: userName,
+                      password: password,
+                      phoneNumber: phoneNumber,
+                      profilePic: profilePic,
+                    ));
               },
               child: const Text(
                 "Start",
