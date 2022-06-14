@@ -24,61 +24,57 @@ class _ContactPageState extends State<ContactPage> {
     return ChangeNotifierProvider(
       create: (BuildContext context) => ContactTabBloc(),
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          backgroundColor: PRIMARY_COLOR,
-          centerTitle: true,
-          title: TitleText(title: LABEL_CONTACTS),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.person_add_alt_1_outlined),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-          ],
-        ),
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverToBoxAdapter(
-                child: Consumer<ContactTabBloc>(
-                  builder: (BuildContext context, bloc, Widget? child) {
-                    return SearBarSectionView(
-                      onChanged: (text) {
-                        bloc.searchByName(text);
-                      },
-                    );
-                  },
-                ),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            backgroundColor: PRIMARY_COLOR,
+            centerTitle: true,
+            title: TitleText(title: LABEL_CONTACTS),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.person_add_alt_1_outlined),
+                color: Colors.white,
+                onPressed: () {},
               ),
-              const SliverToBoxAdapter(
-                child: ContactsCardsSectionView(),
-              ),
-            ];
-          },
-          body: Container(
-            color: Colors.white,
-            child: Consumer<ContactTabBloc>(
-              builder: (BuildContext context, bloc, Widget? child) {
-                return Stack(
-                  alignment: Alignment.centerLeft,
-                  clipBehavior: Clip.none,
-                  children: [
-                    ContactSection(
-                        user: bloc.filterList ?? [], onClick: (user) {}),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: FriendsCountSectionView(
-                          friendCount: bloc.usersDummy?.length ?? 0),
-                    ),
-                  ],
-                );
-              },
-            ),
+            ],
           ),
-        ),
-      ),
+          body: Column(
+            children: [
+              Consumer<ContactTabBloc>(
+                builder: (BuildContext context, bloc, Widget? child) {
+                  return SearBarSectionView(
+                    onChanged: (text) {
+                      bloc.searchByName(text);
+                    },
+                  );
+                },
+              ),
+              const ContactsCardsSectionView(),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: MARGIN_SMALL),
+                  color: Colors.white,
+                  child: Consumer<ContactTabBloc>(
+                    builder: (BuildContext context, bloc, Widget? child) {
+                      return Stack(
+                        alignment: Alignment.centerLeft,
+                        clipBehavior: Clip.none,
+                        children: [
+                          ContactSection(
+                              user: bloc.filterList ?? [], onClick: (user) {}),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: FriendsCountSectionView(
+                                friendCount: bloc.usersDummy?.length ?? 0),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          )),
     );
   }
 }
@@ -172,7 +168,11 @@ class ContactPeopleShowView extends StatelessWidget {
                 leading: ProfileImageView(
                     radius: MARGIN_LARGE - MARGIN_SMALL,
                     profilePicture: user[index].person.profilePicture ?? ""),
-                title: Text(user[index].person.userName ?? ""),
+                title: Text(
+                  user[index].person.userName ?? "",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: TEXT_REGULAR),
+                ),
               ),
               const Divider(
                 thickness: 1,
@@ -207,54 +207,6 @@ class FriendsCountSectionView extends StatelessWidget {
     );
   }
 }
-
-// class ContactPrefixSectionView extends StatelessWidget {
-//   ContactPrefixSectionView({
-//     Key? key,
-//     required this.contactPrefix,
-//   }) : super(key: key);
-//   String contactPrefix;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Text(
-//       contactPrefix,
-//       style: TextStyle(
-//           color: Colors.black.withOpacity(0.5), fontSize: TEXT_MEDIUM),
-//     );
-//   }
-// }
-
-// class ContactsListSectionView extends StatelessWidget {
-//   const ContactsListSectionView({
-//     Key? key,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       margin: const EdgeInsets.only(top: MARGIN_XLARGE * 1.5),
-//       height: post,
-//       color: Colors.white,
-//       child: ListView.separated(
-//         separatorBuilder: (context, index) => const Divider(
-//           thickness: 0,
-//           color: Colors.white,
-//         ),
-//         itemCount: 10,
-//         padding: const EdgeInsets.symmetric(
-//             horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM_2),
-//         itemBuilder: (BuildContext context, int index) {
-//           return GestureDetector(
-//               onTap: () {
-//                 navigateToNextScreen(context, const ChatDetailPage());
-//               },
-//               child: ChattingItemView());
-//         },
-//       ),
-//     );
-//   }
-// }
 
 class ContactsCardsSectionView extends StatelessWidget {
   const ContactsCardsSectionView({
