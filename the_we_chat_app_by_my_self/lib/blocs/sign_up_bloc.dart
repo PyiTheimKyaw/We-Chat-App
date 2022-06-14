@@ -33,7 +33,7 @@ class SignUpBloc extends ChangeNotifier {
     print("Email => $email , Password => $password");
     _showLoading();
     return mModel
-        .register(email, password, phone, profilePic)
+        .register(name,email, password, phone, profilePic)
         .whenComplete(() => _hideLoading());
   }
 

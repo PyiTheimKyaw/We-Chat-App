@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -30,6 +31,8 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
 
   ///Auth
   FirebaseAuth auth = FirebaseAuth.instance;
+
+
 
   @override
   Stream<List<MomentVO>> getMoments() {
@@ -90,7 +93,7 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         ..updatePhotoURL(newUser.profilePicture ?? "");
     }).then((user) {
       newUser.id = user?.uid ?? "";
-      newUser.qrCode=user?.uid ?? "";
+      newUser.qrCode = user?.uid ?? "";
       _addNewUser(newUser);
     });
   }
@@ -109,7 +112,7 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
 
   @override
   bool isLoggedIn() {
-    return auth.currentUser!=null;
+    return auth.currentUser != null;
   }
 
   @override

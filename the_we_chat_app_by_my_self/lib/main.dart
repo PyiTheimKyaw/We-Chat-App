@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
+import 'package:the_we_chat_app_by_my_self/fcm/fcm_service.dart';
 import 'package:the_we_chat_app_by_my_self/pages/privacy_policy_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/welcome_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/start_page.dart';
@@ -8,6 +9,7 @@ import 'package:the_we_chat_app_by_my_self/pages/start_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FCMService().listenForMessages();
   runApp( MyApp());
 }
 

@@ -53,6 +53,9 @@ dependencies:
   country_pickers: ^2.0.0
   flutter_markdown: ^0.6.10+2
   firebase_auth: ^3.3.19
+  firebase_in_app_messaging: ^0.6.0+15
+  flutter_local_notifications: ^9.5.3+1
+  firebase_messaging: ^11.4.1
 
 
 dev_dependencies:
