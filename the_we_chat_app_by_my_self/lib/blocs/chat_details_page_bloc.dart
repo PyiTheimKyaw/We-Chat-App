@@ -1,14 +1,7 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
-import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
-import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
-import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 
 class ChatDetailsPageBloc extends ChangeNotifier {
@@ -16,54 +9,31 @@ class ChatDetailsPageBloc extends ChangeNotifier {
   bool isDisposed = false;
   File? chosenFile;
   String? chosenFileType;
-  List<ContactAndMessageVO>? conversationsList;
-  UserVO? loggedInUser;
-  UserVO? chatUserinfo;
+  List<ChatMessageVO>? conversations;
 
-  ///Dataagent
-  WeChatModel mModel = WeChatModelImpl();
-  AuthenticationModel mAuthModel = AuthenticationModelImpl();
-
-  ChatDetailsPageBloc(UserVO chatUser) {
-    chatUserinfo = chatUser;
-    loggedInUser = mAuthModel.getLoggedInUser();
-    _notifySafely();
-    mModel.getConversion(chatUser).listen((conversion) {
-      conversationsList = conversion;
-      _notifySafely();
-    });
-  }
-
-  void onSubmitted(String? text) {
-    print("On tap submitted => $text");
-
-    mModel
-        .sendMessages(text, chosenFile, chatUserinfo ?? UserVO())
-        .then((value) {
-      print("Success add text ");
-    }).catchError((error) {
-      print("Error at add text => ${error.toString()}");
-    });
-  }
-
-  void onTapCancel() {
-    chosenFile = null;
+  ChatDetailsPageBloc(){
+    conversations=messages;
     _notifySafely();
   }
 
-  void onTapMoreButton() {
-    isPopUp = !isPopUp;
+  void onTapCancel(){
+    chosenFile=null;
     _notifySafely();
   }
 
-  void onTapTextField() {
-    isPopUp = false;
+  void onTapMoreButton(){
+    isPopUp=!isPopUp;
     _notifySafely();
   }
 
-  void onChosenFile(File? file, String fileType) {
-    chosenFile = file;
-    chosenFileType = fileType;
+  void onTapTextField(){
+    isPopUp=false;
+    _notifySafely();
+  }
+
+  void onChosenFile(File? file,String fileType){
+    chosenFile=file;
+    chosenFileType=fileType;
     _notifySafely();
   }
 

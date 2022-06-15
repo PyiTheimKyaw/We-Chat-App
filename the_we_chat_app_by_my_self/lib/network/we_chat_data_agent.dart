@@ -21,5 +21,4 @@ abstract class WeChatDataAgent{
   Future<void> addAnotherUserContact(UserVO user);
   Future<void> sendMyInfoToAnotherUser(UserVO user);
   Stream<List<UserVO>> getContacts();
-
 }

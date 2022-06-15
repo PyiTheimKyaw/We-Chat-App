@@ -4,24 +4,27 @@ import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/contact_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/az_item_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
-import 'package:the_we_chat_app_by_my_self/pages/chat_detail_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
-import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/card_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
-class ContactPage extends StatelessWidget {
+class ContactPage extends StatefulWidget {
   const ContactPage({Key? key}) : super(key: key);
 
+  @override
+  State<ContactPage> createState() => _ContactPageState();
+}
+
+class _ContactPageState extends State<ContactPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => ContactTabBloc(),
       child: Scaffold(
-          // resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,
@@ -57,16 +60,10 @@ class ContactPage extends StatelessWidget {
                   child: Consumer<ContactTabBloc>(
                     builder: (BuildContext context, bloc, Widget? child) {
                       return Stack(
+
                         children: [
                           ContactSection(
-                              user: bloc.filterList ?? [],
-                              onClick: (user) {
-                                navigateToNextScreen(
-                                    context,
-                                    ChatDetailPage(
-                                      chatUser: user,
-                                    ));
-                              }),
+                              user: bloc.filterList ?? [], onClick: (user) {}),
                           Align(
                             alignment: Alignment.topRight,
                             child: FriendsCountSectionView(
@@ -138,8 +135,8 @@ class ContactPeopleShowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double? indent = MediaQuery.of(context).size.width / 5;
-    double? endIndent = MediaQuery.of(context).size.width / 9;
+    double? indent=MediaQuery.of(context).size.width/5;
+    double? endIndent=MediaQuery.of(context).size.width/9;
     return GestureDetector(
       onTap: () {
         onClick();
@@ -175,7 +172,7 @@ class ContactPeopleShowView extends StatelessWidget {
               children: [
                 ListTile(
                   leading: ProfileImageView(
-                      radius: MARGIN_XLARGE - MARGIN_MEDIUM_2,
+                      radius: MARGIN_XLARGE-MARGIN_MEDIUM_2,
                       profilePicture: user[index].person.profilePicture ?? ""),
                   title: Text(
                     user[index].person.userName ?? "",
@@ -208,7 +205,7 @@ class FriendsCountSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding:
-          const EdgeInsets.only(top: MARGIN_MEDIUM_2, right: MARGIN_MEDIUM_2),
+      const EdgeInsets.only(top: MARGIN_MEDIUM_2, right: MARGIN_MEDIUM_2),
       child: Text(
         (friendCount > 1) ? "$friendCount Friends" : "$friendCount Friend",
         style: TextStyle(
@@ -256,7 +253,7 @@ class ContactsCardsSectionView extends StatelessWidget {
         scrollDirection: Axis.vertical,
         itemCount: 4,
         gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
         itemBuilder: (BuildContext context, int index) {
           return CardItemView(label: itemLabel[index], icon: itemIcon[index]);
         },

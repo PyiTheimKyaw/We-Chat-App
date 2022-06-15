@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:provider/provider.dart';
-import 'package:the_we_chat_app_by_my_self/blocs/chat_list_page_bloc.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/chat_detail_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
@@ -18,37 +15,24 @@ class ChatListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => ChatListPageBloc(),
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          backgroundColor: PRIMARY_COLOR,
-          centerTitle: true,
-          title: TitleText(title: LABEL_WECHAT),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-          ],
-        ),
-        body: Selector<ChatListPageBloc, List<UserVO>?>(
-          selector: (BuildContext context, bloc) => bloc.chattedUsersList,
-          builder: (BuildContext context, userList, Widget? child) {
-            return Container(
-              color: Colors.white,
-              child: ChattingHistoryListSectionView(
-                onTapUser: (user) {
-                  navigateToNextScreen(context, ChatDetailPage(chatUser: user));
-                },
-                userList: userList ?? [],
-              ),
-            );
-          },
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: PRIMARY_COLOR,
+        centerTitle: true,
+        title: TitleText(title: LABEL_WECHAT),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            color: Colors.white,
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Container(
+        color: Colors.white,
+        child: const ChattingHistoryListSectionView(),
       ),
     );
   }
@@ -57,25 +41,21 @@ class ChatListPage extends StatelessWidget {
 class ChattingHistoryListSectionView extends StatelessWidget {
   const ChattingHistoryListSectionView({
     Key? key,
-    required this.onTapUser,
-    required this.userList,
   }) : super(key: key);
-  final Function(UserVO) onTapUser;
-  final List<UserVO> userList;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       separatorBuilder: (BuildContext context, int index) => Divider(),
       padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
-      itemCount: userList.length,
+      itemCount: 20,
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onHorizontalDragStart: (dragStart) {},
           onHorizontalDragEnd: (dragEnd) {},
           onTap: () {
-            onTapUser(userList[index]);
+            navigateToNextScreen(context, const ChatDetailPage());
           },
           child: Slidable(
               endActionPane:
@@ -92,7 +72,6 @@ class ChattingHistoryListSectionView extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
                 child: ChattingItemView(
-                  user: userList[index],
                   isContact: false,
                 ),
               )),

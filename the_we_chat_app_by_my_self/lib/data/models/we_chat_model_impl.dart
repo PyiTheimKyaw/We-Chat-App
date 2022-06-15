@@ -3,12 +3,9 @@ import 'dart:io';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
-import 'package:the_we_chat_app_by_my_self/network/chatting_data_agent.dart';
 import 'package:the_we_chat_app_by_my_self/network/cloud_fire_store_data_agent_impl.dart';
-import 'package:the_we_chat_app_by_my_self/network/realtime_database_data_agent_impl.dart';
 import 'package:the_we_chat_app_by_my_self/network/we_chat_data_agent.dart';
 
 class WeChatModelImpl extends WeChatModel {
@@ -22,7 +19,6 @@ class WeChatModelImpl extends WeChatModel {
 
   ///DataAgent
   WeChatDataAgent mDataAgent = CloudFireStoreDataAgentImpl();
-  ChattingDataAgent mRealTimeDataAgent = RealTimeDatabaseDataAgentImpl();
 
   ///Model
   AuthenticationModel mAuthModel = AuthenticationModelImpl();
@@ -109,54 +105,5 @@ class WeChatModelImpl extends WeChatModel {
   @override
   Stream<List<UserVO>> getContacts() {
     return mDataAgent.getContacts();
-  }
-
-  @override
-  Future<void> sendMessages(String? message, File? file, UserVO chatUser) {
-    if (file != null) {
-      return mDataAgent.uploadFileToFirebase(file)
-        ..then((downloadUrl) {
-          return craftNewConversion(message, downloadUrl).then((conversion) {
-            return mRealTimeDataAgent
-                .sendMessageFromLoggedUser(conversion, chatUser)
-                .then((value) {
-              return mRealTimeDataAgent.sendMessageFromChatUser(
-                  conversion, chatUser);
-            });
-          });
-        });
-    } else {
-      return craftNewConversion(message, "").then((conversion) {
-        return mRealTimeDataAgent
-            .sendMessageFromLoggedUser(conversion, chatUser)
-            .then((value) {
-          return mRealTimeDataAgent.sendMessageFromChatUser(
-              conversion, chatUser);
-        });
-      });
-    }
-  }
-
-  Future<ContactAndMessageVO> craftNewConversion(
-      String? message, String? fileUrl) {
-    var timeStamp = DateTime.now().millisecondsSinceEpoch;
-    var conversion = ContactAndMessageVO(
-        id: mAuthModel.getLoggedInUser().id ?? "",
-        messages: message,
-        profilePicture: mAuthModel.getLoggedInUser().profilePicture,
-        file: fileUrl,
-        timeStamp: timeStamp,
-        userName: mAuthModel.getLoggedInUser().userName);
-    return Future.value(conversion);
-  }
-
-  @override
-  Stream<List<ContactAndMessageVO>> getConversion(UserVO chatUser) {
-    return mRealTimeDataAgent.getConversion(chatUser);
-  }
-
-  @override
-  Stream<List<UserVO>> getChattedUser() {
-    return mRealTimeDataAgent.getChattedUser();
   }
 }
