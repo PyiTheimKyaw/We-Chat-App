@@ -7,6 +7,7 @@ import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/card_item_view.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -231,11 +232,10 @@ class ProfileSectionView extends StatelessWidget {
               color: Colors.white,
             ),
             child: Center(
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(profilePicture),
-                radius: PROFILE_HEIGHT,
-              ),
-            ),
+                child: ProfileImageView(
+              profilePicture: profilePicture,
+              radius: PROFILE_HEIGHT,
+            )),
           ),
         )
       ],

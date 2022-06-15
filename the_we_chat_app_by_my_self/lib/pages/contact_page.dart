@@ -180,7 +180,7 @@ class ContactPeopleShowView extends StatelessWidget {
                         fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ),
-                 Divider(
+                Divider(
                   thickness: 1,
                   indent: indent,
                   endIndent: endIndent,
@@ -205,7 +205,7 @@ class FriendsCountSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding:
-          const EdgeInsets.only(top: MARGIN_MEDIUM_2, right: MARGIN_MEDIUM_2),
+      const EdgeInsets.only(top: MARGIN_MEDIUM_2, right: MARGIN_MEDIUM_2),
       child: Text(
         (friendCount > 1) ? "$friendCount Friends" : "$friendCount Friend",
         style: TextStyle(
@@ -253,7 +253,7 @@ class ContactsCardsSectionView extends StatelessWidget {
         scrollDirection: Axis.vertical,
         itemCount: 4,
         gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
         itemBuilder: (BuildContext context, int index) {
           return CardItemView(label: itemLabel[index], icon: itemIcon[index]);
         },

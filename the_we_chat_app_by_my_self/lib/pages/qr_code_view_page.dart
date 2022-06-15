@@ -28,21 +28,24 @@ class QRCodeViewPage extends StatelessWidget {
                   (bloc.qrCode != '-1')
                       ? Future.delayed(const Duration(seconds: 3))
                           .then((value) {
-                          _showDialog(context, scannedUser: bloc.scannedUser,
-                              onTapOk: () {
-                            bloc.addAnotherContact().then((value) {
-                              navigateToNextScreen(
-                                  context,
-                                  StartPage(
-                                    index: 1,
-                                  ));
-                            }).catchError((error) {
-                              showSnackBarWithMessage(
-                                  context, error.toString());
-                            });
-                          }, onTapCancel: () {
-                            Navigator.pop(context);
-                          });
+                          (bloc.scannedUser != null)
+                              ? _showDialog(context,
+                                  scannedUser: bloc.scannedUser, onTapOk: () {
+                                  bloc.addAnotherContact().then((value) {
+                                    navigateToNextScreen(
+                                        context,
+                                        StartPage(
+                                          index: 1,
+                                        ));
+                                  }).catchError((error) {
+                                    showSnackBarWithMessage(
+                                        context, error.toString());
+                                  });
+                                }, onTapCancel: () {
+                                  Navigator.pop(context);
+                                })
+                              : showSnackBarWithMessage(
+                                  context, "You Should scan a correct contact");
                         })
                       : null;
 

@@ -1,205 +1,300 @@
-import 'dart:io';
-
+import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/blocs/contact_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/az_item_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/card_item_view.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
-class MomentPage extends StatelessWidget {
-  const MomentPage({Key? key}) : super(key: key);
+class ContactPage extends StatefulWidget {
+  const ContactPage({Key? key}) : super(key: key);
 
+  @override
+  State<ContactPage> createState() => _ContactPageState();
+}
+
+class _ContactPageState extends State<ContactPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => MomentsPageBloc(),
+      create: (BuildContext context) => ContactTabBloc(),
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: PRIMARY_COLOR,
-          automaticallyImplyLeading: true,
-          leadingWidth: 90,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Row(
-              children: const [
-                Icon(
-                  Icons.chevron_left,
-                  size: TEXT_LARGE,
+        // resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            backgroundColor: PRIMARY_COLOR,
+            centerTitle: true,
+            title: TitleText(title: LABEL_CONTACTS),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.person_add_alt_1_outlined),
+                color: Colors.white,
+                onPressed: () {},
+              ),
+            ],
+          ),
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Consumer<ContactTabBloc>(
+                builder: (BuildContext context, bloc, Widget? child) {
+                  return SearBarSectionView(
+                    onChanged: (text) {
+                      bloc.searchByName(text);
+                    },
+                  );
+                },
+              ),
+              const ContactsCardsSectionView(),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: MARGIN_SMALL),
+                  color: Colors.white,
+                  child: Consumer<ContactTabBloc>(
+                    builder: (BuildContext context, bloc, Widget? child) {
+                      return Stack(
+
+                        children: [
+                          ContactSection(
+                              user: bloc.filterList ?? [], onClick: (user) {}),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: FriendsCountSectionView(
+                                friendCount: bloc.usersDummy?.length ?? 0),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-                Text(
-                  LABEL_WECHAT,
-                  style: TextStyle(
-                      color: Colors.white60, fontSize: MARGIN_MEDIUM_2),
+              )
+            ],
+          )),
+    );
+  }
+}
+
+class ContactSection extends StatelessWidget {
+  final List<AZItemVO> user;
+  final Function(UserVO) onClick;
+
+  const ContactSection({
+    Key? key,
+    required this.user,
+    required this.onClick,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AzListView(
+        data: user,
+        itemCount: user.length,
+        indexBarMargin: const EdgeInsets.only(right: MARGIN_MEDIUM),
+        itemBuilder: (BuildContext context, int index) {
+          final tag = user[index].getSuspensionTag();
+          final length = user[index].getSuspensionTag().length;
+          final offStage = !user[index].isShowSuspension;
+          return ContactPeopleShowView(
+            user: user,
+            index: index,
+            tag: tag,
+            offStage: offStage,
+            onClick: () {
+              onClick(user[index].person);
+            },
+            length: length,
+          );
+        });
+  }
+}
+
+class ContactPeopleShowView extends StatelessWidget {
+  const ContactPeopleShowView({
+    Key? key,
+    required this.user,
+    required this.index,
+    required this.tag,
+    required this.offStage,
+    required this.onClick,
+    required this.length,
+  }) : super(key: key);
+
+  final List<AZItemVO> user;
+  final int index;
+  final String tag;
+  final bool offStage;
+  final Function onClick;
+  final int length;
+
+  @override
+  Widget build(BuildContext context) {
+    double? indent=MediaQuery.of(context).size.width/5;
+    double? endIndent=MediaQuery.of(context).size.width/9;
+    return GestureDetector(
+      onTap: () {
+        onClick();
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Offstage(
+            offstage: offStage,
+            child: Container(
+              alignment: Alignment.centerLeft,
+              width: MediaQuery.of(context).size.width,
+              height: MOMENT_USER_PROFILE_HEIGHT,
+              color: BACKGROUND_COLOR,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: MOMENT_USER_PROFILE_HEIGHT),
+                child: Text(
+                  tag,
+                  style: const TextStyle(
+                    color: Color(0xFF757575),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: MARGIN_MEDIUM),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: ProfileImageView(
+                      radius: MARGIN_XLARGE-MARGIN_MEDIUM_2,
+                      profilePicture: user[index].person.profilePicture ?? ""),
+                  title: Text(
+                    user[index].person.userName ?? "",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ),
+                Divider(
+                  thickness: 1,
+                  indent: indent,
+                  endIndent: endIndent,
                 ),
               ],
             ),
-          ),
-          title: const Text(LABEL_MOMENTS),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.person_outline_outlined),
-            ),
-          ],
-        ),
-        body: Container(
-          color: Colors.white,
-          child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                const ChangeCoverPhotoSectionView(),
-              ];
-            },
-            body: ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                  vertical: MARGIN_XLARGE, horizontal: MARGIN_MEDIUM_2),
-              itemCount: 40,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  margin: const EdgeInsets.only(top: MARGIN_LARGE),
-                  decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 1.0), //(x,y)
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                    color: Colors.white,
-                  ),
-                  child: Container(
-                    height: null,
-                    alignment: Alignment(1, 2),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
-                      radius: 25,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
+          )
+        ],
       ),
     );
   }
 }
 
-class ChangeCoverPhotoSectionView extends StatelessWidget {
-  const ChangeCoverPhotoSectionView({
+class FriendsCountSectionView extends StatelessWidget {
+  FriendsCountSectionView({
     Key? key,
+    required this.friendCount,
   }) : super(key: key);
+  int friendCount;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MomentsPageBloc>(
-      builder: (BuildContext context, bloc, Widget? child) {
-        return SliverToBoxAdapter(
-          child: GestureDetector(
-            onTap: (bloc.chosenCoverImage == null)
-                ? () async {
-                    final ImagePicker _picker = ImagePicker();
-                    final XFile? image =
-                        await _picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      bloc.onChosenCoverImage(File(image.path));
-                    }
-                  }
-                : null,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 3,
-              decoration: BoxDecoration(
-                color: Colors.black38,
-                image: (bloc.chosenCoverImage != null)
-                    ? DecorationImage(
-                        image: FileImage(
-                          bloc.chosenCoverImage ?? File(""),
-                        ),
-                        fit: BoxFit.cover)
-                    : const DecorationImage(
-                        image: NetworkImage(
-                            "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640"),
-                        fit: BoxFit.cover),
-              ),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-                alignment: const Alignment(1.1, 1.4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    ProfileImageView(),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: UserNameAndMomentsInfoView(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+    return Padding(
+      padding:
+      const EdgeInsets.only(top: MARGIN_MEDIUM_2, right: MARGIN_MEDIUM_2),
+      child: Text(
+        (friendCount > 1) ? "$friendCount Friends" : "$friendCount Friend",
+        style: TextStyle(
+            color: Colors.black.withOpacity(0.5), fontSize: MARGIN_MEDIUM_2),
+      ),
     );
   }
 }
 
-class UserNameAndMomentsInfoView extends StatelessWidget {
-  const UserNameAndMomentsInfoView({
+class ContactsCardsSectionView extends StatelessWidget {
+  const ContactsCardsSectionView({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: const [
-        Text(
-          "Pyi Theim Kyaw ",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Text(
-          "Sunday September 14 , 2015 ",
-          style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
-        ),
-        Text(
-          "23 new moments",
-          style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
-        ),
-      ],
+    List<String> itemLabel = [
+      'New Friends',
+      'Group Chats',
+      'Tags',
+      'Official Accounts'
+    ];
+    List<IconData> itemIcon = [
+      Icons.person_add_alt,
+      Icons.group_outlined,
+      Icons.tag_outlined,
+      Icons.account_box_outlined
+    ];
+    return Container(
+      height: null,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(width: 1, color: Colors.black12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0.0, 3.0),
+            blurRadius: 3.0,
+          )
+        ],
+      ),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        itemCount: 4,
+        gridDelegate:
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+        itemBuilder: (BuildContext context, int index) {
+          return CardItemView(label: itemLabel[index], icon: itemIcon[index]);
+        },
+      ),
     );
   }
 }
 
-class ProfileImageView extends StatelessWidget {
-  const ProfileImageView({
+class SearBarSectionView extends StatelessWidget {
+  const SearBarSectionView({
     Key? key,
+    required this.onChanged,
   }) : super(key: key);
+  final Function(String) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return const CircleAvatar(
-      backgroundImage: NetworkImage(
-          "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
-      radius: 40,
+    return Container(
+      margin: const EdgeInsets.symmetric(
+          horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
+      width: double.infinity,
+      height: TAG_HEIGHT,
+      decoration: BoxDecoration(
+        color: SEARCH_BAR_COLOR,
+        borderRadius: BorderRadius.circular(MARGIN_SMALL),
+        boxShadow: const [
+          BoxShadow(
+              color: Colors.black12, offset: Offset(0.0, 2.0), blurRadius: 3.0)
+        ],
+      ),
+      child: TextField(
+        onChanged: (text) {
+          onChanged(text);
+        },
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          hintText: "Search",
+        ),
+      ),
     );
   }
 }

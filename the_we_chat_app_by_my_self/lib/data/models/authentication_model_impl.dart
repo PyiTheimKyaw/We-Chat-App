@@ -21,7 +21,7 @@ class AuthenticationModelImpl extends AuthenticationModel {
               userName, email, password, phoneNumber, downloadUrl))
           .then((newUser) => mDataAgent.registerNewUser(newUser));
     } else {
-      return craftNewUserVO(userName, email, password, phoneNumber, "")
+      return craftNewUserVO(userName, email, password, phoneNumber, "https://th.bing.com/th/id/OIP.TpqSE-tsrMBbQurUw2Su-AHaHk?pid=ImgDet&rs=1")
           .then((newUser) => mDataAgent.registerNewUser(newUser));
     }
   }
@@ -36,7 +36,7 @@ class AuthenticationModelImpl extends AuthenticationModel {
           email: email,
           password: password,
           phoneNumber: phoneNumber,
-          profilePicture:(profilePicture!=null)? profilePicture : "https://th.bing.com/th/id/OIP.TpqSE-tsrMBbQurUw2Su-AHaHk?pid=ImgDet&rs=1",
+          profilePicture:profilePicture,
           qrCode: "",
           fcmToken: fcmToken);
       return Future.value(newUser);
