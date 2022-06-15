@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/chat_details_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -36,18 +38,19 @@ List<String> optionLabel = [
 ];
 
 class ChatDetailPage extends StatelessWidget {
-  const ChatDetailPage({Key? key}) : super(key: key);
+  ChatDetailPage({Key? key, required this.chatUser}) : super(key: key);
+  UserVO chatUser;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => ChatDetailsPageBloc(),
-      child: Selector<ChatDetailsPageBloc, List<ChatMessageVO>?>(
-        selector: (BuildContext context, bloc) => bloc.conversations,
+      create: (BuildContext context) => ChatDetailsPageBloc(chatUser),
+      child: Selector<ChatDetailsPageBloc, List<ContactAndMessageVO>?>(
+        selector: (BuildContext context, bloc) => bloc.conversationsList,
         shouldRebuild: (previous, next) => previous != next,
         builder: (BuildContext context, conversations, Widget? child) {
           return Scaffold(
-            appBar: getAppBar(context),
+            appBar: getAppBar(context, name: chatUser.userName ?? ""),
             body: Container(
               color: Colors.white,
               child: Column(
@@ -58,10 +61,16 @@ class ChatDetailPage extends StatelessWidget {
                           horizontal: MARGIN_MEDIUM_2,
                           vertical: MARGIN_MEDIUM_2),
                       child: ListView.builder(
-                        itemCount: conversations?.length,
+                        itemCount: conversations?.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
-                          return Message(
-                            conversations: conversations?[index],
+                          return Consumer<ChatDetailsPageBloc>(
+                            builder:
+                                (BuildContext context, bloc, Widget? child) {
+                              return Message(
+                                conversations: conversations?[index],
+                                loggedInUser: bloc.loggedInUser,
+                              );
+                            },
                           );
                         },
                       ),
@@ -120,6 +129,7 @@ class ChatDetailPage extends StatelessWidget {
                 ),
               ),
               TextFieldSectionView(
+                onSubmitted: bloc.onSubmitted,
                 onTapAdd: () {
                   bloc.onTapMoreButton();
                 },
@@ -139,7 +149,7 @@ class ChatDetailPage extends StatelessWidget {
                   height: (bloc.isPopUp) ? null : 0.0,
                   child: GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: 8,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -178,7 +188,7 @@ class ChatDetailPage extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget getAppBar(BuildContext context) {
+  PreferredSizeWidget getAppBar(BuildContext context, {required String name}) {
     return AppBar(
       elevation: 0,
       backgroundColor: PRIMARY_COLOR,
@@ -202,7 +212,7 @@ class ChatDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      title: const Text("Pyi Theim Kyaw"),
+      title: Text(name),
       centerTitle: true,
       actions: [
         IconButton(
@@ -237,13 +247,15 @@ class Message extends StatelessWidget {
   const Message({
     Key? key,
     required this.conversations,
+    required this.loggedInUser,
   }) : super(key: key);
-  final ChatMessageVO? conversations;
+  final ContactAndMessageVO? conversations;
+  final UserVO? loggedInUser;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: (conversations?.isOtherUser ?? false)
+      mainAxisAlignment: (conversations?.id != loggedInUser?.id)
           ? MainAxisAlignment.start
           : MainAxisAlignment.end,
       children: [
@@ -259,7 +271,7 @@ class TextMessage extends StatelessWidget {
     required this.conversations,
   }) : super(key: key);
 
-  final ChatMessageVO? conversations;
+  final ContactAndMessageVO? conversations;
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +284,7 @@ class TextMessage extends StatelessWidget {
             color: BACKGROUND_COLOR,
             borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
         child: Text(
-          conversations?.message ?? "",
+          conversations?.messages ?? "",
         ));
   }
 }
@@ -310,11 +322,13 @@ class TextFieldSectionView extends StatelessWidget {
     required this.onTapAdd,
     required this.onTapTextField,
     required this.isPopUp,
+    required this.onSubmitted,
   });
 
   final Function onTapAdd;
   final Function onTapTextField;
   final bool isPopUp;
+  final ValueChanged<String> onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -343,10 +357,6 @@ class TextFieldSectionView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
-                      // style: const TextStyle(
-                      //
-                      //   fontSize: TEXT_SMALL,
-                      // ),
                       onTap: () {
                         onTapTextField();
                       },
@@ -355,6 +365,7 @@ class TextFieldSectionView extends StatelessWidget {
                           hintText: "Message...",
                           border:
                               OutlineInputBorder(borderSide: BorderSide.none)),
+                      onSubmitted: onSubmitted,
                     ),
                   ),
                   IconButton(

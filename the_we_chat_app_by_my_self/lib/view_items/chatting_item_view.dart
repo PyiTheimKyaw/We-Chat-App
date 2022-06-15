@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 
 class ChattingItemView extends StatelessWidget {
    ChattingItemView({
     Key? key,
     this.isContact=true,
+     required this.user,
   }) : super(key: key);
   bool isContact;
+  final UserVO? user;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -14,11 +17,11 @@ class ChattingItemView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
+           CircleAvatar(
             radius: MARGIN_LARGE,
             backgroundColor: Colors.white,
             backgroundImage: NetworkImage(
-                "https://sm.askmen.com/t/askmen_in/article/f/facebook-p/facebook-profile-picture-affects-chances-of-gettin_fr3n.1200.jpg"),
+                user?.profilePicture ?? ""),
           ),
           const SizedBox(
             width: MARGIN_MEDIUM,
@@ -27,8 +30,8 @@ class ChattingItemView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:  [
-                const Text(
-                  "Pyi Theim Kyaw",
+                 Text(
+                  user?.userName ?? "",
                   style: TextStyle(
                       fontSize: TEXT_REGULAR, fontWeight: FontWeight.bold),
                 ),
