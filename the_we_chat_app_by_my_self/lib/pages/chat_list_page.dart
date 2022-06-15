@@ -67,7 +67,7 @@ class ChattingHistoryListSectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      separatorBuilder: (BuildContext context, int index) => Divider(),
+      separatorBuilder: (BuildContext context, int index) => Divider(thickness: 1,),
       padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
       itemCount: userList.length ?? 0,
       scrollDirection: Axis.vertical,

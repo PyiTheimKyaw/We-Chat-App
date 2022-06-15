@@ -14,13 +14,15 @@ class MomentVO {
     String? userName;
     @JsonKey(name: 'file_type')
     String? fileType;
+    @JsonKey(name: 'time_stamp')
+    int? timeStamp;
 
     MomentVO(
       {required this.id,
       required this.description,
       required this.postFile,
       required this.profilePicture,
-      required this.userName,required this.fileType});
+      required this.userName,required this.fileType,required this.timeStamp});
 
     factory MomentVO.fromJson(Map<String,dynamic> json) => _$MomentVOFromJson(json);
     Map<String,dynamic> toJson() => _$MomentVOToJson(this);

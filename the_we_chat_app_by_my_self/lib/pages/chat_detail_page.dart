@@ -13,6 +13,7 @@ import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/time_ago.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
 
@@ -311,17 +312,27 @@ class TextMessage extends StatelessWidget {
           : CrossAxisAlignment.end,
       children: [
         Visibility(
+          visible: (conversations?.id != loggedInUser?.id),
+          child: Text(
+            TimeAgo.timeAgoSinceDateNow(conversations?.timeStamp ?? 0),
+            style: TextStyle(color: Colors.black26),
+          ),
+        ),
+        Visibility(
             visible: conversations?.file != "",
             child: Container(
               clipBehavior: Clip.none,
-              margin: EdgeInsets.only(bottom: MARGIN_MEDIUM),
+              margin: const EdgeInsets.only(bottom: MARGIN_MEDIUM),
               height: (conversations?.fileType == 'mp4') ? null : 200,
               width: (conversations?.fileType == 'mp4') ? null : 100,
               child: (conversations?.fileType == 'mp4')
                   ? FLickVideoPlayerView(
                       momentFile: conversations?.file,
                     )
-                  : Image.network(conversations?.file ?? "",fit: BoxFit.cover,),
+                  : Image.network(
+                      conversations?.file ?? "",
+                      fit: BoxFit.cover,
+                    ),
             )),
         Container(
             padding: const EdgeInsets.symmetric(

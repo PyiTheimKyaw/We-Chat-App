@@ -10,6 +10,7 @@ import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
+import 'package:the_we_chat_app_by_my_self/utils/time_ago.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/moment_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
@@ -125,11 +126,11 @@ class MomentItemSectionView extends StatelessWidget {
                       userProfile: bloc.momentsList?[index].profilePicture,
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     right: MOMENT_USER_PROFILE_HEIGHT / 2,
                     child: Text(
-                      "12 mins ago",
-                      style: TextStyle(color: Colors.black54),
+                      TimeAgo.timeAgoSinceDateNow(bloc.momentsList?[index].timeStamp ?? 0),
+                      style: const TextStyle(color: Colors.black54),
                     ),
                   ),
                 ],

@@ -61,7 +61,7 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   azlistview: ^2.0.0
   firebase_database: ^9.0.15
-
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
