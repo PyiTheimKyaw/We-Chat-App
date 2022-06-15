@@ -112,11 +112,11 @@ class WeChatModelImpl extends WeChatModel {
   }
 
   @override
-  Future<void> sendMessages(String? message, File? file, UserVO chatUser) {
+  Future<void> sendMessages(String? message, File? file,String fileType, UserVO chatUser) {
     if (file != null) {
       return mDataAgent.uploadFileToFirebase(file)
         ..then((downloadUrl) {
-          return craftNewConversion(message, downloadUrl).then((conversion) {
+          return craftNewConversion(message, downloadUrl,fileType).then((conversion) {
             return mRealTimeDataAgent
                 .sendMessageFromLoggedUser(conversion, chatUser)
                 .then((value) {
@@ -126,7 +126,7 @@ class WeChatModelImpl extends WeChatModel {
           });
         });
     } else {
-      return craftNewConversion(message, "").then((conversion) {
+      return craftNewConversion(message, "","").then((conversion) {
         return mRealTimeDataAgent
             .sendMessageFromLoggedUser(conversion, chatUser)
             .then((value) {
@@ -138,7 +138,7 @@ class WeChatModelImpl extends WeChatModel {
   }
 
   Future<ContactAndMessageVO> craftNewConversion(
-      String? message, String? fileUrl) {
+      String? message, String? fileUrl,String fileType,) {
     var timeStamp = DateTime.now().millisecondsSinceEpoch;
     var conversion = ContactAndMessageVO(
         id: mAuthModel.getLoggedInUser().id ?? "",
@@ -146,7 +146,7 @@ class WeChatModelImpl extends WeChatModel {
         profilePicture: mAuthModel.getLoggedInUser().profilePicture,
         file: fileUrl,
         timeStamp: timeStamp,
-        userName: mAuthModel.getLoggedInUser().userName);
+        userName: mAuthModel.getLoggedInUser().userName,fileType: fileType);
     return Future.value(conversion);
   }
 
@@ -156,7 +156,7 @@ class WeChatModelImpl extends WeChatModel {
   }
 
   @override
-  Stream<List<UserVO>> getChattedUser() {
+  Stream<List<String?>> getChattedUser() {
     return mRealTimeDataAgent.getChattedUser();
   }
 }

@@ -5,5 +5,6 @@ abstract class ChattingDataAgent{
   Future<void> sendMessageFromLoggedUser(ContactAndMessageVO chatMessage,UserVO chatUser);
   Future<void> sendMessageFromChatUser(ContactAndMessageVO chatMessage,UserVO chatUser);
   Stream<List<ContactAndMessageVO>> getConversion(UserVO chatUser);
-  Stream<List<UserVO>> getChattedUser();
+  Stream<List<String?>> getChattedUser();
+
 }

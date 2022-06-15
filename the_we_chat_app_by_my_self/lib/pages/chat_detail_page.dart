@@ -13,6 +13,7 @@ import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
 
 const kAnimationDuration = Duration(milliseconds: 500);
@@ -69,6 +70,7 @@ class ChatDetailPage extends StatelessWidget {
                               return Message(
                                 conversations: conversations?[index],
                                 loggedInUser: bloc.loggedInUser,
+                                chattedUser: chatUser,
                               );
                             },
                           );
@@ -137,6 +139,7 @@ class ChatDetailPage extends StatelessWidget {
                   bloc.onTapTextField();
                 },
                 isPopUp: bloc.isPopUp,
+                controller: bloc.controller,
               ),
               AnimatedSize(
                 duration: kAnimationDuration,
@@ -248,44 +251,89 @@ class Message extends StatelessWidget {
     Key? key,
     required this.conversations,
     required this.loggedInUser,
+    required this.chattedUser,
   }) : super(key: key);
   final ContactAndMessageVO? conversations;
   final UserVO? loggedInUser;
+  final UserVO? chattedUser;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: (conversations?.id != loggedInUser?.id)
-          ? MainAxisAlignment.start
-          : MainAxisAlignment.end,
-      children: [
-        TextMessage(conversations: conversations),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(
+          right: (conversations?.id != loggedInUser?.id)
+              ? MediaQuery.of(context).size.width / 3
+              : 0,
+          left: (conversations?.id != loggedInUser?.id)
+              ? 0
+              : MediaQuery.of(context).size.width / 3,
+          top: MARGIN_MEDIUM_2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: (conversations?.id != loggedInUser?.id)
+            ? MainAxisAlignment.start
+            : MainAxisAlignment.end,
+        children: [
+          Visibility(
+              visible: (conversations?.id != loggedInUser?.id),
+              child: ProfileImageView(
+                profilePicture: chattedUser?.profilePicture ?? "",
+                radius: MARGIN_MEDIUM_2 + 3,
+              )),
+          const SizedBox(
+            width: MARGIN_SMALL,
+          ),
+          Expanded(
+              child: TextMessage(
+            conversations: conversations,
+            loggedInUser: loggedInUser,
+          )),
+        ],
+      ),
     );
   }
 }
 
 class TextMessage extends StatelessWidget {
-  const TextMessage({
-    Key? key,
-    required this.conversations,
-  }) : super(key: key);
+  const TextMessage(
+      {Key? key, required this.conversations, required this.loggedInUser})
+      : super(key: key);
 
   final ContactAndMessageVO? conversations;
+  final UserVO? loggedInUser;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.of(context).size.width / 1.5,
-        margin: const EdgeInsets.only(top: MARGIN_LARGE),
-        padding: const EdgeInsets.symmetric(
-            horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
-        decoration: BoxDecoration(
-            color: BACKGROUND_COLOR,
-            borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
-        child: Text(
-          conversations?.messages ?? "",
-        ));
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: (conversations?.id != loggedInUser?.id)
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.end,
+      children: [
+        Visibility(
+            visible: conversations?.file != "",
+            child: Container(
+              clipBehavior: Clip.none,
+              margin: EdgeInsets.only(bottom: MARGIN_MEDIUM),
+              height: (conversations?.fileType == 'mp4') ? null : 200,
+              width: (conversations?.fileType == 'mp4') ? null : 100,
+              child: (conversations?.fileType == 'mp4')
+                  ? FLickVideoPlayerView(
+                      momentFile: conversations?.file,
+                    )
+                  : Image.network(conversations?.file ?? "",fit: BoxFit.cover,),
+            )),
+        Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
+            decoration: BoxDecoration(
+                color: BACKGROUND_COLOR,
+                borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
+            child: Text(
+              conversations?.messages ?? "",
+            )),
+      ],
+    );
   }
 }
 
@@ -323,12 +371,14 @@ class TextFieldSectionView extends StatelessWidget {
     required this.onTapTextField,
     required this.isPopUp,
     required this.onSubmitted,
+    required this.controller,
   });
 
   final Function onTapAdd;
   final Function onTapTextField;
   final bool isPopUp;
   final ValueChanged<String> onSubmitted;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -357,6 +407,7 @@ class TextFieldSectionView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: controller,
                       onTap: () {
                         onTapTextField();
                       },

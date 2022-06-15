@@ -23,9 +23,9 @@ abstract class WeChatModel {
 
   Stream<List<UserVO>> getContacts();
 
-  Future<void> sendMessages(String? message, File? file, UserVO chatUser);
+  Future<void> sendMessages(String? message, File? file,String fileType, UserVO chatUser);
 
   Stream<List<ContactAndMessageVO>> getConversion(UserVO chatUser);
 
-  Stream<List<UserVO>> getChattedUser();
+  Stream<List<String?>> getChattedUser();
 }

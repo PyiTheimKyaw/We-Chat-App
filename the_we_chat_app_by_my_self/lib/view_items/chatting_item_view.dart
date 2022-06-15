@@ -7,9 +7,11 @@ class ChattingItemView extends StatelessWidget {
     Key? key,
     this.isContact=true,
      required this.user,
+     required this.lastMessage,
   }) : super(key: key);
   bool isContact;
   final UserVO? user;
+  final String lastMessage;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -32,16 +34,16 @@ class ChattingItemView extends StatelessWidget {
               children:  [
                  Text(
                   user?.userName ?? "",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: TEXT_REGULAR, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: MARGIN_SMALL,
                 ),
-                const Expanded(
+                 Expanded(
                   child: Text(
-                    "What's up bro,are you okay?I'm on my way ",
-                    style: TextStyle(color: Colors.black38),
+                    lastMessage ?? "",
+                    style: const TextStyle(color: Colors.black38),
                   ),
                 ),
                 Visibility(

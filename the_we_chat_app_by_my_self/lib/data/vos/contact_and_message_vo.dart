@@ -14,6 +14,8 @@ class ContactAndMessageVO {
   int? timeStamp;
   @JsonKey(name: 'id')
   String? id;
+  @JsonKey(name: 'file_type')
+  String? fileType;
 
   ContactAndMessageVO({
     this.file,
@@ -22,6 +24,7 @@ class ContactAndMessageVO {
     this.profilePicture,
     this.timeStamp,
     this.id,
+    this.fileType,
   });
 
   factory ContactAndMessageVO.fromJson(Map<String, dynamic> json) =>

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
@@ -19,6 +20,7 @@ class ChatDetailsPageBloc extends ChangeNotifier {
   List<ContactAndMessageVO>? conversationsList;
   UserVO? loggedInUser;
   UserVO? chatUserinfo;
+  TextEditingController controller = TextEditingController();
 
   ///Dataagent
   WeChatModel mModel = WeChatModelImpl();
@@ -36,10 +38,12 @@ class ChatDetailsPageBloc extends ChangeNotifier {
 
   void onSubmitted(String? text) {
     print("On tap submitted => $text");
-
     mModel
-        .sendMessages(text, chosenFile, chatUserinfo ?? UserVO())
+        .sendMessages(text, chosenFile,chosenFileType ?? "" ,chatUserinfo ?? UserVO())
         .then((value) {
+      controller.text = '';
+      chosenFile=null;
+      _notifySafely();
       print("Success add text ");
     }).catchError((error) {
       print("Error at add text => ${error.toString()}");
@@ -62,6 +66,7 @@ class ChatDetailsPageBloc extends ChangeNotifier {
   }
 
   void onChosenFile(File? file, String fileType) {
+    print("File type => $fileType");
     chosenFile = file;
     chosenFileType = fileType;
     _notifySafely();

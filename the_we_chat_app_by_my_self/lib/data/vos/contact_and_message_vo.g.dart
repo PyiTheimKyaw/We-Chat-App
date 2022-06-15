@@ -14,6 +14,7 @@ ContactAndMessageVO _$ContactAndMessageVOFromJson(Map<String, dynamic> json) =>
       profilePicture: json['profile_picture'] as String?,
       timeStamp: json['time_stamp'] as int?,
       id: json['id'] as String?,
+      fileType: json['file_type'] as String?,
     );
 
 Map<String, dynamic> _$ContactAndMessageVOToJson(
@@ -25,4 +26,5 @@ Map<String, dynamic> _$ContactAndMessageVOToJson(
       'profile_picture': instance.profilePicture,
       'time_stamp': instance.timeStamp,
       'id': instance.id,
+      'file_type': instance.fileType,
     };

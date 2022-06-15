@@ -61,16 +61,14 @@ class RealTimeDatabaseDataAgentImpl extends ChattingDataAgent {
   }
 
   @override
-  Stream<List<UserVO>> getChattedUser() {
+  Stream<List<String?>> getChattedUser() {
     return databaseRef
         .child(contactsAndMessages)
         .child(auth.currentUser?.uid ?? "")
         .onValue
         .map((event) {
-      return event.snapshot.children.map<UserVO>((snapShot) {
-
-        return UserVO.fromJson(
-            Map<String, dynamic>.from(snapShot.value as Map));
+      return event.snapshot.children.map((snapShot) {
+        return snapShot.key;
       }).toList();
     });
   }
