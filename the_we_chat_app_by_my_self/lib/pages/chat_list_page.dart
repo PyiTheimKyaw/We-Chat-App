@@ -8,6 +8,7 @@ import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/time_ago.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/chatting_item_view.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/icons_view.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
@@ -104,11 +105,11 @@ class ChattingHistoryListSectionView extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
                 child: ChattingItemView(
                   lastMessage:
-                  // userList?[index].conversationList?.last.messages ??
+                  userList?[index].conversationList?.last.messages ??
                       "",
                   user: userList?[index],
                   isContact: false,
-                  date: 0,
+                  date: userList?[index].conversationList?.last.timeStamp ?? 0,
                 ),
               )),
         );

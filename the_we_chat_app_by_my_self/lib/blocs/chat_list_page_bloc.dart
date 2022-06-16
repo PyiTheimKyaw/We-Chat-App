@@ -20,20 +20,25 @@ class ChatListPageBloc extends ChangeNotifier {
     // _notifySafely();
     mModel.getChattedUser().listen((usersIdList) {
       print("Id list => ${usersIdList.length}");
-      filterList.clear();
-      // chattedUsersList?.clear();
+      // filterList.clear();
+      chattedUsersList?.clear();
       _notifySafely();
       usersIdList.forEach((userId) {
 
         // filterList.clear();
         // chattedUsersList?.clear();
         mModel.getUserByQRCode(userId ?? "").listen((user) {
-          filterList.add(UserVO(id: user.id,userName: user.userName,profilePicture: user.profilePicture));
-          _notifySafely();
-          chattedUsersList = filterList;
-          _notifySafely();
-          // print(("Chatted User List => ${chattedUsersList?.last.userName}"));
-          print(("Chatted User List length => ${chattedUsersList?.length}"));
+          mModel.getConversion(user).listen((event) {
+            user.conversationList=event;
+            _notifySafely();
+            filterList.add(user);
+            _notifySafely();
+            chattedUsersList = filterList;
+            _notifySafely();
+            // print(("Chatted User List => ${chattedUsersList?.last.userName}"));
+            print(("Chatted User List length => ${chattedUsersList?.length}"));
+          });
+
 
         });
       });
