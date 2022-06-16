@@ -9,29 +9,31 @@ class ChatListPageBloc extends ChangeNotifier {
 
   ///State
   List<UserVO>? chattedUsersList;
-  List<UserVO> dummyUserList = [];
+
+  Set<UserVO> filterList = {};
   List<String?>? chattedUserId;
-  List<String> dummyMessages = [];
-  List<String>? conversation;
 
   ///Model
   WeChatModel mModel = WeChatModelImpl();
 
   ChatListPageBloc() {
+    filterList = {};
+    _notifySafely();
     mModel.getChattedUser().listen((usersIdList) {
       usersIdList.forEach((userId) {
         mModel.getUserByQRCode(userId ?? "").listen((user) {
-          dummyUserList.add(user);
-          chattedUsersList = dummyUserList;
-          _notifySafely();
           mModel.getConversion(user).listen((messagesList) {
-            dummyMessages.add(messagesList.last.messages ?? "");
+            user.conversationList = messagesList;
+            filterList.add(user);
             _notifySafely();
-            conversation = dummyMessages;
+            print("Set user List ${filterList.toString()}");
+            chattedUsersList = filterList.toList();
             _notifySafely();
           });
         });
       });
+      filterList = {};
+      _notifySafely();
     });
   }
 

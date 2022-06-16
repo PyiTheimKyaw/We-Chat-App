@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 
 class LoadingView extends StatelessWidget {
@@ -14,7 +15,7 @@ class LoadingView extends StatelessWidget {
       height: MARGIN_XLARGE,
       child: LoadingIndicator(
         indicatorType: Indicator.ballBeat,
-        colors: [Colors.red],
+        colors: [PRIMARY_COLOR],
         strokeWidth: 2,
         backgroundColor: Colors.transparent,
         pathBackgroundColor: Colors.black,

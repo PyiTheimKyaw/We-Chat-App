@@ -71,7 +71,7 @@ class AddMomentsPageBloc extends ChangeNotifier {
       return Future.error("Error");
     } else {
       isLoading = true;
-      isAddNewMomentError = true;
+      isAddNewMomentError = false;
       _notifySafely();
       if (isInEditMode) {
         return _editMoment().then((value) {

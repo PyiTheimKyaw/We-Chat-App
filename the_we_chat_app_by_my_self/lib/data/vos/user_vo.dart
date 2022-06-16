@@ -1,5 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
+
 part 'user_vo.g.dart';
+
 @JsonSerializable()
 class UserVO {
   @JsonKey(name: 'id')
@@ -18,6 +21,8 @@ class UserVO {
   String? qrCode;
   @JsonKey(name: 'fcm_token')
   String? fcmToken;
+  @JsonKey(name: 'conversation_list')
+  List<ContactAndMessageVO>? conversationList;
 
   UserVO(
       {this.id,
@@ -27,8 +32,10 @@ class UserVO {
       this.email,
       this.password,
       this.qrCode,
-      this.fcmToken});
+      this.fcmToken,
+      this.conversationList});
 
-  factory UserVO.fromJson(Map<String,dynamic> json) => _$UserVOFromJson(json);
-  Map<String,dynamic> toJson() => _$UserVOToJson(this);
+  factory UserVO.fromJson(Map<String, dynamic> json) => _$UserVOFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserVOToJson(this);
 }

@@ -15,6 +15,9 @@ UserVO _$UserVOFromJson(Map<String, dynamic> json) => UserVO(
       password: json['password'] as String?,
       qrCode: json['qr_code'] as String?,
       fcmToken: json['fcm_token'] as String?,
+      conversationList: (json['conversation_list'] as List<dynamic>?)
+          ?.map((e) => ContactAndMessageVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
@@ -26,4 +29,5 @@ Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
       'password': instance.password,
       'qr_code': instance.qrCode,
       'fcm_token': instance.fcmToken,
+      'conversation_list': instance.conversationList,
     };

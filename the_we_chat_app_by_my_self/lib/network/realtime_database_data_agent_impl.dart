@@ -26,6 +26,7 @@ class RealTimeDatabaseDataAgentImpl extends ChattingDataAgent {
   @override
   Future<void> sendMessageFromLoggedUser(
       ContactAndMessageVO chatMessage, UserVO chatUser) {
+
     return databaseRef
         .child(contactsAndMessages)
         .child(auth.currentUser?.uid ?? "")

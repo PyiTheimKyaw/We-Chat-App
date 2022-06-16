@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
+import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
+import 'package:the_we_chat_app_by_my_self/utils/time_ago.dart';
 
 class ChattingItemView extends StatelessWidget {
-   ChattingItemView({
+  ChattingItemView({
     Key? key,
-    this.isContact=true,
-     required this.user,
-     required this.lastMessage,
+    this.isContact = true,
+    required this.user,
+    required this.lastMessage,
+    required this.date,
   }) : super(key: key);
   bool isContact;
   final UserVO? user;
   final String lastMessage;
+  final int date;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -19,11 +24,10 @@ class ChattingItemView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           CircleAvatar(
+          CircleAvatar(
             radius: MARGIN_LARGE,
             backgroundColor: Colors.white,
-            backgroundImage: NetworkImage(
-                user?.profilePicture ?? ""),
+            backgroundImage: NetworkImage(user?.profilePicture ?? ""),
           ),
           const SizedBox(
             width: MARGIN_MEDIUM,
@@ -31,8 +35,8 @@ class ChattingItemView extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
-                 Text(
+              children: [
+                Text(
                   user?.userName ?? "",
                   style: const TextStyle(
                       fontSize: TEXT_REGULAR, fontWeight: FontWeight.bold),
@@ -40,15 +44,14 @@ class ChattingItemView extends StatelessWidget {
                 const SizedBox(
                   height: MARGIN_SMALL,
                 ),
-                 Expanded(
+                Expanded(
                   child: Text(
                     lastMessage ?? "",
                     style: const TextStyle(color: Colors.black38),
                   ),
                 ),
                 Visibility(
-
-                  visible:isContact,
+                  visible: isContact,
                   child: const Divider(
                     thickness: 1,
                   ),
@@ -56,6 +59,7 @@ class ChattingItemView extends StatelessWidget {
               ],
             ),
           ),
+          Text(TimeAgo.dateAgo(date),style: TextStyle(color: Colors.black54),),
         ],
       ),
     );

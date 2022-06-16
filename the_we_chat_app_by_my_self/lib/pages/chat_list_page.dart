@@ -36,7 +36,6 @@ class ChatListPage extends StatelessWidget {
           ],
         ),
         body: Consumer<ChatListPageBloc>(
-
           builder: (BuildContext context, bloc, Widget? child) {
             return Container(
               color: Colors.white,
@@ -44,7 +43,8 @@ class ChatListPage extends StatelessWidget {
                 onTapUser: (user) {
                   navigateToNextScreen(context, ChatDetailPage(chatUser: user));
                 },
-                userList: bloc.chattedUsersList ?? [], messages: bloc.conversation ?? [],
+                userList: bloc.chattedUsersList ?? [],
+
               ),
             );
           },
@@ -59,15 +59,17 @@ class ChattingHistoryListSectionView extends StatelessWidget {
     Key? key,
     required this.onTapUser,
     required this.userList,
-    required this.messages,
   }) : super(key: key);
   final Function(UserVO) onTapUser;
   final List<UserVO> userList;
-  final List<String> messages;
+
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      separatorBuilder: (BuildContext context, int index) => Divider(thickness: 1,),
+      separatorBuilder: (BuildContext context, int index) => const Divider(
+        thickness: 1,
+      ),
       padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
       itemCount: userList.length ?? 0,
       scrollDirection: Axis.vertical,
@@ -93,9 +95,9 @@ class ChattingHistoryListSectionView extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
                 child: ChattingItemView(
-                  lastMessage: messages[index],
+                  lastMessage: userList[index].conversationList?.last.messages ?? "",
                   user: userList[index],
-                  isContact: false,
+                  isContact: false, date: userList[index].conversationList?.last.timeStamp ?? 0,
                 ),
               )),
         );
