@@ -35,17 +35,17 @@ class ChatListPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Selector<ChatListPageBloc,List<UserVO>?>(
-          selector: (BuildContext context,bloc ) => bloc.chattedUsersList,
-          shouldRebuild: (previous,next) => previous!=next,
-          builder: (BuildContext context, chattedUsersList, Widget? child) {
+        body: Consumer<ChatListPageBloc>(
+          // selector: (BuildContext context,bloc ) => bloc.chattedUsersList,
+          // shouldRebuild: (previous,next) => previous!=next,
+          builder: (BuildContext context, bloc, Widget? child) {
             return Container(
               color: Colors.white,
               child: ChattingHistoryListSectionView(
                 onTapUser: (user) {
                   navigateToNextScreen(context, ChatDetailPage(chatUser: user));
                 },
-                userList: chattedUsersList ?? [],
+                userList: bloc.chattedUsersList ?? [],
                 onTapDelete: (index) {
                   ChatListPageBloc bloc=Provider.of(context,listen: false);
                   bloc.onTapDelete(index);

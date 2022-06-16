@@ -15,36 +15,34 @@ class ChatListPageBloc extends ChangeNotifier {
   WeChatModel mModel = WeChatModelImpl();
 
   ChatListPageBloc() {
-    // filterList = [];
+    // filterList.clear();
+    // // chattedUsersList?.clear();
     // _notifySafely();
     mModel.getChattedUser().listen((usersIdList) {
+      print("Id list => ${usersIdList.length}");
+      filterList.clear();
+      // chattedUsersList?.clear();
+      _notifySafely();
       usersIdList.forEach((userId) {
-        filterList.clear();
-        chattedUsersList?.clear();
+
+        // filterList.clear();
+        // chattedUsersList?.clear();
         mModel.getUserByQRCode(userId ?? "").listen((user) {
-          filterList.add(user);
+          filterList.add(UserVO(id: user.id,userName: user.userName,profilePicture: user.profilePicture));
           _notifySafely();
-          // mModel.getConversion(user).listen((messagesList) {
-          //   user.conversationList = messagesList;
-          //   dummy.add(user);
-          //   filterList.add(user);
-          //   _notifySafely();
-          //   print("Set user List ${filterList.toString()}");
-          // });
           chattedUsersList = filterList;
           _notifySafely();
-        });
+          // print(("Chatted User List => ${chattedUsersList?.last.userName}"));
+          print(("Chatted User List length => ${chattedUsersList?.length}"));
 
+        });
       });
 
-      // filterList = [];
-      // _notifySafely();
     });
   }
 
   void onTapDelete(int index) {
-    mModel
-        .deleteConversation(chattedUsersList?[index] ?? UserVO());
+    mModel.deleteConversation(chattedUsersList?[index] ?? UserVO());
     _notifySafely();
   }
 
