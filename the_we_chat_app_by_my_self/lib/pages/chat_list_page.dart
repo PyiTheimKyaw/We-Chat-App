@@ -48,12 +48,12 @@ class ChatListPage extends StatelessWidget {
                 },
                 userList: bloc.chattedUsersList ?? [],
                 onTapDelete: (index) {
-                  ChatListPageBloc bloc=Provider.of(context,listen: false);
+                  ChatListPageBloc bloc = Provider.of(context, listen: false);
                   bloc.onTapDelete(index);
                 },
               ),
             );
-          }, 
+          },
         ),
       ),
     );
@@ -104,9 +104,7 @@ class ChattingHistoryListSectionView extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
                 child: ChattingItemView(
-                  lastMessage:
-                  userList?[index].conversationList?.last.messages ??
-                      "",
+                  lastMessage: userList?[index].conversationList?.last,
                   user: userList?[index],
                   isContact: false,
                   date: userList?[index].conversationList?.last.timeStamp ?? 0,

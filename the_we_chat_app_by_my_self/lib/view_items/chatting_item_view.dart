@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -14,7 +15,7 @@ class ChattingItemView extends StatelessWidget {
   }) : super(key: key);
   bool isContact;
   final UserVO? user;
-  final String? lastMessage;
+  final ContactAndMessageVO? lastMessage;
   final int date;
 
   @override
@@ -46,7 +47,11 @@ class ChattingItemView extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    lastMessage ?? "",
+                    (lastMessage?.fileType != "")
+                        ? (lastMessage?.fileType == "mp4")
+                            ? "sent a video"
+                            : "sent a photo"
+                        : lastMessage?.messages ?? "",
                     style: const TextStyle(color: Colors.black38),
                   ),
                 ),
@@ -59,7 +64,10 @@ class ChattingItemView extends StatelessWidget {
               ],
             ),
           ),
-          Text(TimeAgo.dateAgo(date),style: TextStyle(color: Colors.black54),),
+          Text(
+            TimeAgo.dateAgo(date),
+            style: TextStyle(color: Colors.black54),
+          ),
         ],
       ),
     );

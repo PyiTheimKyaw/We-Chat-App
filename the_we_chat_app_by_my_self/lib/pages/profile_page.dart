@@ -116,7 +116,7 @@ class UserFunctionSectionView extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: MARGIN_LARGE * 2),
           child: Text(
-            "The worst of alll possible universe and the best of all possible earth fsdfsdfds dfdsfsdfds fdfdsfd fdsf ee er ere ",
+            "The worst of all possible universe and the best of all possible earth",
             textAlign: TextAlign.center,
           ),
         ),

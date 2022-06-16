@@ -114,7 +114,7 @@ class ChatDetailPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  height: 170,
+                  height: null,
                   width: 170,
                   child: Stack(children: [
                     ChosenFileView(bloc.chosenFile, bloc.chosenFileType),
@@ -315,7 +315,7 @@ class TextMessage extends StatelessWidget {
           visible: (conversations?.id != loggedInUser?.id),
           child: Text(
             TimeAgo.timeAgoSinceDateNow(conversations?.timeStamp ?? 0),
-            style: TextStyle(color: Colors.black26),
+            style: const TextStyle(color: Colors.black26),
           ),
         ),
         Visibility(
@@ -323,8 +323,8 @@ class TextMessage extends StatelessWidget {
             child: Container(
               clipBehavior: Clip.none,
               margin: const EdgeInsets.only(bottom: MARGIN_MEDIUM),
-              height: (conversations?.fileType == 'mp4') ? null : 200,
-              width: (conversations?.fileType == 'mp4') ? null : 100,
+              height: (conversations?.fileType == 'mp4') ? null : null,
+              width: (conversations?.fileType == 'mp4') ? null : 200,
               child: (conversations?.fileType == 'mp4')
                   ? FLickVideoPlayerView(
                       momentFile: conversations?.file,
@@ -334,15 +334,18 @@ class TextMessage extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
             )),
-        Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
-            decoration: BoxDecoration(
-                color: BACKGROUND_COLOR,
-                borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
-            child: Text(
-              conversations?.messages ?? "",
-            )),
+        Visibility(
+          visible: conversations?.messages !="",
+          child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
+              decoration: BoxDecoration(
+                  color: BACKGROUND_COLOR,
+                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
+              child: Text(
+                conversations?.messages ?? "",
+              )),
+        ),
       ],
     );
   }

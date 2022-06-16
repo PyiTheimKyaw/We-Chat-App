@@ -24,12 +24,14 @@ class ChatListPageBloc extends ChangeNotifier {
       chattedUsersList?.clear();
       _notifySafely();
       usersIdList.forEach((userId) {
-
         // filterList.clear();
         // chattedUsersList?.clear();
         mModel.getUserByQRCode(userId ?? "").listen((user) {
           mModel.getConversion(user).listen((event) {
-            user.conversationList=event;
+            List<ContactAndMessageVO> messageList = [];
+            messageList.addAll(event.where(
+                (element) => element.messages != "" || element.fileType != ""));
+            user.conversationList = messageList;
             _notifySafely();
             filterList.add(user);
             _notifySafely();
@@ -38,11 +40,8 @@ class ChatListPageBloc extends ChangeNotifier {
             // print(("Chatted User List => ${chattedUsersList?.last.userName}"));
             print(("Chatted User List length => ${chattedUsersList?.length}"));
           });
-
-
         });
       });
-
     });
   }
 
