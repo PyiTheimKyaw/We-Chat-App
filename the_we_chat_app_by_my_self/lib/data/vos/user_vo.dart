@@ -23,6 +23,7 @@ class UserVO {
   String? fcmToken;
   @JsonKey(name: 'conversation_list')
   List<ContactAndMessageVO>? conversationList;
+  String? lastMessage;
 
   UserVO(
       {this.id,
@@ -33,7 +34,7 @@ class UserVO {
       this.password,
       this.qrCode,
       this.fcmToken,
-      this.conversationList});
+      this.conversationList,this.lastMessage});
 
   factory UserVO.fromJson(Map<String, dynamic> json) => _$UserVOFromJson(json);
 

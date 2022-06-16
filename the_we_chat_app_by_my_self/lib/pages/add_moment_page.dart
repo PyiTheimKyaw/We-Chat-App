@@ -48,6 +48,7 @@ class _AddMomentPageState extends State<AddMomentPage> {
             children: [
               Scaffold(
                 appBar: AppBar(
+                  automaticallyImplyLeading: false,
                   elevation: 0,
                   backgroundColor: PRIMARY_COLOR,
                   leading: IconButton(

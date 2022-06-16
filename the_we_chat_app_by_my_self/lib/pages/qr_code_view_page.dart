@@ -56,6 +56,8 @@ class QRCodeViewPage extends StatelessWidget {
               child: const Icon(Icons.camera_alt_outlined),
             ),
             appBar: AppBar(
+
+              automaticallyImplyLeading: false,
               backgroundColor: PRIMARY_COLOR,
               elevation: 0,
               leading: IconButton(

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/chatting_data_agent.dart';
+import 'package:the_we_chat_app_by_my_self/network/cloud_fire_store_data_agent_impl.dart';
 
 ///Nodes
 const contactsAndMessages = "contactsAndMessages";
@@ -26,7 +27,6 @@ class RealTimeDatabaseDataAgentImpl extends ChattingDataAgent {
   @override
   Future<void> sendMessageFromLoggedUser(
       ContactAndMessageVO chatMessage, UserVO chatUser) {
-
     return databaseRef
         .child(contactsAndMessages)
         .child(auth.currentUser?.uid ?? "")
@@ -72,5 +72,23 @@ class RealTimeDatabaseDataAgentImpl extends ChattingDataAgent {
         return snapShot.key;
       }).toList();
     });
+  }
+
+  @override
+  Future deleteConversationFromChatUser(UserVO chatUser) {
+    return databaseRef
+        .child(contactsAndMessages)
+        .child(chatUser.id ?? "")
+        .child(auth.currentUser?.uid ?? "")
+        .remove();
+  }
+
+  @override
+  Future deleteConversationFromLoggedInUser(UserVO chatUser) {
+    return databaseRef
+        .child(contactsAndMessages)
+        .child(auth.currentUser?.uid ?? "")
+        .child(chatUser.id ?? "")
+        .remove();
   }
 }

@@ -14,7 +14,7 @@ class ChattingItemView extends StatelessWidget {
   }) : super(key: key);
   bool isContact;
   final UserVO? user;
-  final String lastMessage;
+  final String? lastMessage;
   final int date;
 
   @override

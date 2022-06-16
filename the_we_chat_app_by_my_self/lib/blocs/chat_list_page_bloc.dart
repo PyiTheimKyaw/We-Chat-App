@@ -9,32 +9,43 @@ class ChatListPageBloc extends ChangeNotifier {
 
   ///State
   List<UserVO>? chattedUsersList;
-
-  Set<UserVO> filterList = {};
-  List<String?>? chattedUserId;
+  List<UserVO> filterList = [];
 
   ///Model
   WeChatModel mModel = WeChatModelImpl();
 
   ChatListPageBloc() {
-    filterList = {};
-    _notifySafely();
+    // filterList = [];
+    // _notifySafely();
     mModel.getChattedUser().listen((usersIdList) {
       usersIdList.forEach((userId) {
+        filterList.clear();
+        chattedUsersList?.clear();
         mModel.getUserByQRCode(userId ?? "").listen((user) {
-          mModel.getConversion(user).listen((messagesList) {
-            user.conversationList = messagesList;
-            filterList.add(user);
-            _notifySafely();
-            print("Set user List ${filterList.toString()}");
-            chattedUsersList = filterList.toList();
-            _notifySafely();
-          });
+          filterList.add(user);
+          _notifySafely();
+          // mModel.getConversion(user).listen((messagesList) {
+          //   user.conversationList = messagesList;
+          //   dummy.add(user);
+          //   filterList.add(user);
+          //   _notifySafely();
+          //   print("Set user List ${filterList.toString()}");
+          // });
+          chattedUsersList = filterList;
+          _notifySafely();
         });
+
       });
-      filterList = {};
-      _notifySafely();
+
+      // filterList = [];
+      // _notifySafely();
     });
+  }
+
+  void onTapDelete(int index) {
+    mModel
+        .deleteConversation(chattedUsersList?[index] ?? UserVO());
+    _notifySafely();
   }
 
   void _notifySafely() {

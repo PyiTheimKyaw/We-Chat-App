@@ -18,6 +18,7 @@ UserVO _$UserVOFromJson(Map<String, dynamic> json) => UserVO(
       conversationList: (json['conversation_list'] as List<dynamic>?)
           ?.map((e) => ContactAndMessageVO.fromJson(e as Map<String, dynamic>))
           .toList(),
+      lastMessage: json['lastMessage'] as String?,
     );
 
 Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
@@ -30,4 +31,5 @@ Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
       'qr_code': instance.qrCode,
       'fcm_token': instance.fcmToken,
       'conversation_list': instance.conversationList,
+      'lastMessage': instance.lastMessage,
     };

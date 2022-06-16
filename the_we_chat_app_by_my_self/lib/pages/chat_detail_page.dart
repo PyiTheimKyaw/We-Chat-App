@@ -41,18 +41,18 @@ List<String> optionLabel = [
 
 class ChatDetailPage extends StatelessWidget {
   ChatDetailPage({Key? key, required this.chatUser}) : super(key: key);
-  UserVO chatUser;
+  UserVO? chatUser;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => ChatDetailsPageBloc(chatUser),
+      create: (BuildContext context) => ChatDetailsPageBloc(chatUser ?? UserVO()),
       child: Selector<ChatDetailsPageBloc, List<ContactAndMessageVO>?>(
         selector: (BuildContext context, bloc) => bloc.conversationsList,
         shouldRebuild: (previous, next) => previous != next,
         builder: (BuildContext context, conversations, Widget? child) {
           return Scaffold(
-            appBar: getAppBar(context, name: chatUser.userName ?? ""),
+            appBar: getAppBar(context, name: chatUser?.userName ?? ""),
             body: Container(
               color: Colors.white,
               child: Column(

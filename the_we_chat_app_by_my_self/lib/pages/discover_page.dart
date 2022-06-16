@@ -14,6 +14,8 @@ class DiscoverPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
+        automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: PRIMARY_COLOR,
         centerTitle: true,

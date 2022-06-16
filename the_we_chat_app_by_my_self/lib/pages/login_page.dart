@@ -27,6 +27,8 @@ class LoginPage extends StatelessWidget {
             children: [
               Scaffold(
                 appBar: AppBar(
+
+                  automaticallyImplyLeading: false,
                   elevation: 0,
                   backgroundColor: Colors.white,
                   leading: IconButton(
@@ -48,6 +50,8 @@ class LoginPage extends StatelessWidget {
                   child: Consumer<LoginBloc>(
                     builder: (BuildContext context, bloc, Widget? child) {
                       return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const TitleSectionView(
                             title: LOGIN_VIA_EMAIL,

@@ -10,12 +10,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FCMService().listenForMessages();
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({Key? key}) : super(key: key);
-  final authenticationModel=AuthenticationModelImpl();
+  MyApp({Key? key}) : super(key: key);
+  final authenticationModel = AuthenticationModelImpl();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: (authenticationModel.isLoggedIn()) ?  StartPage() : const WelcomePage(),
+      home: (authenticationModel.isLoggedIn())
+          ? StartPage()
+          : const WelcomePage(),
     );
   }
 }

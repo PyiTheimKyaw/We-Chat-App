@@ -35,19 +35,24 @@ class ChatListPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Consumer<ChatListPageBloc>(
-          builder: (BuildContext context, bloc, Widget? child) {
+        body: Selector<ChatListPageBloc,List<UserVO>?>(
+          selector: (BuildContext context,bloc ) => bloc.chattedUsersList,
+          shouldRebuild: (previous,next) => previous!=next,
+          builder: (BuildContext context, chattedUsersList, Widget? child) {
             return Container(
               color: Colors.white,
               child: ChattingHistoryListSectionView(
                 onTapUser: (user) {
                   navigateToNextScreen(context, ChatDetailPage(chatUser: user));
                 },
-                userList: bloc.chattedUsersList ?? [],
-
+                userList: chattedUsersList ?? [],
+                onTapDelete: (index) {
+                  ChatListPageBloc bloc=Provider.of(context,listen: false);
+                  bloc.onTapDelete(index);
+                },
               ),
             );
-          },
+          }, 
         ),
       ),
     );
@@ -59,10 +64,11 @@ class ChattingHistoryListSectionView extends StatelessWidget {
     Key? key,
     required this.onTapUser,
     required this.userList,
+    required this.onTapDelete,
   }) : super(key: key);
-  final Function(UserVO) onTapUser;
-  final List<UserVO> userList;
-
+  final Function(UserVO?) onTapUser;
+  final List<UserVO>? userList;
+  final Function(int) onTapDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -71,21 +77,23 @@ class ChattingHistoryListSectionView extends StatelessWidget {
         thickness: 1,
       ),
       padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
-      itemCount: userList.length ?? 0,
+      itemCount: userList?.length ?? 0,
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onHorizontalDragStart: (dragStart) {},
           onHorizontalDragEnd: (dragEnd) {},
           onTap: () {
-            onTapUser(userList[index]);
+            onTapUser(userList?[index]);
           },
           child: Slidable(
               endActionPane:
                   ActionPane(motion: const StretchMotion(), children: [
                 SlidableAction(
                   flex: 2,
-                  onPressed: (context) {},
+                  onPressed: (context) {
+                    onTapDelete(index);
+                  },
                   backgroundColor: BACKGROUND_COLOR,
                   foregroundColor: Colors.red,
                   icon: Icons.cancel,
@@ -95,9 +103,12 @@ class ChattingHistoryListSectionView extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
                 child: ChattingItemView(
-                  lastMessage: userList[index].conversationList?.last.messages ?? "",
-                  user: userList[index],
-                  isContact: false, date: userList[index].conversationList?.last.timeStamp ?? 0,
+                  lastMessage:
+                  // userList?[index].conversationList?.last.messages ??
+                      "",
+                  user: userList?[index],
+                  isContact: false,
+                  date: 0,
                 ),
               )),
         );

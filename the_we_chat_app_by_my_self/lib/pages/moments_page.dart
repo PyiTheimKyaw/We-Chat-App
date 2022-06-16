@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
@@ -43,7 +44,7 @@ class MomentPage extends StatelessWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: PRIMARY_COLOR,
-      automaticallyImplyLeading: true,
+      // automaticallyImplyLeading: true,
       leadingWidth: MediaQuery.of(context).size.width / 4,
       // leading: GestureDetector(
       //   onTap: () {
@@ -396,11 +397,11 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
                 radius: PROFILE_HEIGHT / 2,
                 profilePicture: profilePicture,
               )),
-          const SizedBox(
-            width: PROFILE_HEIGHT,
+           SizedBox(
+            width: MediaQuery.of(context).size.width/3,
           ),
           Flexible(
-            flex: 1,
+            flex: 2,
             child: UserNameAndMomentsInfoView(
               userName: userName,
             ),
@@ -433,8 +434,8 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        const Text(
-          "Sunday September 14 , 2015 ",
+         Text(
+          DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
           style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),
         const Text(

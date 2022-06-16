@@ -28,4 +28,6 @@ abstract class WeChatModel {
   Stream<List<ContactAndMessageVO>> getConversion(UserVO chatUser);
 
   Stream<List<String?>> getChattedUser();
+
+  Future deleteConversation(UserVO chatUser);
 }

@@ -166,4 +166,13 @@ class WeChatModelImpl extends WeChatModel {
   Stream<List<String?>> getChattedUser() {
     return mRealTimeDataAgent.getChattedUser();
   }
+
+  @override
+  Future deleteConversation(UserVO chatUser) {
+    return mRealTimeDataAgent
+        .deleteConversationFromLoggedInUser(chatUser)
+        .then((value) {
+      return mRealTimeDataAgent.deleteConversationFromChatUser(chatUser);
+    });
+  }
 }
