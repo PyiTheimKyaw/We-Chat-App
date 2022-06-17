@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_installations/firebase_installations.dart';
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/fcm/fcm_service.dart';
@@ -10,6 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FCMService().listenForMessages();
+  var firebaseInstallationId=await FirebaseInstallations.id ?? "";
+  debugPrint("Firebase installation id => $firebaseInstallationId");
   runApp(MyApp());
 }
 

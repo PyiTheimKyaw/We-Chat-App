@@ -11,8 +11,8 @@ class MomentsItemView extends StatelessWidget {
     required this.moment,
     required this.onTapDelete,
     required this.onTapEdit,
-    this.isOverlay=false,
-    this.color=Colors.black,
+    this.isOverlay = false,
+    this.color = Colors.black,
   }) : super(key: key);
   final MomentVO? moment;
   final Function onTapDelete;
@@ -26,7 +26,7 @@ class MomentsItemView extends StatelessWidget {
       width: double.infinity,
       height: post,
       margin: const EdgeInsets.only(top: MARGIN_LARGE),
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
         // boxShadow: [
         //   BoxShadow(
         //     color: Colors.grey,
@@ -34,7 +34,7 @@ class MomentsItemView extends StatelessWidget {
         //     blurRadius: 6.0,
         //   ),
         // ],
-        color: (isOverlay) ? Colors.transparent:Colors.white,
+        color: (isOverlay) ? Colors.transparent : Colors.white,
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -45,16 +45,22 @@ class MomentsItemView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding:  EdgeInsets.only(left: (isOverlay) ? MARGIN_SMALL:PROFILE_HEIGHT),
+              padding: EdgeInsets.only(
+                  left: (isOverlay) ? MARGIN_SMALL : PROFILE_HEIGHT),
               child: TitleText(
                 title: moment?.userName ?? "",
                 textColor: color,
               ),
             ),
             Padding(
-              padding:  EdgeInsets.only(
-                  left: (isOverlay) ? MARGIN_SMALL:MARGIN_LARGE, top: MARGIN_MEDIUM, bottom: MARGIN_LARGE),
-              child: Text(moment?.description ?? "",style: TextStyle(color: color),),
+              padding: EdgeInsets.only(
+                  left: (isOverlay) ? MARGIN_SMALL : MARGIN_LARGE,
+                  top: MARGIN_MEDIUM,
+                  bottom: MARGIN_LARGE),
+              child: Text(
+                moment?.description ?? "",
+                style: TextStyle(color: color),
+              ),
             ),
             MomentImageView(
               fileType: moment?.fileType ?? "",
@@ -66,11 +72,16 @@ class MomentsItemView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Icon(Icons.favorite_border,color: color,),
+                Icon(
+                  Icons.favorite_border,
+                  color: color,
+                ),
                 const SizedBox(
                   width: MARGIN_SMALL,
                 ),
-                CommentButtonView(color: color,),
+                CommentButtonView(
+                  color: color,
+                ),
                 const SizedBox(
                   width: MARGIN_SMALL,
                 ),
@@ -86,6 +97,7 @@ class MomentsItemView extends StatelessWidget {
     );
   }
 }
+
 class MomentImageView extends StatelessWidget {
   MomentImageView({
     Key? key,
@@ -108,27 +120,32 @@ class MomentImageView extends StatelessWidget {
         ),
         child: (fileType == "mp4")
             ? FLickVideoPlayerView(
-          isMomentsPage: true,
-          momentFile: momentImage,
-        )
+                isMomentsPage: true,
+                momentFile: momentImage,
+              )
             : Image.network(
-          momentImage ?? "",
-          fit: BoxFit.cover,
-        ),
+                momentImage ?? "",
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }
 }
+
 class CommentButtonView extends StatelessWidget {
   CommentButtonView({
     Key? key,
     required this.color,
   }) : super(key: key);
   final Color color;
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon:  Icon(Icons.comment_outlined,color: color,),
+      icon: Icon(
+        Icons.comment_outlined,
+        color: color,
+      ),
       onPressed: () {
         print("comment print");
         Navigator.of(context).push(CommentOverlayView());

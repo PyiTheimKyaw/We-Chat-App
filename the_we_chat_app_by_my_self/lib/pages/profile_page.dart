@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/profile_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/pages/qr_code_view_page.dart';
@@ -33,6 +36,17 @@ class ProfilePage extends StatelessWidget {
                           loggedInUser: bloc.loggedInUser,
                         ));
                   },
+                  onTapProfile: () {
+                    _showBottomSheet(context, onTapView: () {},
+                        onTapChange: () async {
+                      ImagePicker picker = ImagePicker();
+                      XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        bloc.onChangeProfile(File(image.path));
+                      }
+                    });
+                  },
                 ),
                 const UserFunctionSectionView(),
                 const LogOutButtonSectionView(),
@@ -40,6 +54,48 @@ class ProfilePage extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context,
+      {required Function onTapView, required Function onTapChange}) {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(MARGIN_MEDIUM_2),
+        topRight: Radius.circular(MARGIN_MEDIUM_2),
+      )),
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: MediaQuery.of(context).size.height / 7,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(MARGIN_MEDIUM_2),
+            topRight: Radius.circular(MARGIN_MEDIUM_2),
+          ),
+          color: Colors.white,
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              ListTile(
+                onTap: () {
+                  onTapView();
+                },
+                leading: const Icon(Icons.photo_size_select_actual_outlined),
+                title: const Text("View profile picture"),
+              ),
+              ListTile(
+                onTap: () {
+                  onTapChange();
+                },
+                leading: const Icon(Icons.add_a_photo_outlined),
+                title: const Text("Edit profile picture"),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -177,10 +233,12 @@ class ProfileSectionView extends StatelessWidget {
     required this.userName,
     required this.profilePicture,
     required this.onTapQrCode,
+    required this.onTapProfile,
   }) : super(key: key);
   final String userName;
   final String profilePicture;
   final Function onTapQrCode;
+  final Function onTapProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -189,26 +247,29 @@ class ProfileSectionView extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
+          alignment: Alignment.centerLeft,
           margin: const EdgeInsets.only(bottom: PROFILE_HEIGHT * 1.2),
           width: double.infinity,
           height: MediaQuery.of(context).size.height / 4,
           color: PRIMARY_COLOR,
           child: Padding(
-            padding: const EdgeInsets.only(
-                bottom: PROFILE_HEIGHT, left: PROFILE_HEIGHT * 1.4),
+            padding: EdgeInsets.only(
+                bottom: PROFILE_HEIGHT,
+                left: MediaQuery.of(context).size.width / 2.3),
             child: GestureDetector(
               onTap: () {
                 onTapQrCode();
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Center(child: TitleText(title: userName)),
-                  const SizedBox(
-                    width: MARGIN_LARGE * 2,
-                  ),
+                  // const SizedBox(
+                  //   width: MARGIN_LARGE * 2,
+                  // ),
+                  const Spacer(),
                   const Icon(
                     Icons.qr_code_outlined,
                     color: Colors.white,
@@ -224,18 +285,23 @@ class ProfileSectionView extends StatelessWidget {
         ),
         Positioned(
           top: MediaQuery.of(context).size.height / 4 - PROFILE_HEIGHT,
-          child: Container(
-            width: 170,
-            height: 170,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
+          child: GestureDetector(
+            onTap: () {
+              onTapProfile();
+            },
+            child: Container(
+              width: 170,
+              height: 170,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              child: Center(
+                  child: ProfileImageView(
+                profilePicture: profilePicture,
+                radius: PROFILE_HEIGHT,
+              )),
             ),
-            child: Center(
-                child: ProfileImageView(
-              profilePicture: profilePicture,
-              radius: PROFILE_HEIGHT,
-            )),
           ),
         )
       ],

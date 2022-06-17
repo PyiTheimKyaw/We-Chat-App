@@ -1,18 +1,46 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
+import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 
-class ProfileBloc extends ChangeNotifier{
+class ProfileBloc extends ChangeNotifier {
   ///Model
-  AuthenticationModel mModel=AuthenticationModelImpl();
-
-
+  AuthenticationModel mModel = AuthenticationModelImpl();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  WeChatModel mWeChatModel = WeChatModelImpl();
   UserVO? loggedInUser;
-  ProfileBloc(){
-    loggedInUser=mModel.getLoggedInUser();
+  bool isDisposed = false;
+
+  ProfileBloc() {
+    loggedInUser = mModel.getLoggedInUser();
+    _notifySafely();
   }
-  Future onTapSignOut(){
-   return mModel.logOut();
+
+  Future onTapSignOut() {
+    return mModel.logOut();
+  }
+
+  void onChangeProfile(File image) {
+    mWeChatModel.uploadFileToFirebase(image).then((downloadUrl) {
+      auth.currentUser?.updatePhotoURL(downloadUrl);
+      _notifySafely();
+    });
+  }
+
+  void _notifySafely() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    isDisposed = true;
   }
 }

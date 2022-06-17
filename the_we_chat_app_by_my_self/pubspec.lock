@@ -344,6 +344,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.1+7"
+  firebase_installations:
+    dependency: "direct main"
+    description:
+      name: firebase_installations
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "16.3.6"
   firebase_messaging:
     dependency: "direct main"
     description:

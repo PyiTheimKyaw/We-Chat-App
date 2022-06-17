@@ -69,7 +69,7 @@ class _AddMomentPageState extends State<AddMomentPage> {
                           onPressed: () {
                             if (bloc.isAddNewMomentError) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                       content:
                                           Text("Post shouldn't be empty")));
                             } else {
@@ -157,7 +157,7 @@ class _AddMomentPageState extends State<AddMomentPage> {
                                               (bloc.chosenPostImage != null ||
                                                   bloc.postImage != ''),
                                           child: IconButton(
-                                            icon: Icon(Icons.close,
+                                            icon: const Icon(Icons.close,
                                                 color: Colors.red),
                                             onPressed: () {
                                               bloc.onChosenDeleteFile();
@@ -194,8 +194,6 @@ class _AddMomentPageState extends State<AddMomentPage> {
   }
 }
 
-
-
 class BottomNavigationBarSectionView extends StatelessWidget {
   BottomNavigationBarSectionView({Key? key, required this.controller})
       : super(key: key);
@@ -228,7 +226,7 @@ class BottomNavigationBarSectionView extends StatelessWidget {
                   }
                 } else if (newIndex == 4) {
                   bloc.onTapMoreToDrawerPop().whenComplete(() {
-                    Future.delayed(Duration(seconds: 1))
+                    Future.delayed(const Duration(seconds: 1))
                         .then((value) => controller.open());
                   });
                 }
@@ -301,7 +299,6 @@ class MomentsDescriptionTextFieldView extends StatelessWidget {
     required this.controller,
   }) : super(key: key);
   BottomDrawerController controller;
-
 
   @override
   Widget build(BuildContext context) {
@@ -388,42 +385,42 @@ Widget _buildBottomDrawerBody(BuildContext context) {
                   }
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.person_add_alt_1,
                 label: "Tag people",
                 iconColor: Colors.blue,
                 onTapListTile: () {},
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.emoji_emotions_outlined,
                 label: "Feeling/activity",
                 iconColor: Colors.yellow,
                 onTapListTile: () {},
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.location_on,
                 label: "Check in",
                 iconColor: Colors.orange,
                 onTapListTile: () {},
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.video_call,
                 label: "Live Video",
                 iconColor: Colors.red,
                 onTapListTile: () {},
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.text_increase_outlined,
                 label: "Background colour",
                 iconColor: Colors.greenAccent,
                 onTapListTile: () {},
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.camera_alt,
                 label: "Camera",
@@ -437,7 +434,7 @@ Widget _buildBottomDrawerBody(BuildContext context) {
                   }
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.gif_rounded,
                 label: "GIF",
@@ -452,7 +449,7 @@ Widget _buildBottomDrawerBody(BuildContext context) {
                   }
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTitlePostActionsView(
                 icon: Icons.mic_rounded,
                 label: "Host a Q&A",
