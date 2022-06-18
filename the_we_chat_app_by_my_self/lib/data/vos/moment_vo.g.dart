@@ -14,6 +14,7 @@ MomentVO _$MomentVOFromJson(Map<String, dynamic> json) => MomentVO(
       userName: json['user_name'] as String?,
       fileType: json['file_type'] as String?,
       timeStamp: json['time_stamp'] as int?,
+      userId: json['user_id'] as String?,
     );
 
 Map<String, dynamic> _$MomentVOToJson(MomentVO instance) => <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$MomentVOToJson(MomentVO instance) => <String, dynamic>{
       'user_name': instance.userName,
       'file_type': instance.fileType,
       'time_stamp': instance.timeStamp,
+      'user_id': instance.userId,
     };

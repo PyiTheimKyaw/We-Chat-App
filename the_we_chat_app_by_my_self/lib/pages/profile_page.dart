@@ -247,7 +247,7 @@ class ProfileSectionView extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.centerRight,
           margin: const EdgeInsets.only(bottom: PROFILE_HEIGHT * 1.2),
           width: double.infinity,
           height: MediaQuery.of(context).size.height / 4,
@@ -255,19 +255,19 @@ class ProfileSectionView extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(
                 bottom: PROFILE_HEIGHT,
-                left: MediaQuery.of(context).size.width / 2.3),
+              left: MediaQuery.of(context).size.width/3
+                ),
             child: GestureDetector(
               onTap: () {
                 onTapQrCode();
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
+
                 children: [
                   Center(child: TitleText(title: userName)),
                   // const SizedBox(
-                  //   width: MARGIN_LARGE * 2,
+                  //   width: MARGIN_LARGE * 4,
                   // ),
                   const Spacer(),
                   const Icon(

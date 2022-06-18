@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -19,6 +20,8 @@ class MomentsItemView extends StatelessWidget {
   final Function onTapEdit;
   final bool isOverlay;
   final Color color;
+
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +88,12 @@ class MomentsItemView extends StatelessWidget {
                 const SizedBox(
                   width: MARGIN_SMALL,
                 ),
-                MoreButtonView(
-                  onTapEdit: onTapEdit,
-                  onTapDelete: onTapDelete,
+                Visibility(
+                  visible: moment?.userId == auth.currentUser?.uid,
+                  child: MoreButtonView(
+                    onTapEdit: onTapEdit,
+                    onTapDelete: onTapDelete,
+                  ),
                 )
               ],
             )

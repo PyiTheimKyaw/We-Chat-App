@@ -46,7 +46,8 @@ class ChatDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => ChatDetailsPageBloc(chatUser ?? UserVO()),
+      create: (BuildContext context) =>
+          ChatDetailsPageBloc(chatUser ?? UserVO()),
       child: Selector<ChatDetailsPageBloc, List<ContactAndMessageVO>?>(
         selector: (BuildContext context, bloc) => bloc.conversationsList,
         shouldRebuild: (previous, next) => previous != next,
@@ -306,7 +307,10 @@ class TextMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      // mainAxisSize: MainAxisSize.min,
+      // mainAxisAlignment: (conversations?.id != loggedInUser?.id)
+      //     ? MainAxisAlignment.start
+      //     : MainAxisAlignment.end,
       crossAxisAlignment: (conversations?.id != loggedInUser?.id)
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.end,
@@ -318,13 +322,81 @@ class TextMessage extends StatelessWidget {
             style: const TextStyle(color: Colors.black26),
           ),
         ),
+        (conversations?.messages != "" && conversations?.file != "")
+            ? MessageAndFileNotNullSectionView(
+                conversations: conversations,
+                loggedInUser: loggedInUser,
+              )
+            : MessageOrFileNotNullSectionView(conversations: conversations),
+      ],
+    );
+  }
+}
+
+class MessageAndFileNotNullSectionView extends StatelessWidget {
+  const MessageAndFileNotNullSectionView({
+    Key? key,
+    required this.conversations,
+    required this.loggedInUser,
+  }) : super(key: key);
+
+  final ContactAndMessageVO? conversations;
+  final UserVO? loggedInUser;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: null,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+          color: BACKGROUND_COLOR,
+          borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
+      child: Column(
+        crossAxisAlignment: (conversations?.id != loggedInUser?.id)
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
+        children: [
+          (conversations?.fileType == 'mp4')
+              ? FLickVideoPlayerView(
+                  momentFile: conversations?.file,
+                )
+              : Image.network(
+                  conversations?.file ?? "",
+                  fit: BoxFit.cover,
+                ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              conversations?.messages ?? "",
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class MessageOrFileNotNullSectionView extends StatelessWidget {
+  const MessageOrFileNotNullSectionView({
+    Key? key,
+    required this.conversations,
+  }) : super(key: key);
+
+  final ContactAndMessageVO? conversations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
         Visibility(
             visible: conversations?.file != "",
             child: Container(
-              clipBehavior: Clip.none,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
               margin: const EdgeInsets.only(bottom: MARGIN_MEDIUM),
               height: (conversations?.fileType == 'mp4') ? null : null,
-              width: (conversations?.fileType == 'mp4') ? null : 200,
+              width: (conversations?.fileType == 'mp4') ? 200 : 200,
               child: (conversations?.fileType == 'mp4')
                   ? FLickVideoPlayerView(
                       momentFile: conversations?.file,
@@ -335,16 +407,17 @@ class TextMessage extends StatelessWidget {
                     ),
             )),
         Visibility(
-          visible: conversations?.messages !="",
+          visible: conversations?.messages != "",
           child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
-              decoration: BoxDecoration(
-                  color: BACKGROUND_COLOR,
-                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
-              child: Text(
-                conversations?.messages ?? "",
-              )),
+            padding: const EdgeInsets.symmetric(
+                horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
+            decoration: BoxDecoration(
+                color: BACKGROUND_COLOR,
+                borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2)),
+            child: Text(
+              conversations?.messages ?? "",
+            ),
+          ),
         ),
       ],
     );

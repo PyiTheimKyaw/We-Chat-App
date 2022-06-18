@@ -7,7 +7,7 @@ import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 abstract class WeChatModel {
   Stream<List<MomentVO>> getMoments();
 
-  Future<void> addNewMoment(String description, File? file, String fileType);
+  Future<void> addNewMoment(String description, File? file, String fileType,String userId);
 
   Future<void> editMoment(MomentVO editMoment, File? file, String fileType);
 

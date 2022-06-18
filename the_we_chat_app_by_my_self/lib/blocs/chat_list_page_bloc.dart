@@ -15,17 +15,12 @@ class ChatListPageBloc extends ChangeNotifier {
   WeChatModel mModel = WeChatModelImpl();
 
   ChatListPageBloc() {
-    // filterList.clear();
-    // // chattedUsersList?.clear();
-    // _notifySafely();
     mModel.getChattedUser().listen((usersIdList) {
       print("Id list => ${usersIdList.length}");
-      // filterList.clear();
+
       chattedUsersList?.clear();
       _notifySafely();
       usersIdList.forEach((userId) {
-        // filterList.clear();
-        // chattedUsersList?.clear();
         mModel.getUserByQRCode(userId ?? "").listen((user) {
           mModel.getConversion(user).listen((event) {
             List<ContactAndMessageVO> messageList = [];

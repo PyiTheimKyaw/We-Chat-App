@@ -88,8 +88,8 @@ class AddMomentsPageBloc extends ChangeNotifier {
   }
 
   Future<dynamic> _addNewMoment() {
-    return mModel.addNewMoment(
-        textEditingController.text, chosenPostImage, fileType ?? "");
+    return mModel.addNewMoment(textEditingController.text, chosenPostImage,
+        fileType ?? "", _loggedInUser?.id ?? "");
   }
 
   Future<dynamic> _editMoment() {

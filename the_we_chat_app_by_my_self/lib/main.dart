@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FCMService().listenForMessages();
-  var firebaseInstallationId=await FirebaseInstallations.id ?? "";
+  var firebaseInstallationId = await FirebaseInstallations.id ?? "";
   debugPrint("Firebase installation id => $firebaseInstallationId");
   runApp(MyApp());
 }

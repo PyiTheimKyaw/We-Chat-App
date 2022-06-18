@@ -33,21 +33,22 @@ class WeChatModelImpl extends WeChatModel {
   }
 
   @override
-  Future<void> addNewMoment(String description, File? file, String fileType) {
+  Future<void> addNewMoment(
+      String description, File? file, String fileType, String userId) {
     if (file != null) {
       return mDataAgent
           .uploadFileToFirebase(file)
           .then((downloadUrl) =>
-              craftNewMomentVO(description, downloadUrl, fileType))
+              craftNewMomentVO(description, downloadUrl, fileType, userId))
           .then((newMoment) => mDataAgent.addNewMoment(newMoment));
     } else {
-      return craftNewMomentVO(description, "", "")
+      return craftNewMomentVO(description, "", "", userId)
           .then((newMoment) => mDataAgent.addNewMoment(newMoment));
     }
   }
 
   Future<MomentVO> craftNewMomentVO(
-      String description, String fileUrl, String fileType) {
+      String description, String fileUrl, String fileType, String userId) {
     var newMoment = MomentVO(
         id: DateTime.now().millisecondsSinceEpoch,
         description: description,
@@ -55,7 +56,8 @@ class WeChatModelImpl extends WeChatModel {
         profilePicture: mAuthModel.getLoggedInUser().profilePicture,
         userName: mAuthModel.getLoggedInUser().userName,
         fileType: fileType,
-        timeStamp: DateTime.now().millisecondsSinceEpoch);
+        timeStamp: DateTime.now().millisecondsSinceEpoch,
+        userId: userId);
     return Future.value(newMoment);
   }
 
