@@ -1,16 +1,14 @@
+import 'package:empty_widget/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/chat_list_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/chat_detail_page.dart';
-import 'package:the_we_chat_app_by_my_self/pages/discover_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
-import 'package:the_we_chat_app_by_my_self/utils/time_ago.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/chatting_item_view.dart';
-import 'package:the_we_chat_app_by_my_self/view_items/icons_view.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/title_text.dart';
 
@@ -42,16 +40,28 @@ class ChatListPage extends StatelessWidget {
           builder: (BuildContext context, bloc, Widget? child) {
             return Container(
               color: Colors.white,
-              child: ChattingHistoryListSectionView(
-                onTapUser: (user) {
-                  navigateToNextScreen(context, ChatDetailPage(chatUser: user));
-                },
-                userList: bloc.chattedUsersList ?? [],
-                onTapDelete: (index) {
-                  ChatListPageBloc bloc = Provider.of(context, listen: false);
-                  bloc.onTapDelete(index);
-                },
-              ),
+              child: (bloc.chattedUsersList?.length == 0 ||
+                      bloc.chattedUsersList == null)
+                  ? Center(
+                      child: EmptyWidget(
+                      image: "images/empty_chat.png",
+                      title: "Start a conversation with your friends",
+                      hideBackgroundAnimation: true,
+                      titleTextStyle: const TextStyle(
+                          fontSize: TEXT_REGULAR, color: Colors.black45),
+                    ))
+                  : ChattingHistoryListSectionView(
+                      onTapUser: (user) {
+                        navigateToNextScreen(
+                            context, ChatDetailPage(chatUser: user));
+                      },
+                      userList: bloc.chattedUsersList ?? [],
+                      onTapDelete: (index) {
+                        ChatListPageBloc bloc =
+                            Provider.of(context, listen: false);
+                        bloc.onTapDelete(index);
+                      },
+                    ),
             );
           },
         ),

@@ -1,4 +1,5 @@
 import 'package:azlistview/azlistview.dart';
+import 'package:empty_widget/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/contact_bloc.dart';
@@ -56,7 +57,15 @@ class ContactPage extends StatelessWidget {
                   color: Colors.white,
                   child: Consumer<ContactTabBloc>(
                     builder: (BuildContext context, bloc, Widget? child) {
-                      return Stack(
+                      return(bloc.filterList?.length == 0) ? Container(
+                        child: EmptyWidget(
+                          hideBackgroundAnimation: true,
+                          image: "images/add_friend.jpg",
+                          title: "Add your besties ",
+                          titleTextStyle: const TextStyle(
+                              fontSize: TEXT_REGULAR, color: Colors.black45),
+                        )
+                      ) : Stack(
                         children: [
                           ContactSection(
                               user: bloc.filterList ?? [],

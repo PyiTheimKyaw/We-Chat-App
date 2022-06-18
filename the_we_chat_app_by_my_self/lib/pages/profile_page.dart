@@ -247,37 +247,42 @@ class ProfileSectionView extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.center,
           margin: const EdgeInsets.only(bottom: PROFILE_HEIGHT * 1.2),
           width: double.infinity,
           height: MediaQuery.of(context).size.height / 4,
           color: PRIMARY_COLOR,
           child: Padding(
-            padding: EdgeInsets.only(
-                bottom: PROFILE_HEIGHT,
-              left: MediaQuery.of(context).size.width/3
-                ),
+            padding: const EdgeInsets.only(
+              bottom: PROFILE_HEIGHT,
+              // left: MediaQuery.of(context).size.width/3
+            ),
             child: GestureDetector(
               onTap: () {
                 onTapQrCode();
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(child: TitleText(title: userName)),
-                  // const SizedBox(
-                  //   width: MARGIN_LARGE * 4,
-                  // ),
-                  const Spacer(),
-                  const Icon(
-                    Icons.qr_code_outlined,
-                    color: Colors.white,
+                  Expanded(child: Container()),
+                  Expanded(flex: 3, child: TitleText(title: userName)),
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: const [
+                        Icon(
+                          Icons.qr_code_outlined,
+                          color: Colors.white,
+                        ),
+                        Icon(
+                          Icons.chevron_right_outlined,
+                          color: Colors.white,
+                        )
+                      ],
+                    ),
                   ),
-                  const Icon(
-                    Icons.chevron_right_outlined,
-                    color: Colors.white,
-                  )
                 ],
               ),
             ),

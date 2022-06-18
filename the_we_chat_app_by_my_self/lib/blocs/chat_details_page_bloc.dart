@@ -37,6 +37,7 @@ class ChatDetailsPageBloc extends ChangeNotifier {
   }
 
   void onSubmitted(String? text) {
+
     print("On tap submitted => $text");
     mModel
         .sendMessages(text, chosenFile,chosenFileType ?? "" ,chatUserinfo ?? UserVO())

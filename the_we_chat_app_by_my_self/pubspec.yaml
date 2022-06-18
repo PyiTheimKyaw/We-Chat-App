@@ -63,6 +63,7 @@ dependencies:
   firebase_database: ^9.0.15
   intl: ^0.17.0
   firebase_installations: ^16.3.6
+  empty_widget: ^0.0.5
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +92,8 @@ flutter:
   assets:
    - images/welcome_screen_background.jpg
    - assets/
+   - images/empty_chat.png
+   - images/add_friend.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
