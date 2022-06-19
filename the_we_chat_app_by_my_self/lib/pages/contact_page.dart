@@ -57,14 +57,12 @@ class ContactPage extends StatelessWidget {
                   color: Colors.white,
                   child: Consumer<ContactTabBloc>(
                     builder: (BuildContext context, bloc, Widget? child) {
-                      return(bloc.filterList?.length == 0) ? Container(
-                        child: EmptyWidget(
-                          hideBackgroundAnimation: true,
-                          image: "images/add_friend.jpg",
-                          title: "Add your besties ",
-                          titleTextStyle: const TextStyle(
-                              fontSize: TEXT_REGULAR, color: Colors.black45),
-                        )
+                      return(bloc.filterList?.length == 0) ? EmptyWidget(
+                        hideBackgroundAnimation: true,
+                        image: "images/add_friend.jpg",
+                        title: "Add your besties ",
+                        titleTextStyle: const TextStyle(
+                            fontSize: TEXT_REGULAR, color: Colors.black45),
                       ) : Stack(
                         children: [
                           ContactSection(
