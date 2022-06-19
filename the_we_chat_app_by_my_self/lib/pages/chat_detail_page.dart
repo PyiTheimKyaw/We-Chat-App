@@ -10,9 +10,11 @@ import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
+import 'package:the_we_chat_app_by_my_self/pages/preview_image.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/strings.dart';
+import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 import 'package:the_we_chat_app_by_my_self/utils/time_ago.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/profile_image_view.dart';
 import 'package:the_we_chat_app_by_my_self/widgets/flick_video_player.dart';
@@ -55,8 +57,11 @@ class ChatDetailPage extends StatelessWidget {
           return Scaffold(
             appBar: getAppBar(context, name: chatUser?.userName ?? ""),
             body: Container(
+              alignment: Alignment.bottomCenter,
               color: Colors.white,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+
                 children: [
                   Expanded(
                     child: Padding(
@@ -308,9 +313,9 @@ class TextMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       // mainAxisSize: MainAxisSize.min,
-      // mainAxisAlignment: (conversations?.id != loggedInUser?.id)
-      //     ? MainAxisAlignment.start
-      //     : MainAxisAlignment.end,
+      mainAxisAlignment: (conversations?.id != loggedInUser?.id)
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
       crossAxisAlignment: (conversations?.id != loggedInUser?.id)
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.end,
@@ -360,9 +365,16 @@ class MessageAndFileNotNullSectionView extends StatelessWidget {
               ? FLickVideoPlayerView(
                   momentFile: conversations?.file,
                 )
-              : Image.network(
-                  conversations?.file ?? "",
-                  fit: BoxFit.cover,
+              : GestureDetector(
+                  onTap: () {
+                    print("Tap");
+                    navigateToNextScreen(context,
+                        PreviewImage(photoUrl: conversations?.file ?? ""));
+                  },
+                  child: Image.network(
+                    conversations?.file ?? "",
+                    fit: BoxFit.cover,
+                  ),
                 ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -401,9 +413,16 @@ class MessageOrFileNotNullSectionView extends StatelessWidget {
                   ? FLickVideoPlayerView(
                       momentFile: conversations?.file,
                     )
-                  : Image.network(
-                      conversations?.file ?? "",
-                      fit: BoxFit.cover,
+                  : GestureDetector(
+                      onTap: () {
+                        print("Tap");
+                        navigateToNextScreen(context,
+                            PreviewImage(photoUrl: conversations?.file ?? ""));
+                      },
+                      child: Image.network(
+                        conversations?.file ?? "",
+                        fit: BoxFit.cover,
+                      ),
                     ),
             )),
         Visibility(

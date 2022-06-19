@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/profile_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/pages/preview_image.dart';
 import 'package:the_we_chat_app_by_my_self/pages/qr_code_view_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/welcome_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
@@ -37,8 +38,13 @@ class ProfilePage extends StatelessWidget {
                         ));
                   },
                   onTapProfile: () {
-                    _showBottomSheet(context, onTapView: () {},
-                        onTapChange: () async {
+                    _showBottomSheet(context, onTapView: () {
+                      navigateToNextScreen(
+                          context,
+                          PreviewImage(
+                              photoUrl:
+                                  bloc.loggedInUser?.profilePicture ?? ""));
+                    }, onTapChange: () async {
                       ImagePicker picker = ImagePicker();
                       XFile? image =
                           await picker.pickImage(source: ImageSource.gallery);
