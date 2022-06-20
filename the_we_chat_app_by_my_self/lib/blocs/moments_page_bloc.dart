@@ -16,12 +16,16 @@ class MomentsPageBloc extends ChangeNotifier {
   List<MomentVO>? momentsList;
   UserVO? loggedInUser;
 
-
   ///Models
   WeChatModel mWeChatModel = WeChatModelImpl();
-  AuthenticationModel mAuthModel=AuthenticationModelImpl();
+  AuthenticationModel mAuthModel = AuthenticationModelImpl();
+
   MomentsPageBloc() {
-    loggedInUser=mAuthModel.getLoggedInUser();
+    loggedInUser = mAuthModel.getLoggedInUser();
+    mWeChatModel.getUserByQRCode(loggedInUser?.id ?? "").listen((user) {
+      loggedInUser=user;
+      _notifySafely();
+    });
     mWeChatModel.getMoments().listen((moments) {
       momentsList = moments;
       if (!isDisposed) {
@@ -34,8 +38,9 @@ class MomentsPageBloc extends ChangeNotifier {
     mWeChatModel.deleteMoment(momentId);
   }
 
-  void onChosenCoverImage(File? imageFile) {
-    chosenCoverImage = imageFile;
+  void onChosenCoverImage(File imageFile) {
+    chosenCoverImage=imageFile;
+    mAuthModel.changeCoverPicture(loggedInUser ?? UserVO(), imageFile);
     _notifySafely();
   }
 

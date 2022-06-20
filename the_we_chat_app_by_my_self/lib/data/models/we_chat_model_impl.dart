@@ -177,4 +177,6 @@ class WeChatModelImpl extends WeChatModel {
       return mRealTimeDataAgent.deleteConversationFromChatUser(chatUser);
     });
   }
+
+
 }

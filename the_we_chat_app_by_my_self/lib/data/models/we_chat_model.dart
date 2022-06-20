@@ -30,4 +30,5 @@ abstract class WeChatModel {
   Stream<List<String?>> getChattedUser();
 
   Future deleteConversation(UserVO chatUser);
+
 }

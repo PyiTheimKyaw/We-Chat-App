@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -85,15 +86,17 @@ class MomentItemSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MomentsPageBloc>(
-      builder: (BuildContext context, bloc, Widget? child) {
+    return Selector<MomentsPageBloc, List<MomentVO>?>(
+      selector: (context, bloc) => bloc.momentsList,
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (BuildContext context, momentsList, Widget? child) {
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(
             vertical: MARGIN_XLARGE * 2,
           ),
-          itemCount: bloc.momentsList?.length ?? 0,
+          itemCount: momentsList?.length ?? 0,
           itemBuilder: (BuildContext context, int index) {
             return Padding(
               padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
@@ -101,11 +104,13 @@ class MomentItemSectionView extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                          MomentOverlayView(moment: bloc.momentsList?[index]));
+                      Navigator.of(context)
+                          .push(MomentOverlayView(moment: momentsList?[index]));
                     },
                     child: MomentsFavouriteAndCommentsView(
                       onTapDelete: (momentId) {
+                        MomentsPageBloc bloc =
+                            Provider.of(context, listen: false);
                         bloc.onTapDelete(momentId);
                       },
                       onTapEdit: (momentId) {
@@ -118,19 +123,20 @@ class MomentItemSectionView extends StatelessWidget {
                               ));
                         });
                       },
-                      momentVO: bloc.momentsList?[index],
+                      momentVO: momentsList?[index],
                     ),
                   ),
                   Positioned(
                     left: MOMENT_USER_PROFILE_HEIGHT / 2,
                     child: MomentUserProfileView(
-                      userProfile: bloc.momentsList?[index].profilePicture,
+                      userProfile: momentsList?[index].profilePicture,
                     ),
                   ),
                   Positioned(
                     right: MOMENT_USER_PROFILE_HEIGHT / 2,
                     child: Text(
-                      TimeAgo.timeAgoSinceDateNow(bloc.momentsList?[index].timeStamp ?? 0),
+                      TimeAgo.timeAgoSinceDateNow(
+                          momentsList?[index].timeStamp ?? 0),
                       style: const TextStyle(color: Colors.black54),
                     ),
                   ),
@@ -323,19 +329,20 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).size.height / 3 - PROFILE_HEIGHT / 2;
     const left = PROFILE_HEIGHT / 1.5;
-    return Consumer<MomentsPageBloc>(
-      builder: (BuildContext context, bloc, Widget? child) {
+    return Selector<MomentsPageBloc, UserVO?>(
+      selector: (context, bloc) => bloc.loggedInUser,
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (BuildContext context, loggedInUser, Widget? child) {
         return GestureDetector(
-          onTap: (bloc.chosenCoverImage == null)
-              ? () async {
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    bloc.onChosenCoverImage(File(image.path));
-                  }
-                }
-              : null,
+          onTap: () async {
+            final ImagePicker picker = ImagePicker();
+            final XFile? image =
+                await picker.pickImage(source: ImageSource.gallery);
+            if (image != null) {
+              MomentsPageBloc bloc = Provider.of(context, listen: false);
+              bloc.onChosenCoverImage(File(image.path));
+            }
+          },
           child: Stack(
             // alignment: Alignment.center,
             clipBehavior: Clip.none,
@@ -343,25 +350,17 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
               Container(
                 height: MediaQuery.of(context).size.height / 3,
                 decoration: BoxDecoration(
-                  color: Colors.black38,
-                  image: (bloc.chosenCoverImage != null)
-                      ? DecorationImage(
-                          image: FileImage(
-                            bloc.chosenCoverImage ?? File(""),
-                          ),
-                          fit: BoxFit.cover)
-                      : const DecorationImage(
-                          image: NetworkImage(
-                              "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640"),
-                          fit: BoxFit.cover),
-                ),
+                    color: Colors.black38,
+                    image: DecorationImage(
+                        image: NetworkImage(loggedInUser?.coverPicture ?? ""),
+                        fit: BoxFit.cover)),
               ),
               Positioned(
                 top: top,
                 left: left,
                 child: ProfileImageAndUserNameSectionView(
-                  profilePicture: bloc.loggedInUser?.profilePicture ?? "",
-                  userName: bloc.loggedInUser?.userName ?? "",
+                  profilePicture: loggedInUser?.profilePicture ?? "",
+                  userName: loggedInUser?.userName ?? "",
                 ),
               )
             ],
@@ -397,8 +396,8 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
                 radius: PROFILE_HEIGHT / 2,
                 profilePicture: profilePicture,
               )),
-           SizedBox(
-            width: MediaQuery.of(context).size.width/3,
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 3,
           ),
           Flexible(
             flex: 2,
@@ -434,7 +433,7 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-         Text(
+        Text(
           DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
           style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),

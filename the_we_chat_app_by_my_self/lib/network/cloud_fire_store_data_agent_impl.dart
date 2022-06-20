@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -93,15 +92,8 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
     }).then((user) {
       newUser.id = user?.uid ?? "";
       newUser.qrCode = user?.uid ?? "";
-      _addNewUser(newUser);
+      addNewUser(newUser);
     });
-  }
-
-  Future<void> _addNewUser(UserVO newUser) {
-    return _fireStore
-        .collection(userCollectionsPath)
-        .doc(newUser.id.toString())
-        .set(newUser.toJson());
   }
 
   @override
@@ -173,5 +165,13 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         return UserVO.fromJson(document.data());
       }).toList();
     });
+  }
+
+  @override
+  Future<void> addNewUser(UserVO newUser) {
+    return _fireStore
+        .collection(userCollectionsPath)
+        .doc(newUser.id.toString())
+        .set(newUser.toJson());
   }
 }

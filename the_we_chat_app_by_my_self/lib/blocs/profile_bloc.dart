@@ -26,10 +26,7 @@ class ProfileBloc extends ChangeNotifier {
   }
 
   void onChangeProfile(File image) {
-    mWeChatModel.uploadFileToFirebase(image).then((downloadUrl) {
-      auth.currentUser?.updatePhotoURL(downloadUrl);
-      _notifySafely();
-    });
+    mModel.changeProfilePicture(loggedInUser ?? UserVO(), image);
   }
 
   void _notifySafely() {

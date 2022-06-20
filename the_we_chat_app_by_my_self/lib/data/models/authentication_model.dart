@@ -8,4 +8,6 @@ abstract class AuthenticationModel{
   bool isLoggedIn();
   Future<void> logOut();
   UserVO getLoggedInUser();
+  Future<void> changeCoverPicture(UserVO newUser,File coverImage);
+  Future<void> changeProfilePicture(UserVO newUser,File profileImage);
 }

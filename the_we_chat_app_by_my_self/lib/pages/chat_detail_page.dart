@@ -61,7 +61,6 @@ class ChatDetailPage extends StatelessWidget {
               color: Colors.white,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-
                 children: [
                   Expanded(
                     child: Padding(
@@ -69,13 +68,15 @@ class ChatDetailPage extends StatelessWidget {
                           horizontal: MARGIN_MEDIUM_2,
                           vertical: MARGIN_MEDIUM_2),
                       child: ListView.builder(
+                        reverse: true,
                         itemCount: conversations?.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
                           return Consumer<ChatDetailsPageBloc>(
                             builder:
                                 (BuildContext context, bloc, Widget? child) {
                               return Message(
-                                conversations: conversations?[index],
+                                conversations:
+                                    conversations?.reversed.elementAt(index),
                                 loggedInUser: bloc.loggedInUser,
                                 chattedUser: chatUser,
                               );
