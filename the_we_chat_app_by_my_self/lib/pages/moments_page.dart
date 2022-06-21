@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/favourite_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -132,6 +133,12 @@ class MomentItemSectionView extends StatelessWidget {
                         bloc.onChangeComment(text);
                       },
                       commentsList: bloc.momentsList?[index].comments,
+                      onTapReact: () {
+                        bloc.onTapReact(
+                            bloc.momentsList?[index].id ?? 0, index);
+                      },
+                      isReacted: bloc.momentsList?[index].isReacted ?? false,
+                      userList: bloc.momentsList?[index].favourites,
                     ),
                   ),
                   Positioned(
@@ -176,21 +183,27 @@ class MomentUserProfileView extends StatelessWidget {
 }
 
 class MomentsFavouriteAndCommentsView extends StatelessWidget {
-  MomentsFavouriteAndCommentsView(
-      {Key? key,
-      required this.momentVO,
-      required this.onTapDelete,
-      required this.onTapEdit,
-      required this.onTapSend,
-      required this.onChanged,
-      required this.commentsList})
-      : super(key: key);
+  MomentsFavouriteAndCommentsView({
+    Key? key,
+    required this.momentVO,
+    required this.onTapDelete,
+    required this.onTapEdit,
+    required this.onTapSend,
+    required this.onChanged,
+    required this.commentsList,
+    required this.onTapReact,
+    required this.isReacted,
+    required this.userList,
+  }) : super(key: key);
   final MomentVO? momentVO;
   final Function(int) onTapDelete;
   final Function(int) onTapEdit;
   Function(String) onChanged;
   Function onTapSend;
+  Function onTapReact;
   final List<CommentVO>? commentsList;
+  final bool isReacted;
+  final List<FavouriteVO>? userList;
 
   @override
   Widget build(BuildContext context) {
@@ -206,12 +219,15 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
           moment: momentVO,
           onTapSend: onTapSend,
           onChanged: onChanged,
+          onTapReact: onTapReact,
+          isReacted: isReacted,
         ),
         const SizedBox(
           height: 4,
         ),
         CommentsAndFavouriteView(
           commentsList: commentsList,
+          userList: userList,
         ),
       ],
     );
@@ -222,8 +238,10 @@ class CommentsAndFavouriteView extends StatelessWidget {
   const CommentsAndFavouriteView({
     Key? key,
     required this.commentsList,
+    required this.userList,
   }) : super(key: key);
   final List<CommentVO>? commentsList;
+  final List<FavouriteVO>? userList;
 
   @override
   Widget build(BuildContext context) {
@@ -245,14 +263,16 @@ class CommentsAndFavouriteView extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         itemCount: 1,
         itemBuilder: (BuildContext context, int index) {
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const FavouriteView(),
+              FavouriteView(
+                userList: userList,
+              ),
               const SizedBox(
                 height: MARGIN_SMALL,
               ),
@@ -322,26 +342,43 @@ class CommentView extends StatelessWidget {
 class FavouriteView extends StatelessWidget {
   const FavouriteView({
     Key? key,
+    required this.userList,
   }) : super(key: key);
+  final List<FavouriteVO>? userList;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Icon(
-          Icons.favorite,
-          size: TEXT_REGULAR,
-        ),
-        SizedBox(
-          width: MARGIN_SMALL,
-        ),
-        Expanded(
-            child: Text(
-          "Steves,Davies,John,Jones,Steves,Davies,John,Jones,Steves,Davies,John,Jones, ",
-          style: TextStyle(fontWeight: FontWeight.w500),
-        )),
-      ],
+    return Visibility(
+      visible: userList?.length != 0,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.favorite,
+            size: TEXT_REGULAR,
+          ),
+          const SizedBox(
+            width: MARGIN_SMALL,
+          ),
+          Container(
+            height: 30,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
+              itemCount: userList?.length ?? 0,
+              itemBuilder: (BuildContext context, int index) {
+                return Text(
+                  userList?[index].userName ?? "",
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Text(","),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

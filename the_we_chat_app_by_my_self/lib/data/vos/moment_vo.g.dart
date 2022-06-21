@@ -15,6 +15,13 @@ MomentVO _$MomentVOFromJson(Map<String, dynamic> json) => MomentVO(
       fileType: json['file_type'] as String?,
       timeStamp: json['time_stamp'] as int?,
       userId: json['user_id'] as String?,
+      comments: (json['comments'] as List<dynamic>?)
+          ?.map((e) => CommentVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      favourites: (json['favourites'] as List<dynamic>?)
+          ?.map((e) => FavouriteVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      isReacted: json['isReacted'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$MomentVOToJson(MomentVO instance) => <String, dynamic>{
@@ -26,4 +33,7 @@ Map<String, dynamic> _$MomentVOToJson(MomentVO instance) => <String, dynamic>{
       'file_type': instance.fileType,
       'time_stamp': instance.timeStamp,
       'user_id': instance.userId,
+      'comments': instance.comments,
+      'favourites': instance.favourites,
+      'isReacted': instance.isReacted,
     };

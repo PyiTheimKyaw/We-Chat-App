@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/favourite_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -14,6 +15,7 @@ const fileUploadRef = "uploads";
 const userCollectionsPath = "users";
 const contactsCollectionPath = "contacts";
 const commentsCollectionPath = "comments";
+const favouriteCollectionPath = "favourites";
 
 class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   static final CloudFireStoreDataAgentImpl _singleton =
@@ -199,5 +201,39 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         return CommentVO.fromJson(document.data());
       }).toList();
     });
+  }
+
+  @override
+  Future<void> reactMoment(FavouriteVO favourite, int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .collection(favouriteCollectionPath)
+        .doc(favourite.id.toString())
+        .set(favourite.toJson());
+  }
+
+  @override
+  Stream<List<FavouriteVO>> getAllReacts(int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .collection(favouriteCollectionPath)
+        .snapshots()
+        .map((snapShot) {
+      return snapShot.docs.map<FavouriteVO>((document) {
+        return FavouriteVO.fromJson(document.data());
+      }).toList();
+    });
+  }
+
+  @override
+  Future<void> unReact(int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .collection(favouriteCollectionPath)
+        .doc(auth.currentUser?.uid)
+        .delete();
   }
 }

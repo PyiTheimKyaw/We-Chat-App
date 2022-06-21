@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:the_we_chat_app_by_my_self/data/vos/favourite_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -24,8 +25,10 @@ abstract class WeChatDataAgent{
   Future<void> sendMyInfoToAnotherUser(UserVO user);
   Stream<List<UserVO>> getContacts();
 
-  ///Comment
+  ///Comment and favourite
   Stream<List<CommentVO>> getComments(int momentId);
   Future<void> addComment(CommentVO newMessage,int momentId);
-
+  Stream<List<FavouriteVO>> getAllReacts(int momentId);
+  Future<void> reactMoment(FavouriteVO favourite,int momentId);
+  Future<void> unReact(int momentId);
 }

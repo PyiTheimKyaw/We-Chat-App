@@ -16,6 +16,8 @@ class MomentsItemView extends StatelessWidget {
     this.color = Colors.black,
     required this.onChanged,
     required this.onTapSend,
+    required this.onTapReact,
+    required this.isReacted,
   }) : super(key: key);
   final MomentVO? moment;
   final Function onTapDelete;
@@ -24,7 +26,8 @@ class MomentsItemView extends StatelessWidget {
   final Color color;
   Function(String) onChanged;
   Function onTapSend;
-
+  Function onTapReact;
+  final bool isReacted;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
@@ -79,9 +82,14 @@ class MomentsItemView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Icon(
-                  Icons.favorite_border,
-                  color: color,
+                IconButton(
+                  icon: Icon(
+                    (isReacted)? Icons.favorite : Icons.favorite_border ,
+                    color: (isReacted) ? Colors.red :color,
+                  ),
+                  onPressed: () {
+                    onTapReact();
+                  },
                 ),
                 const SizedBox(
                   width: MARGIN_SMALL,
@@ -145,13 +153,12 @@ class MomentImageView extends StatelessWidget {
 }
 
 class CommentButtonView extends StatelessWidget {
-
-  CommentButtonView({
-    Key? key,
-    required this.color,
-    required this.onTapSend,
-    required this.onChanged
-  }) : super(key: key);
+  CommentButtonView(
+      {Key? key,
+      required this.color,
+      required this.onTapSend,
+      required this.onChanged})
+      : super(key: key);
   final Color color;
   Function(String) onChanged;
   Function onTapSend;
@@ -165,7 +172,8 @@ class CommentButtonView extends StatelessWidget {
       ),
       onPressed: () {
         print("comment print");
-        Navigator.of(context).push(CommentOverlayView(onTapSend: onTapSend,onChanged: onChanged));
+        Navigator.of(context).push(
+            CommentOverlayView(onTapSend: onTapSend, onChanged: onChanged));
       },
     );
   }

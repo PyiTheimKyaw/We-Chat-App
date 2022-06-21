@@ -78,7 +78,7 @@ class OverLaySectionView extends StatelessWidget {
                             )));
               });
             },
-            moment: moment, onChanged: (text ) {  }, onTapSend: (){},
+            moment: moment, onChanged: (text ) {  }, onTapSend: (){}, onTapReact: (){}, isReacted: true,
           ),
         );
       },

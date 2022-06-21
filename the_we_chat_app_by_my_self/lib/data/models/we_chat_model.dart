@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/favourite_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -8,7 +9,8 @@ import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 abstract class WeChatModel {
   Stream<List<MomentVO>> getMoments();
 
-  Future<void> addNewMoment(String description, File? file, String fileType,String userId);
+  Future<void> addNewMoment(
+      String description, File? file, String fileType, String userId);
 
   Future<void> editMoment(MomentVO editMoment, File? file, String fileType);
 
@@ -24,7 +26,8 @@ abstract class WeChatModel {
 
   Stream<List<UserVO>> getContacts();
 
-  Future<void> sendMessages(String? message, File? file,String fileType, UserVO chatUser);
+  Future<void> sendMessages(
+      String? message, File? file, String fileType, UserVO chatUser);
 
   Stream<List<ContactAndMessageVO>> getConversion(UserVO chatUser);
 
@@ -32,6 +35,13 @@ abstract class WeChatModel {
 
   Future deleteConversation(UserVO chatUser);
 
-  Future<void> addComment(String userName,int momentId,String comment);
+  Future<void> addComment(String userName, int momentId, String comment);
+
   Stream<List<CommentVO>> getComments(int momentId);
+
+  Stream<List<FavouriteVO>> getAllReacts(int momentId);
+
+  Future<void> reactMoment( int momentId);
+
+  Future<void> unReact(int momentId);
 }

@@ -4,6 +4,7 @@ import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/favourite_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
@@ -195,5 +196,28 @@ class WeChatModelImpl extends WeChatModel {
   @override
   Stream<List<CommentVO>> getComments(int momentId) {
     return mDataAgent.getComments(momentId);
+  }
+
+  @override
+  Stream<List<FavouriteVO>> getAllReacts(int momentId) {
+    return mDataAgent.getAllReacts(momentId);
+  }
+
+  Future<FavouriteVO> craftReactVO() {
+    FavouriteVO newFavourite = FavouriteVO(
+        id: mAuthModel.getLoggedInUser().id,
+        userName: mAuthModel.getLoggedInUser().userName);
+    return Future.value(newFavourite);
+  }
+
+  @override
+  Future<void> reactMoment(int momentId) {
+    return craftReactVO()
+        .then((newReact) => mDataAgent.reactMoment(newReact, momentId));
+  }
+
+  @override
+  Future<void> unReact(int momentId) {
+    return mDataAgent.unReact(momentId);
   }
 }
