@@ -11,6 +11,7 @@ import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 class MomentsPageBloc extends ChangeNotifier {
   File? chosenCoverImage;
   bool isDisposed = false;
+  String? commentText;
 
   ///States
   List<MomentVO>? momentsList;
@@ -21,16 +22,24 @@ class MomentsPageBloc extends ChangeNotifier {
   AuthenticationModel mAuthModel = AuthenticationModelImpl();
 
   MomentsPageBloc() {
+    momentsList = null;
+    _notifySafely();
     loggedInUser = mAuthModel.getLoggedInUser();
     mWeChatModel.getUserByQRCode(loggedInUser?.id ?? "").listen((user) {
-      loggedInUser=user;
+      loggedInUser = user;
       _notifySafely();
     });
     mWeChatModel.getMoments().listen((moments) {
+      print("Moments list => ${moments.length}");
       momentsList = moments;
-      if (!isDisposed) {
-        _notifySafely();
-      }
+      _notifySafely();
+      moments.forEach((element) {
+        mWeChatModel.getComments(element.id ?? 0).listen((event) {
+          element.comments = event;
+          _notifySafely();
+          print(("Comments  List length => ${momentsList?.length}"));
+        });
+      });
     });
   }
 
@@ -39,13 +48,28 @@ class MomentsPageBloc extends ChangeNotifier {
   }
 
   void onChosenCoverImage(File imageFile) {
-    chosenCoverImage=imageFile;
+    chosenCoverImage = imageFile;
     mAuthModel.changeCoverPicture(loggedInUser ?? UserVO(), imageFile);
     _notifySafely();
   }
 
   void _notifySafely() {
-    notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void onChangeComment(String comment) {
+    commentText = comment;
+    _notifySafely();
+  }
+
+  Future onTapSendComment(int momentId) {
+    if (commentText != "") {
+      return mWeChatModel.addComment(
+          loggedInUser?.userName ?? "", momentId, commentText ?? "");
+    }
+    return Future.value();
   }
 
   @override

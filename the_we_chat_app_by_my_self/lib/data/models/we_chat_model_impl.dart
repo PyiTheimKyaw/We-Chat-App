@@ -4,6 +4,7 @@ import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/chatting_data_agent.dart';
@@ -178,5 +179,21 @@ class WeChatModelImpl extends WeChatModel {
     });
   }
 
+  Future<CommentVO> craftMessageVO(String userName, String comment) {
+    var milliSeconds = DateTime.now().millisecondsSinceEpoch;
+    CommentVO newMessage =
+        CommentVO(id: milliSeconds, userName: userName, comment: comment);
+    return Future.value(newMessage);
+  }
 
+  @override
+  Future<void> addComment(String userName, int momentId, String comment) {
+    return craftMessageVO(userName, comment)
+        .then((newMessage) => mDataAgent.addComment(newMessage, momentId));
+  }
+
+  @override
+  Stream<List<CommentVO>> getComments(int momentId) {
+    return mDataAgent.getComments(momentId);
+  }
 }

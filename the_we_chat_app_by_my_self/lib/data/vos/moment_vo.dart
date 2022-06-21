@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 part 'moment_vo.g.dart';
 @JsonSerializable()
 class MomentVO {
@@ -18,13 +19,14 @@ class MomentVO {
     int? timeStamp;
     @JsonKey(name: 'user_id')
     String? userId;
+    List<CommentVO>? comments;
 
     MomentVO(
       {required this.id,
       required this.description,
       required this.postFile,
       required this.profilePicture,
-      required this.userName,required this.fileType,required this.timeStamp, this.userId});
+      required this.userName,required this.fileType,required this.timeStamp, this.userId,this.comments});
 
     factory MomentVO.fromJson(Map<String,dynamic> json) => _$MomentVOFromJson(json);
     Map<String,dynamic> toJson() => _$MomentVOToJson(this);

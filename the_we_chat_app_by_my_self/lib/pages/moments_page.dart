@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
@@ -86,17 +87,17 @@ class MomentItemSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<MomentsPageBloc, List<MomentVO>?>(
-      selector: (context, bloc) => bloc.momentsList,
-      shouldRebuild: (previous, next) => previous != next,
-      builder: (BuildContext context, momentsList, Widget? child) {
+    return Consumer<MomentsPageBloc>(
+      // selector: (context, bloc) => bloc.momentsList,
+      // shouldRebuild: (previous, next) => previous != next,
+      builder: (BuildContext context, bloc, Widget? child) {
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(
             vertical: MARGIN_XLARGE * 2,
           ),
-          itemCount: momentsList?.length ?? 0,
+          itemCount: bloc.momentsList?.length ?? 0,
           itemBuilder: (BuildContext context, int index) {
             return Padding(
               padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
@@ -104,13 +105,11 @@ class MomentItemSectionView extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context)
-                          .push(MomentOverlayView(moment: momentsList?[index]));
+                      Navigator.of(context).push(
+                          MomentOverlayView(moment: bloc.momentsList?[index]));
                     },
                     child: MomentsFavouriteAndCommentsView(
                       onTapDelete: (momentId) {
-                        MomentsPageBloc bloc =
-                            Provider.of(context, listen: false);
                         bloc.onTapDelete(momentId);
                       },
                       onTapEdit: (momentId) {
@@ -123,20 +122,29 @@ class MomentItemSectionView extends StatelessWidget {
                               ));
                         });
                       },
-                      momentVO: momentsList?[index],
+                      momentVO: bloc.momentsList?[index],
+                      onTapSend: () {
+                        bloc
+                            .onTapSendComment(bloc.momentsList?[index].id ?? 0)
+                            .then((value) => Navigator.pop(context));
+                      },
+                      onChanged: (text) {
+                        bloc.onChangeComment(text);
+                      },
+                      commentsList: bloc.momentsList?[index].comments,
                     ),
                   ),
                   Positioned(
                     left: MOMENT_USER_PROFILE_HEIGHT / 2,
                     child: MomentUserProfileView(
-                      userProfile: momentsList?[index].profilePicture,
+                      userProfile: bloc.momentsList?[index].profilePicture,
                     ),
                   ),
                   Positioned(
                     right: MOMENT_USER_PROFILE_HEIGHT / 2,
                     child: Text(
                       TimeAgo.timeAgoSinceDateNow(
-                          momentsList?[index].timeStamp ?? 0),
+                          bloc.momentsList?[index].timeStamp ?? 0),
                       style: const TextStyle(color: Colors.black54),
                     ),
                   ),
@@ -168,15 +176,21 @@ class MomentUserProfileView extends StatelessWidget {
 }
 
 class MomentsFavouriteAndCommentsView extends StatelessWidget {
-  const MomentsFavouriteAndCommentsView({
-    Key? key,
-    required this.momentVO,
-    required this.onTapDelete,
-    required this.onTapEdit,
-  }) : super(key: key);
+  MomentsFavouriteAndCommentsView(
+      {Key? key,
+      required this.momentVO,
+      required this.onTapDelete,
+      required this.onTapEdit,
+      required this.onTapSend,
+      required this.onChanged,
+      required this.commentsList})
+      : super(key: key);
   final MomentVO? momentVO;
   final Function(int) onTapDelete;
   final Function(int) onTapEdit;
+  Function(String) onChanged;
+  Function onTapSend;
+  final List<CommentVO>? commentsList;
 
   @override
   Widget build(BuildContext context) {
@@ -190,11 +204,15 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
             onTapEdit(momentVO?.id ?? 0);
           },
           moment: momentVO,
+          onTapSend: onTapSend,
+          onChanged: onChanged,
         ),
         const SizedBox(
           height: 4,
         ),
-        const CommentsAndFavouriteView(),
+        CommentsAndFavouriteView(
+          commentsList: commentsList,
+        ),
       ],
     );
   }
@@ -203,7 +221,9 @@ class MomentsFavouriteAndCommentsView extends StatelessWidget {
 class CommentsAndFavouriteView extends StatelessWidget {
   const CommentsAndFavouriteView({
     Key? key,
+    required this.commentsList,
   }) : super(key: key);
+  final List<CommentVO>? commentsList;
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +231,7 @@ class CommentsAndFavouriteView extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.only(
           left: MARGIN_XLARGE * 2, right: MARGIN_XLARGE, top: MARGIN_MEDIUM_2),
-      height: 300,
+      height: null,
       decoration: const BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -223,17 +243,22 @@ class CommentsAndFavouriteView extends StatelessWidget {
         color: BACKGROUND_COLOR,
       ),
       child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
         itemCount: 1,
         itemBuilder: (BuildContext context, int index) {
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              FavouriteView(),
-              SizedBox(
+            children: [
+              const FavouriteView(),
+              const SizedBox(
                 height: MARGIN_SMALL,
               ),
-              CommentView(),
+              CommentView(
+                commentsList: commentsList,
+              ),
             ],
           );
         },
@@ -243,52 +268,53 @@ class CommentsAndFavouriteView extends StatelessWidget {
 }
 
 class CommentView extends StatelessWidget {
-  const CommentView({
-    Key? key,
-  }) : super(key: key);
+  const CommentView({Key? key, required this.commentsList}) : super(key: key);
+  final List<CommentVO>? commentsList;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(
-          Icons.comment,
-          size: TEXT_REGULAR,
-        ),
-        const SizedBox(
-          width: MARGIN_SMALL,
-        ),
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            itemCount: 30,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: MARGIN_MEDIUM),
-                child: RichText(
-                  text: TextSpan(
-                    style: DefaultTextStyle.of(context).style,
-                    children: const <TextSpan>[
-                      TextSpan(
-                          text: 'Davies',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          )),
-                      TextSpan(
-                          text:
-                              'I like this post I like this post I like this post I like this post I like this post !',
-                          style: TextStyle(color: Colors.black54)),
-                    ],
-                  ),
-                ),
-              );
-            },
+    return Visibility(
+      visible: commentsList?.length != 0,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.comment,
+            size: TEXT_REGULAR,
           ),
-        ),
-      ],
+          const SizedBox(
+            width: MARGIN_SMALL,
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
+              itemCount: commentsList?.length ?? 0,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: MARGIN_MEDIUM),
+                  child: RichText(
+                    text: TextSpan(
+                      style: DefaultTextStyle.of(context).style,
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: "${commentsList?[index].userName}  " ?? "",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            )),
+                        TextSpan(
+                            text: commentsList?[index].comment,
+                            style: const TextStyle(color: Colors.black54)),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -352,7 +378,8 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.black38,
                     image: DecorationImage(
-                        image: NetworkImage(loggedInUser?.coverPicture ?? ""),
+                        image: NetworkImage(loggedInUser?.coverPicture ??
+                            "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640"),
                         fit: BoxFit.cover)),
               ),
               Positioned(
@@ -435,7 +462,7 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
         ),
         Text(
           DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
-          style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
+          style: const TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),
         const Text(
           "23 new moments",

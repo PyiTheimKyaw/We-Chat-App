@@ -14,12 +14,16 @@ class MomentsItemView extends StatelessWidget {
     required this.onTapEdit,
     this.isOverlay = false,
     this.color = Colors.black,
+    required this.onChanged,
+    required this.onTapSend,
   }) : super(key: key);
   final MomentVO? moment;
   final Function onTapDelete;
   final Function onTapEdit;
   final bool isOverlay;
   final Color color;
+  Function(String) onChanged;
+  Function onTapSend;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -84,6 +88,8 @@ class MomentsItemView extends StatelessWidget {
                 ),
                 CommentButtonView(
                   color: color,
+                  onChanged: onChanged,
+                  onTapSend: onTapSend,
                 ),
                 const SizedBox(
                   width: MARGIN_SMALL,
@@ -139,11 +145,16 @@ class MomentImageView extends StatelessWidget {
 }
 
 class CommentButtonView extends StatelessWidget {
+
   CommentButtonView({
     Key? key,
     required this.color,
+    required this.onTapSend,
+    required this.onChanged
   }) : super(key: key);
   final Color color;
+  Function(String) onChanged;
+  Function onTapSend;
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +165,7 @@ class CommentButtonView extends StatelessWidget {
       ),
       onPressed: () {
         print("comment print");
-        Navigator.of(context).push(CommentOverlayView());
+        Navigator.of(context).push(CommentOverlayView(onTapSend: onTapSend,onChanged: onChanged));
       },
     );
   }

@@ -1,8 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
 
 class CommentOverlayView extends ModalRoute {
+  Function(String) onChanged;
+  Function onTapSend;
+
+  CommentOverlayView({required this.onChanged, required this.onTapSend});
+
   String? commentTyped = null;
 
   @override
@@ -22,6 +28,7 @@ class CommentOverlayView extends ModalRoute {
 
   @override
   bool get maintainState => true;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget buildPage(
@@ -32,16 +39,22 @@ class CommentOverlayView extends ModalRoute {
     return Material(
       type: MaterialType.transparency,
       child: SafeArea(
-        child: _buildOverlayContent(context),
+        child: _buildOverlayContent(
+          context,
+          onChanged: onChanged,
+          onTapSend: onTapSend,
+        ),
       ),
     );
   }
 
-  Widget _buildOverlayContent(BuildContext context) {
+  Widget _buildOverlayContent(BuildContext context,
+      {required Function(String) onChanged, required Function onTapSend}) {
     return Center(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             // mainAxisAlignment: MainAxisAlignment.start,
@@ -63,9 +76,9 @@ class CommentOverlayView extends ModalRoute {
                 horizontal: MARGIN_MEDIUM_2 + MARGIN_SMALL),
             child: Row(
               children: [
-                const Text(
-                  "PTK",
-                  style: TextStyle(color: Colors.white),
+                Text(
+                  auth.currentUser?.displayName ?? "",
+                  style: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(
                   width: 12,
@@ -75,7 +88,7 @@ class CommentOverlayView extends ModalRoute {
                     maxLines: 1,
                     autofocus: true,
                     onChanged: (text) {
-                      commentTyped = text;
+                      onChanged(text);
                     },
                     style: const TextStyle(
                       color: Colors.white,
@@ -95,7 +108,7 @@ class CommentOverlayView extends ModalRoute {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.pop(context, commentTyped);
+                    onTapSend();
                   },
                   icon: const Icon(
                     Icons.send,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 
@@ -31,4 +32,6 @@ abstract class WeChatModel {
 
   Future deleteConversation(UserVO chatUser);
 
+  Future<void> addComment(String userName,int momentId,String comment);
+  Stream<List<CommentVO>> getComments(int momentId);
 }

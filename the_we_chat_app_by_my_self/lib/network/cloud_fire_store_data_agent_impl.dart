@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/network/we_chat_data_agent.dart';
@@ -12,6 +13,7 @@ const momentCollection = "moments";
 const fileUploadRef = "uploads";
 const userCollectionsPath = "users";
 const contactsCollectionPath = "contacts";
+const commentsCollectionPath = "comments";
 
 class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
   static final CloudFireStoreDataAgentImpl _singleton =
@@ -173,5 +175,29 @@ class CloudFireStoreDataAgentImpl extends WeChatDataAgent {
         .collection(userCollectionsPath)
         .doc(newUser.id.toString())
         .set(newUser.toJson());
+  }
+
+  @override
+  Future<void> addComment(CommentVO newMessage, int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .collection(commentsCollectionPath)
+        .doc(newMessage.id.toString())
+        .set(newMessage.toJson());
+  }
+
+  @override
+  Stream<List<CommentVO>> getComments(int momentId) {
+    return _fireStore
+        .collection(momentCollection)
+        .doc(momentId.toString())
+        .collection(commentsCollectionPath)
+        .snapshots()
+        .map((snapShot) {
+      return snapShot.docs.map<CommentVO>((document) {
+        return CommentVO.fromJson(document.data());
+      }).toList();
+    });
   }
 }
