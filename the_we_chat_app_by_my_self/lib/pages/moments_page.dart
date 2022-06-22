@@ -47,7 +47,7 @@ class MomentPage extends StatelessWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: PRIMARY_COLOR,
-      // automaticallyImplyLeading: true,
+      automaticallyImplyLeading: false,
       leadingWidth: MediaQuery.of(context).size.width / 4,
       // leading: GestureDetector(
       //   onTap: () {

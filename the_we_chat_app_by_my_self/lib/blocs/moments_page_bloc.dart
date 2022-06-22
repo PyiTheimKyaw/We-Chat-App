@@ -12,7 +12,8 @@ class MomentsPageBloc extends ChangeNotifier {
   File? chosenCoverImage;
   bool isDisposed = false;
   String? commentText;
-  List<String> reactedUser=[];
+  List<String> reactedUser = [];
+
   ///States
   List<MomentVO>? momentsList;
   UserVO? loggedInUser;
@@ -43,7 +44,6 @@ class MomentsPageBloc extends ChangeNotifier {
                 reactedUser.add(item.userName ?? "");
                 _notifySafely();
                 element.isReacted = true;
-
                 _notifySafely();
               }
             }).toList();
