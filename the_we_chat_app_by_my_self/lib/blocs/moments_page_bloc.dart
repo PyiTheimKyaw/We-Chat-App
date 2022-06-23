@@ -71,25 +71,6 @@ class MomentsPageBloc extends ChangeNotifier {
       mWeChatModel.reactMoment(momentId);
       _notifySafely();
     }
-    // mWeChatModel.getAllReacts(momentId).listen((fav) {
-    //   fav.map((e) {
-    //     print("Fav id ${e.id}");
-    //     if (e.id == mAuthModel.getLoggedInUser().id) {
-    //       print("un react");
-    //       mWeChatModel.unReact(momentId).then((value) {
-    //         momentsList?[momentIndex].isReacted = false;
-    //         momentsList = momentsList;
-    //         _notifySafely();
-    //       });
-    //     } else if(e.id != mAuthModel.getLoggedInUser().id) {
-    //       print("react");
-    //       mWeChatModel.reactMoment(momentId);
-    //       _notifySafely();
-    //     }
-    //   }).toList();
-    // });
-    // mWeChatModel.unReact(momentId);
-    // mWeChatModel.reactMoment(momentId);
   }
 
   void onTapDelete(int momentId) {

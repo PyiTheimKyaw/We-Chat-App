@@ -4,13 +4,12 @@ import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/view_items/moment_item_view.dart';
-import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
 
 class MomentOverlayView extends ModalRoute {
-  MomentOverlayView({required this.moment});
+  MomentOverlayView({required this.moment, required this.index});
 
   MomentVO? moment;
-
+  int index;
   String? commentTyped = null;
 
   @override
@@ -43,7 +42,10 @@ class MomentOverlayView extends ModalRoute {
         elevation: 200,
         type: MaterialType.transparency,
         child: SafeArea(
-          child: OverLaySectionView(moment: moment),
+          child: OverLaySectionView(
+            moment: moment,
+            index: index,
+          ),
         ),
       ),
     );
@@ -51,9 +53,10 @@ class MomentOverlayView extends ModalRoute {
 }
 
 class OverLaySectionView extends StatelessWidget {
-  OverLaySectionView({required this.moment});
+  OverLaySectionView({required this.moment, required this.index});
 
   final MomentVO? moment;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +72,7 @@ class OverLaySectionView extends StatelessWidget {
             },
             onTapEdit: () {
               print("On Tap edit at overlay");
-              Future.delayed(Duration(seconds: 1)).then((value) {
+              Future.delayed(const Duration(seconds: 1)).then((value) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -78,7 +81,19 @@ class OverLaySectionView extends StatelessWidget {
                             )));
               });
             },
-            moment: moment, onChanged: (text ) {  }, onTapSend: (){}, onTapReact: (){}, isReacted: true,
+            moment: moment,
+            onChanged: (text) {
+              bloc.onChangeComment(text);
+            },
+            onTapSend: () {
+              bloc
+                  .onTapSendComment(moment?.id ?? 0)
+                  .then((value) => Navigator.pop(context));
+            },
+            onTapReact: () {
+              bloc.onTapReact(moment?.id ?? 0, index);
+            },
+            isReacted: moment?.isReacted ?? false,
           ),
         );
       },

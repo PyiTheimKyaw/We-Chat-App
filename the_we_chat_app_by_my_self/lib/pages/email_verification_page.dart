@@ -73,7 +73,7 @@ class EmailVerificationPage extends StatelessWidget {
                             onTapVerified: () {
                               if (bloc.email != "") {
                                 bloc
-                                    .onTapSignUp(userName,password,
+                                    .onTapSignUp(userName, password,
                                         phoneNumber, profilePic)
                                     .then((value) {
                                   navigateToNextScreen(
@@ -108,8 +108,6 @@ class EmailVerificationPage extends StatelessWidget {
     );
   }
 }
-
-
 
 class VerifiedButtonView extends StatelessWidget {
   const VerifiedButtonView(

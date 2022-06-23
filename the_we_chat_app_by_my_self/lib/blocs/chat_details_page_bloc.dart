@@ -7,10 +7,8 @@ import 'package:the_we_chat_app_by_my_self/data/models/authentication_model.dart
 import 'package:the_we_chat_app_by_my_self/data/models/authentication_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model.dart';
 import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
-import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 
 class ChatDetailsPageBloc extends ChangeNotifier {
   bool isPopUp = false;
@@ -37,13 +35,13 @@ class ChatDetailsPageBloc extends ChangeNotifier {
   }
 
   void onSubmitted(String? text) {
-
     print("On tap submitted => $text");
     mModel
-        .sendMessages(text, chosenFile,chosenFileType ?? "" ,chatUserinfo ?? UserVO())
+        .sendMessages(
+            text, chosenFile, chosenFileType ?? "", chatUserinfo ?? UserVO())
         .then((value) {
       controller.text = '';
-      chosenFile=null;
+      chosenFile = null;
       _notifySafely();
       print("Success add text ");
     }).catchError((error) {

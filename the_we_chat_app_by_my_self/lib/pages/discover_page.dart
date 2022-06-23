@@ -14,26 +14,23 @@ class DiscoverPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: PRIMARY_COLOR,
         centerTitle: true,
-        title: TitleText(title:LABEL_DISCOVER),
-        // actions:  [
-        //   IconButton(icon:const Icon(Icons.add),color: Colors.white, onPressed: () {  },),
-        // ],
+        title: TitleText(title: LABEL_DISCOVER),
       ),
       body: Column(
         children: [
           DiscoverItemsListTileSectionView(
             title: LABEL_MOMENTS,
             onTapListTile: () {
-              navigateToNextScreen(context,  MomentPage());
+              navigateToNextScreen(context, MomentPage());
             },
           ),
           DiscoverItemsListTileSectionView(title: "Scan", onTapListTile: () {}),
-          DiscoverItemsListTileSectionView(title: "Shake", onTapListTile: () {}),
+          DiscoverItemsListTileSectionView(
+              title: "Shake", onTapListTile: () {}),
           DiscoverItemsListTileSectionView(
               title: "Top Stories", onTapListTile: () {}),
         ],

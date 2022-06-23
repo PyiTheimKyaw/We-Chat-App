@@ -27,7 +27,6 @@ class LoginPage extends StatelessWidget {
             children: [
               Scaffold(
                 appBar: AppBar(
-
                   automaticallyImplyLeading: false,
                   elevation: 0,
                   backgroundColor: Colors.white,
@@ -96,8 +95,7 @@ class LoginPage extends StatelessWidget {
                             onPressed: () {
                               if (bloc.canLoginAccount()) {
                                 bloc.onTapLogin().then((value) {
-                                  navigateToNextScreen(
-                                      context,  StartPage());
+                                  navigateToNextScreen(context, StartPage());
                                 }).catchError((error) {
                                   showSnackBarWithMessage(
                                       context, error.toString());

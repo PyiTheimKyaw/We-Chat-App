@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/qr_code_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
-import 'package:the_we_chat_app_by_my_self/pages/contact_page.dart';
-import 'package:the_we_chat_app_by_my_self/pages/qr_scanner_page.dart';
 import 'package:the_we_chat_app_by_my_self/pages/start_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/utils/extensions.dart';
@@ -56,7 +54,6 @@ class QRCodeViewPage extends StatelessWidget {
               child: const Icon(Icons.camera_alt_outlined),
             ),
             appBar: AppBar(
-
               automaticallyImplyLeading: false,
               backgroundColor: PRIMARY_COLOR,
               elevation: 0,

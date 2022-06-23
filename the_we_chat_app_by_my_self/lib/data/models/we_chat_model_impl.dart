@@ -173,11 +173,11 @@ class WeChatModelImpl extends WeChatModel {
 
   @override
   Future deleteConversation(UserVO chatUser) {
-    return mRealTimeDataAgent
-        .deleteConversationFromLoggedInUser(chatUser)
-        .then((value) {
-      return mRealTimeDataAgent.deleteConversationFromChatUser(chatUser);
-    });
+    return mRealTimeDataAgent.deleteConversationFromLoggedInUser(chatUser);
+
+    //     .then((value) {
+    //   return mRealTimeDataAgent.deleteConversationFromChatUser(chatUser);
+    // });
   }
 
   Future<CommentVO> craftMessageVO(String userName, String comment) {

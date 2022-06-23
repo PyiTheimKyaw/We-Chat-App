@@ -8,7 +8,6 @@ import 'package:the_we_chat_app_by_my_self/blocs/moments_page_bloc.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/favourite_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/moment_vo.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 import 'package:the_we_chat_app_by_my_self/pages/add_moment_page.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -107,7 +106,9 @@ class MomentItemSectionView extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
-                          MomentOverlayView(moment: bloc.momentsList?[index]));
+                        MomentOverlayView(
+                            moment: bloc.momentsList?[index], index: index),
+                      );
                     },
                     child: MomentsFavouriteAndCommentsView(
                       onTapDelete: (momentId) {
@@ -319,7 +320,7 @@ class CommentView extends StatelessWidget {
                       style: DefaultTextStyle.of(context).style,
                       children: <TextSpan>[
                         TextSpan(
-                            text: "${commentsList?[index].userName}  " ?? "",
+                            text: "${commentsList?[index].userName}  ",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             )),
@@ -392,10 +393,10 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).size.height / 3 - PROFILE_HEIGHT / 2;
     const left = PROFILE_HEIGHT / 1.5;
-    return Selector<MomentsPageBloc, UserVO?>(
-      selector: (context, bloc) => bloc.loggedInUser,
-      shouldRebuild: (previous, next) => previous != next,
-      builder: (BuildContext context, loggedInUser, Widget? child) {
+    return Consumer<MomentsPageBloc>(
+      // selector: (context, bloc) => bloc.loggedInUser,
+      // shouldRebuild: (previous, next) => previous != next,
+      builder: (BuildContext context, bloc, Widget? child) {
         return GestureDetector(
           onTap: () async {
             final ImagePicker picker = ImagePicker();
@@ -415,7 +416,7 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.black38,
                     image: DecorationImage(
-                        image: NetworkImage(loggedInUser?.coverPicture ??
+                        image: NetworkImage(bloc.loggedInUser?.coverPicture ??
                             "https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640"),
                         fit: BoxFit.cover)),
               ),
@@ -423,8 +424,9 @@ class ChangeCoverPhotoSectionView extends StatelessWidget {
                 top: top,
                 left: left,
                 child: ProfileImageAndUserNameSectionView(
-                  profilePicture: loggedInUser?.profilePicture ?? "",
-                  userName: loggedInUser?.userName ?? "",
+                  profilePicture: bloc.loggedInUser?.profilePicture ?? "",
+                  userName: bloc.loggedInUser?.userName ?? "",
+                  totalMoments: bloc.momentsList?.length ?? 0,
                 ),
               )
             ],
@@ -440,9 +442,11 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
     Key? key,
     required this.profilePicture,
     required this.userName,
+    required this.totalMoments,
   }) : super(key: key);
   final String profilePicture;
   final String userName;
+  final int totalMoments;
 
   @override
   Widget build(BuildContext context) {
@@ -467,6 +471,7 @@ class ProfileImageAndUserNameSectionView extends StatelessWidget {
             flex: 2,
             child: UserNameAndMomentsInfoView(
               userName: userName,
+              totalMoments: totalMoments,
             ),
           ),
         ],
@@ -479,8 +484,10 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
   const UserNameAndMomentsInfoView({
     Key? key,
     required this.userName,
+    required this.totalMoments,
   }) : super(key: key);
   final String userName;
+  final int totalMoments;
 
   @override
   Widget build(BuildContext context) {
@@ -501,9 +508,9 @@ class UserNameAndMomentsInfoView extends StatelessWidget {
           DateFormat("MMMM, dd, yyyy").format(DateTime.now()),
           style: const TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),
-        const Text(
-          "23 new moments",
-          style: TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
+        Text(
+          "$totalMoments new moments",
+          style: const TextStyle(color: Colors.black, fontSize: TEXT_SMALL),
         ),
       ],
     );

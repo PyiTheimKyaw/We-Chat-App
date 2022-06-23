@@ -5,43 +5,48 @@ import 'package:the_we_chat_app_by_my_self/data/models/we_chat_model_impl.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/az_item_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
 
-class ContactTabBloc extends ChangeNotifier{
-
+class ContactTabBloc extends ChangeNotifier {
   List<UserVO>? usersDummy;
   List<AZItemVO>? alphabetList;
   List<AZItemVO>? filterList;
   bool isDisposed = false;
-  ///Model
-  WeChatModel mModel=WeChatModelImpl();
-  ContactTabBloc(){
 
+  ///Model
+  WeChatModel mModel = WeChatModelImpl();
+
+  ContactTabBloc() {
     mModel.getContacts().listen((event) {
-      usersDummy=event;
+      usersDummy = event;
       _notifySafely();
-      alphabetList = usersDummy?.map((item) => AZItemVO(person: item, tag: item.userName?[0].toUpperCase() ?? "")).toList();
-      filterList = usersDummy?.map((item) => AZItemVO(person: item, tag: item.userName?[0].toUpperCase() ?? "")).toList();
+      alphabetList = usersDummy
+          ?.map((item) => AZItemVO(
+              person: item, tag: item.userName?[0].toUpperCase() ?? ""))
+          .toList();
+      filterList = usersDummy
+          ?.map((item) => AZItemVO(
+              person: item, tag: item.userName?[0].toUpperCase() ?? ""))
+          .toList();
 
       SuspensionUtil.sortListBySuspensionTag(filterList);
       SuspensionUtil.setShowSuspensionStatus(filterList);
     });
-    //usersDummy.sort((a,b) => a.name!.compareTo(b.name!));
-
-
   }
 
-  searchByName(String text){
-    if(text.isNotEmpty){
-      filterList = alphabetList?.where((element){
-        return element.person.userName!.toLowerCase().contains(text.toLowerCase());
+  searchByName(String text) {
+    if (text.isNotEmpty) {
+      filterList = alphabetList?.where((element) {
+        return element.person.userName!
+            .toLowerCase()
+            .contains(text.toLowerCase());
       }).toList();
-    }else{
+    } else {
       filterList = alphabetList;
     }
     _notifySafely();
   }
 
-  _notifySafely(){
-    if(!isDisposed){
+  _notifySafely() {
+    if (!isDisposed) {
       notifyListeners();
     }
   }
@@ -51,6 +56,4 @@ class ContactTabBloc extends ChangeNotifier{
     super.dispose();
     isDisposed = true;
   }
-
-
 }

@@ -1,15 +1,12 @@
 import 'dart:io';
 
-import 'package:bottom_drawer/bottom_drawer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_we_chat_app_by_my_self/blocs/chat_details_page_bloc.dart';
-import 'package:the_we_chat_app_by_my_self/data/vos/chat_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/contact_and_message_vo.dart';
 import 'package:the_we_chat_app_by_my_self/data/vos/user_vo.dart';
-import 'package:the_we_chat_app_by_my_self/dummy_data/messages.dart';
 import 'package:the_we_chat_app_by_my_self/pages/preview_image.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/colors.dart';
 import 'package:the_we_chat_app_by_my_self/rescources/dimens.dart';
@@ -236,7 +233,8 @@ class ChatDetailPage extends StatelessWidget {
 }
 
 class ChosenFileView extends StatelessWidget {
-  ChosenFileView(this.chosenFile, this.chosenFileType);
+  const ChosenFileView(this.chosenFile, this.chosenFileType, {Key? key})
+      : super(key: key);
 
   final File? chosenFile;
   final String? chosenFileType;
@@ -445,10 +443,12 @@ class MessageOrFileNotNullSectionView extends StatelessWidget {
 }
 
 class MoreOptionButtonView extends StatelessWidget {
-  MoreOptionButtonView(
-      {required this.icon,
+  const MoreOptionButtonView(
+      {Key? key,
+      required this.icon,
       required this.optionLabel,
-      required this.onTapFunction});
+      required this.onTapFunction})
+      : super(key: key);
 
   final IconData icon;
   final String optionLabel;
@@ -473,13 +473,14 @@ class MoreOptionButtonView extends StatelessWidget {
 }
 
 class TextFieldSectionView extends StatelessWidget {
-  TextFieldSectionView({
+  const TextFieldSectionView({
+    Key? key,
     required this.onTapAdd,
     required this.onTapTextField,
     required this.isPopUp,
     required this.onSubmitted,
     required this.controller,
-  });
+  }) : super(key: key);
 
   final Function onTapAdd;
   final Function onTapTextField;
